@@ -1,0 +1,20 @@
+<?xml version='1.0' encoding='utf-8'?>
+<!DOCTYPE hibernate-mapping PUBLIC
+    "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+    "http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
+<hibernate-mapping>
+
+    <class name="com.gaussic.model.history.DcoalPipingHistoryEntity" table="dcoal_piping_history" schema="wind">
+        <id name="id" column="id"/>
+        <property name="hCoalMillId" column="h_coal_mill_id"/>
+        <property name="hTime" column="h_time"/>
+        <property name="hPipeAVelocity" column="h_pipeA_Velocity"/>
+        <property name="hPipeBVelocity" column="h_pipeB_Velocity"/>
+        <property name="hPipeCVelocity" column="h_pipeC_velocity"/>
+        <property name="hPipeDVelocity" column="h_pipeD_velocity"/>
+        <property name="hPipeADencity" column="h_pipeA_dencity"/>
+        <property name="hPipeBDencity" column="h_pipeB_dencity"/>
+        <property name="hPipeCDencity" column="h_pipeC_dencity"/>
+        <property name="hPipeDDencity" column="h_pipeD_dencity"/>
+    </class>
+</hibernate-mapping>

@@ -1,0 +1,14 @@
+<?xml version='1.0' encoding='utf-8'?>
+<!DOCTYPE hibernate-mapping PUBLIC
+    "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+    "http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
+<hibernate-mapping>
+
+    <class name="com.gaussic.model.CapcityCoalmillHistoryEntity" table="capcity_coalmill_history" schema="wind">
+        <id name="id" column="id"/>
+        <property name="cTime" column="c_time"/>
+        <property name="cCapcityValue" column="c_capcity_value"/>
+        <property name="cCoalMillSet" column="c_coal_mill_set"/>
+        <property name="cCalMillReal" column="c_cal_mill_real"/>
+    </class>
+</hibernate-mapping>

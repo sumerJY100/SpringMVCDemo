@@ -1,0 +1,23 @@
+<?xml version='1.0' encoding='utf-8'?>
+<!DOCTYPE hibernate-mapping PUBLIC
+    "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+    "http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
+<hibernate-mapping>
+
+    <class name="com.gaussic.model.CoalPipingEntity" table="coal_piping" schema="wind">
+        <id name="id" column="id"/>
+        <property name="pName" column="p_name"/>
+        <property name="pCoalMillId" column="p_coalMill_id"/>
+        <property name="pCoalPipingSetId" column="p_coalPiping_set_id"/>
+        <property name="pTime" column="p_time"/>
+        <property name="pLocation" column="p_location"/>
+        <property name="pVelocity" column="p_velocity"/>
+        <property name="pDencity" column="p_dencity"/>
+        <property name="pCommunicationState" column="p_communication_state"/>
+        <property name="pStartOrStopState" column="p_startOrStop_state"/>
+        <property name="pAlarmState" column="p_alarm_state"/>
+        <property name="pNote" column="p_note"/>
+        <property name="pNameUserDefined" column="p_name_user_defined"/>
+        <property name="pNumUserDefined" column="p_num_user_defined"/>
+    </class>
+</hibernate-mapping>

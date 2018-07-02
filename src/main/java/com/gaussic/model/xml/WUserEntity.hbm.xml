@@ -1,0 +1,17 @@
+<?xml version='1.0' encoding='utf-8'?>
+<!DOCTYPE hibernate-mapping PUBLIC
+    "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+    "http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
+<hibernate-mapping>
+
+    <class name="com.gaussic.model.WUserEntity" table="w_user" schema="wind">
+        <id name="id" column="id"/>
+        <property name="uName" column="u_name"/>
+        <property name="uLoginName" column="u_login_name"/>
+        <property name="uLoginPwd" column="u_login_pwd"/>
+        <property name="uLastLoginTime" column="u_last_login_time"/>
+        <property name="uLoginState" column="u_login_state"/>
+        <property name="uAuthorityId" column="u_authority_id"/>
+        <property name="uNote" column="u_note"/>
+    </class>
+</hibernate-mapping>

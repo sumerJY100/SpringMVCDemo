@@ -1,0 +1,13 @@
+<?xml version='1.0' encoding='utf-8'?>
+<!DOCTYPE hibernate-mapping PUBLIC
+    "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+    "http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
+<hibernate-mapping>
+
+    <class name="com.gaussic.model.WAuthorityEntity" table="w_authority" schema="wind">
+        <id name="id" column="id"/>
+        <property name="aName" column="a_name"/>
+        <property name="aNum" column="a_num"/>
+        <property name="aNote" column="a_note"/>
+    </class>
+</hibernate-mapping>

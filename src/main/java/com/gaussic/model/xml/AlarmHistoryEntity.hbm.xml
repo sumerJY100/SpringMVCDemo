@@ -1,0 +1,16 @@
+<?xml version='1.0' encoding='utf-8'?>
+<!DOCTYPE hibernate-mapping PUBLIC
+    "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+    "http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
+<hibernate-mapping>
+
+    <class name="com.gaussic.model.AlarmHistoryEntity" table="alarm_history" schema="wind">
+        <id name="id" column="id"/>
+        <property name="aDeviceId" column="a_device_id"/>
+        <property name="aDeviceType" column="a_device_type"/>
+        <property name="aDeviceName" column="a_device_name"/>
+        <property name="aAlarmTime" column="a_alarm_time"/>
+        <property name="aAlarmType" column="a_alarm_type"/>
+        <property name="aReAlarmTime" column="a_re_alarm_time"/>
+    </class>
+</hibernate-mapping>

@@ -1,0 +1,18 @@
+<?xml version='1.0' encoding='utf-8'?>
+<!DOCTYPE hibernate-mapping PUBLIC
+    "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+    "http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
+<hibernate-mapping>
+
+    <class name="com.gaussic.model.CoalMillEntity" table="coal_mill" schema="wind">
+        <id name="id" column="id"/>
+        <property name="cName" column="c_name"/>
+        <property name="cTime" column="c_time"/>
+        <property name="cRealValue" column="c_real_value"/>
+        <property name="cSetValue" column="c_set_value"/>
+        <property name="cCommunicationState" column="c_communication_state"/>
+        <property name="cStartOrStopState" column="c_startOrStop_state"/>
+        <property name="cAlarmState" column="c_alarm_state"/>
+        <property name="cNote" column="c_note"/>
+    </class>
+</hibernate-mapping>

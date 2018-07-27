@@ -8,7 +8,7 @@
         <id name="id" column="id"/>
         <property name="sParam1" column="s_param_1"/>
         <property name="sParam2" column="s_param_2"/>
-        <property name="coalPipingId" column="coal_piping_id"/>
+        <property name="getCoalPipeId" column="coal_piping_id"/>
         <property name="sParam3" column="s_param_3"/>
         <property name="sParam4" column="s_param_4"/>
         <property name="sParam5" column="s_param_5"/>

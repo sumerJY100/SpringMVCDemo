@@ -21,6 +21,7 @@ public class CoalMillEntity {
 
     private List<CoalPipingEntity> coalPipingEntityList;
 
+
     /**
      * 添加管道
      * @param coalPipingEntity
@@ -144,11 +145,12 @@ public class CoalMillEntity {
         return Objects.hash(id, cName, cTime, cRealValue, cSetValue, cCommunicationState, cStartOrStopState, cAlarmState, cNote);
     }
 
-    @Transient
+//    @Transient
+    @OneToMany(mappedBy = "coalMillEntity")
     public List<CoalPipingEntity> getCoalPipingEntityList() {
-        if(null == coalPipingEntityList) {
-            coalPipingEntityList = new ArrayList<CoalPipingEntity>();
-        }
+//        if(null == coalPipingEntityList) {
+////            coalPipingEntityList = new ArrayList<CoalPipingEntity>();
+////        }
         return coalPipingEntityList;
     }
 

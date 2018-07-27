@@ -9,14 +9,18 @@ public class CoalPipingSetEntity {
     private long id;
     private Float sParam1;
     private Float sParam2;
-    private Long coalPipingId;
+    private Long coalPipeId;
     private Float sParam3;
     private Float sParam4;
     private Float sParam5;
     private String sUrl;
 
+//    private CoalPipingEntity coalPipingEntity;
+    private CoalPipingEntity coalPipingEntity;
+
     @Id
     @Column(name = "id")
+    @GeneratedValue(strategy = GenerationType.AUTO)
     public long getId() {
         return id;
     }
@@ -61,14 +65,17 @@ public class CoalPipingSetEntity {
         return Objects.hash(id, sParam1, sParam2);
     }
 
-    @Basic
-    @Column(name = "coal_piping_id")
-    public Long getCoalPipingId() {
-        return coalPipingId;
+/*    @Basic
+    @Column(name = "coal_piping_id")*/
+    @Transient
+    public Long getCoalPipeId() {
+        if(null != coalPipingEntity)
+            coalPipeId = coalPipingEntity.getId();
+        return coalPipeId;
     }
 
-    public void setCoalPipingId(Long coalPipingId) {
-        this.coalPipingId = coalPipingId;
+    public void setCoalPipeId(Long coalPipingId) {
+        this.coalPipeId = coalPipingId;
     }
 
     @Basic
@@ -109,5 +116,16 @@ public class CoalPipingSetEntity {
 
     public void setsUrl(String sUrl) {
         this.sUrl = sUrl;
+    }
+
+    //    @OneToOne(mappedBy = "coalPipingSetEntity" ,cascade = CascadeType.ALL)
+    @OneToOne
+    @JoinColumn(name = "coal_piping_id")
+    public CoalPipingEntity getCoalPipingEntity() {
+        return coalPipingEntity;
+    }
+
+    public void setCoalPipingEntity(CoalPipingEntity coalPipingEntity) {
+        this.coalPipingEntity = coalPipingEntity;
     }
 }

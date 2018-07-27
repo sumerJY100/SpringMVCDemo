@@ -7,13 +7,18 @@ import com.gaussic.repository.CoalPipingHistoryRepositoryA;
 import com.gaussic.repository.CoalPipingHistoryRepositoryB;
 import com.gaussic.repository.CoalPipingHistoryRepositoryC;
 import com.gaussic.repository.CoalPipingHistoryRepositoryD;
+import org.json.JSONArray;
+import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.Date;
+import java.util.List;
 
 @Component
-public class CoalPipingHistoryService {
+public class CoalPipingHistoryService<T extends CoalPipingHistory> {
     @Autowired
     private CoalPipingHistoryRepositoryA coalPipingHistoryRepositoryA;
     @Autowired
@@ -23,6 +28,58 @@ public class CoalPipingHistoryService {
     @Autowired
     private CoalPipingHistoryRepositoryD coalPipingHistoryRepositoryD;
 
+
+//    public String generateJsonStringByHistroyList(List<AcoalPipingHistoryEntity> coalPipeHistoryEntityList, Calendar beginC,
+//                                                  Calendar endC){
+//        List<CoP>
+//    }
+
+    public String generateJsonStringByHistroyList(List<T > coalPipeHistoryEntityList,
+                                                  Calendar beginC,
+                                                  Calendar endC){
+        JSONObject jsonObject = new JSONObject();
+        JSONArray jsonArrayForPipe1Density = new JSONArray();
+        JSONArray jsonArrayForPipe2Density = new JSONArray();
+        JSONArray jsonArrayForPipe3Density = new JSONArray();
+        JSONArray jsonArrayForPipe4Density = new JSONArray();
+        JSONArray jsonArrayForPipe1Velocity = new JSONArray();
+        JSONArray jsonArrayForPipe2Velocity = new JSONArray();
+        JSONArray jsonArrayForPipe3Velocity = new JSONArray();
+        JSONArray jsonArrayForPipe4Velocity = new JSONArray();
+        if(null != coalPipeHistoryEntityList) {
+            for (CoalPipingHistory h : coalPipeHistoryEntityList) {
+                jsonArrayForPipe1Density.put(h.gethPipeADencity());
+                jsonArrayForPipe2Density.put(h.gethPipeBDencity());
+                jsonArrayForPipe3Density.put(h.gethPipeCDencity());
+                jsonArrayForPipe4Density.put(h.gethPipeDDencity());
+
+                jsonArrayForPipe1Velocity.put(h.gethPipeAVelocity());
+                jsonArrayForPipe2Velocity.put(h.gethPipeBVelocity());
+                jsonArrayForPipe3Velocity.put(h.gethPipeCVelocity());
+                jsonArrayForPipe4Velocity.put(h.gethPipeDVelocity());
+            }
+        }
+
+        jsonObject.put("startTime", beginC.getTimeInMillis());
+        jsonObject.put("endTime", endC.getTimeInMillis());
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm");
+        jsonObject.put("startTimeStr", simpleDateFormat.format(beginC.getTime()));
+        jsonObject.put("endTimeStr", simpleDateFormat.format(endC.getTime()));
+
+        jsonObject.put("pipe1Density", jsonArrayForPipe1Density);
+        jsonObject.put("pipe2Density", jsonArrayForPipe2Density);
+        jsonObject.put("pipe3Density", jsonArrayForPipe3Density);
+        jsonObject.put("pipe4Density", jsonArrayForPipe4Density);
+
+        jsonObject.put("pipe1Velocity", jsonArrayForPipe1Velocity);
+        jsonObject.put("pipe2Velocity", jsonArrayForPipe2Velocity);
+        jsonObject.put("pipe3Velocity", jsonArrayForPipe3Velocity);
+        jsonObject.put("pipe4Velocity", jsonArrayForPipe4Velocity);
+
+
+
+        return jsonObject.toString();
+    }
 
     /**
      * 生成一个 history对象

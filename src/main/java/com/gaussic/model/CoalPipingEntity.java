@@ -23,6 +23,8 @@ public class CoalPipingEntity {
     private String pNote;
     private String pNameUserDefined;
     private String pNumUserDefined;
+    private String pLocationUserDefined;
+
 
     private CoalPipingSetEntity coalPipingSetEntity;
     private CoalMillEntity coalMillEntity;
@@ -47,8 +49,9 @@ public class CoalPipingEntity {
         this.pName = pName;
     }
 
-    @Basic
-    @Column(name = "p_coalMill_id")
+    /*@Basic
+    @Column(name = "p_coalMill_id")*/
+    @Transient
     public Long getpCoalMillId() {
         return pCoalMillId;
     }
@@ -167,6 +170,16 @@ public class CoalPipingEntity {
         this.pNumUserDefined = pNumUserDefined;
     }
 
+    @Basic
+    @Column(name = "p_location_user_defined")
+    public String getpLocationUserDefined() {
+        return pLocationUserDefined;
+    }
+
+    public void setpLocationUserDefined(String pLocationUserDefined) {
+        this.pLocationUserDefined = pLocationUserDefined;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -194,7 +207,13 @@ public class CoalPipingEntity {
         return Objects.hash(id, pName, pCoalMillId, pCoalPipingSetId, pTime, pLocation, pVelocity, pDencity, pCommunicationState, pStartOrStopState, pAlarmState, pNote, pNameUserDefined, pNumUserDefined);
     }
 
-    @Transient
+    /* @OneToOne
+     @JoinColumn(name="coalPipingId")*/
+/*   @OneToOne(cascade = CascadeType.ALL)
+   @JoinColumn(name="coalPiping_id")*/
+//    @OneToOne(mappedBy = "coalPipingEntity")
+//    @Transient
+    @OneToOne(mappedBy = "coalPipingEntity")
     public CoalPipingSetEntity getCoalPipingSetEntity() {
         return coalPipingSetEntity;
     }
@@ -202,7 +221,10 @@ public class CoalPipingEntity {
     public void setCoalPipingSetEntity(CoalPipingSetEntity coalPipingSetEntity) {
         this.coalPipingSetEntity = coalPipingSetEntity;
     }
-    @Transient
+
+    //    @Transient
+    @ManyToOne
+    @JoinColumn(name = "p_coalMill_id")
     public CoalMillEntity getCoalMillEntity() {
         return coalMillEntity;
     }

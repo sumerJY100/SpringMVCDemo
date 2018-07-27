@@ -7,7 +7,6 @@ import com.gaussic.repository.CoalMillRepository;
 import com.gaussic.repository.CoalPipingRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-import org.springframework.stereotype.Service;
 
 import java.util.List;
 
@@ -31,7 +30,7 @@ public class CoalPipingService {
         for(CoalPipingEntity coalPipingEntity:coalPipingEntityList){
             Long coalPipingId = coalPipingEntity.getId();
             for(CoalPipingSetEntity coalPipingSetEntity:coalPipingSetEntityList){
-                Long coalPipingSetPipingId = coalPipingSetEntity.getCoalPipingId();
+                Long coalPipingSetPipingId = coalPipingSetEntity.getCoalPipeId();
                 if(coalPipingId.equals(coalPipingSetPipingId)){
                     coalPipingEntity.setCoalPipingSetEntity(coalPipingSetEntity);
                     break;

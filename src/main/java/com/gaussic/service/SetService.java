@@ -26,17 +26,19 @@ public class SetService {
 
     public List<CoalMillEntity> findAllCoalMillEntity() {
         List<CoalMillEntity> coalMillEntityList = coalMillRepository.findAll();
-        List<CoalPipingEntity> coalPipingEntityList = coalPipingService.findAll();
-        for(CoalMillEntity coalMillEntity:coalMillEntityList   ){
-            List<CoalPipingEntity> coalPipingEntityListTemp = coalMillEntity.getCoalPipingEntityList();
-            Long coalMillEntityId = coalMillEntity.getId();
-            for(CoalPipingEntity coalPipingEntity:coalPipingEntityList){
-                Long coalPipingMillId = coalPipingEntity.getpCoalMillId();
-                if(coalMillEntityId.equals(coalPipingMillId)){
-                    coalPipingEntityListTemp.add(coalPipingEntity);
-                }
-            }
-        }
+        coalMillEntityList.get(0).getCoalPipingEntityList();
+        System.out.println(coalMillEntityList.get(0).getCoalPipingEntityList().get(0));
+//        List<CoalPipingEntity> coalPipingEntityList = coalPipingService.findAll();
+//        for(CoalMillEntity coalMillEntity:coalMillEntityList   ){
+//            List<CoalPipingEntity> coalPipingEntityListTemp = coalMillEntity.getCoalPipingEntityList();
+//            Long coalMillEntityId = coalMillEntity.getId();
+//            for(CoalPipingEntity coalPipingEntity:coalPipingEntityList){
+//                Long coalPipingMillId = coalPipingEntity.getpCoalMillId();
+//                if(coalMillEntityId.equals(coalPipingMillId)){
+//                    coalPipingEntityListTemp.add(coalPipingEntity);
+//                }
+//            }
+//        }
 
 
         return coalMillEntityList;

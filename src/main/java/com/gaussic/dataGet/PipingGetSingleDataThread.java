@@ -38,12 +38,12 @@ public class PipingGetSingleDataThread extends Thread {
      */
     public void updateData() {
         CoalPipingSetEntity setEntity = coalPipingEntity.getCoalPipingSetEntity();
-//        String url = setEntity.getsUrl();
+//        String url = setEntity.getsUrl() ;
         //TODO 每个对象的地址需要设置
-        String url = "http://192.168.1.50:8080/windJsonProject/json.jsp";
+        String url = "http://192.168.1.41:8080/windJsonProject/json.jsp";
         JSONArray jo = HandleDeviceData.httpRequest(url, "GET");
         WindDataPojo windDataPojo = new WindDataPojo(jo);
-        WindPojoToEntityUtil.updateRealData(coalPipingEntity,windDataPojo);
+        WindPojoToEntityUtil.updateRealData(now.getTime(),coalPipingEntity,windDataPojo);
         //更新coalPipingEntity对象
         coalPipingRepository.saveAndFlush(coalPipingEntity);
 

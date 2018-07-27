@@ -16,7 +16,7 @@ public class TaskCool {
      * 第一个定时器测试方法
      */
     public void testJob() {
-        System.out.println("test first taskJob .... " + new Date());
+//        System.out.println("test first taskJob .... " + new Date());
         pipingGetData.getData();
     }
 //

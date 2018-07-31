@@ -22,7 +22,7 @@ public class CoalMillService {
     public List<CoalMillEntity> findAll(){
         List<CoalMillEntity> coalMillEntityList = coalMillRepository.findAll();
 
-        List<CoalPipingEntity> coalPipingEntityList = coalPipingService.findAll();
+       /* List<CoalPipingEntity> coalPipingEntityList = coalPipingService.findAll();
         for(CoalPipingEntity coalPipingEntity:coalPipingEntityList) {
             Long coalPipingMillId = coalPipingEntity.getpCoalMillId();
             for (CoalMillEntity coalMillEntity : coalMillEntityList) {
@@ -33,7 +33,7 @@ public class CoalMillService {
                     break;
                 }
             }
-        }
+        }*/
         return coalMillEntityList;
     }
 }

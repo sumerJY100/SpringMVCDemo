@@ -53,6 +53,8 @@ public class CoalPipingEntity {
     @Column(name = "p_coalMill_id")*/
     @Transient
     public Long getpCoalMillId() {
+        if(null != this.getCoalMillEntity())
+            return this.getCoalMillEntity().getId();
         return pCoalMillId;
     }
 

@@ -112,12 +112,7 @@ public class CoalPipingHistoryService<T extends CoalPipingHistory> {
         return coalPipingHistory;
     }
 
-    /**
-     * 根据coalPiping的实时数据，更新历史数据
-     * @param coalPipingEntity
-     * @param coalPipingHistoryEntity
-     */
-    public void updateHistory(CoalPipingEntity coalPipingEntity, CoalPipingHistory coalPipingHistoryEntity) {
+    private CoalPipingHistory setCoalPipingHistory(CoalPipingEntity coalPipingEntity,CoalPipingHistory coalPipingHistoryEntity){
         String pipingLocation = coalPipingEntity.getpLocation();
         Float velocity = coalPipingEntity.getpVelocity();
         Float density = coalPipingEntity.getpDencity();
@@ -139,9 +134,20 @@ public class CoalPipingHistoryService<T extends CoalPipingHistory> {
                 coalPipingHistoryEntity.sethPipeDVelocity(velocity);
                 break;
             default:
-                    break;
+                break;
         }
-        Long coalMillId = coalPipingEntity.getpCoalMillId();
+
+
+        return coalPipingHistoryEntity;
+    }
+
+    /**
+     * 更新历史数据
+     * @param coalMillId
+     * @param coalPipingHistoryEntity
+     */
+    public void updateCoalPipingHistory(Long coalMillId,CoalPipingHistory coalPipingHistoryEntity){
+
         switch(coalMillId.intValue()){
             case 1:
                 coalPipingHistoryRepositoryA.saveAndFlush((AcoalPipingHistoryEntity) coalPipingHistoryEntity);
@@ -157,6 +163,31 @@ public class CoalPipingHistoryService<T extends CoalPipingHistory> {
                 break;
             default:break;
         }
+    }
+
+    /**
+     * 更新历史数据
+     * @param coalPipingEntityList  所有的对象归属于一个Mill
+     * @param coalPipingHistoryEntity
+     */
+    public void updateHistory(List<CoalPipingEntity> coalPipingEntityList, CoalPipingHistory coalPipingHistoryEntity) {
+        for(CoalPipingEntity  coalPipingEntity:coalPipingEntityList){
+            setCoalPipingHistory(coalPipingEntity,coalPipingHistoryEntity);
+        }
+        updateCoalPipingHistory(coalPipingEntityList.get(0).getpCoalMillId(),coalPipingHistoryEntity);
+    }
+    /**
+     * 根据coalPiping的实时数据，更新历史数据
+     * @param coalPipingEntity
+     * @param coalPipingHistoryEntity
+     */
+    public void updateHistory(CoalPipingEntity coalPipingEntity, CoalPipingHistory coalPipingHistoryEntity) {
+        //设置历史数据ABCD四根管的密度与风速
+        setCoalPipingHistory(coalPipingEntity,coalPipingHistoryEntity);
+        Long coalMillId= coalPipingEntity.getpCoalMillId();
+        //保存粉管历史数据
+//        updateCoalPipingHistory(coalMillId,coalPipingHistoryEntity);
+
 
     }
 

@@ -62,32 +62,21 @@ public class PipingGetData extends Thread {
                 CoalPipingHistory coalPipingHistory = coalPipingHistoryService.generatorHistory(coalMillEntity, now);
                 coalPipingHistorieList.add(coalPipingHistory);
                 List<CoalPipingEntity> coalPipingEntityList_temp = coalMillEntity.getCoalPipingEntityList();
-                int i = 0;
-//                final CoalPipingHistory coalPipingHistoryForFinal = new CoalPipingHistory() ;
 
-//                for (CoalPipingEntity coalPipingEntity : coalPipingEntityList_temp) {
                 for(int m=0;m<coalPipingEntityList_temp.size();m++){
                     CoalPipingEntity coalPipingEntity = coalPipingEntityList_temp.get(m);
-//                    final  CoalPipingEntity coalPipingEntityForFinal = new CoalPipingEntity();
-//                    BeanUtils.copyProperties(coalMillEntity,coalPipingEntityForFinal);
                     String url = coalPipingEntity.getCoalPipingSetEntity().getsUrl();
                     final String urlFinal = new String(url);
-//                    BeanUtils.copyProperties(urlFinal,url);
-//                    System.out.println("coalPipingEntityFianl:" + coalMillEntity);
-                    new Thread(new Runnable(){
-                        public void run(){
-                            PipingGetSingleDataThread pipingGetSingleDataThread = new PipingGetSingleDataThread();
-                            pipingGetSingleDataThread.setCoalPipingEntity(coalPipingEntity);
-                            pipingGetSingleDataThread.setNow(now);
-                            //采集数据，并更新实时数据【已经更新保存到数据库】
-//                            System.out.println("url: " + urlFinal);
-                            pipingGetSingleDataThread.updateData(urlFinal);
-//                    coalPipingEntityListAll.add(coalPipingEntity);
-                            //更新历史数据，根据piping的location进行判定
-                            coalPipingHistoryService.updateHistory(coalPipingEntity,coalPipingHistory);
+                    new Thread(() -> {
+                        PipingGetSingleDataThread pipingGetSingleDataThread = new PipingGetSingleDataThread();
+                        pipingGetSingleDataThread.setCoalPipingEntity(coalPipingEntity);
+                        pipingGetSingleDataThread.setNow(now);
+                        //采集数据，并更新实时数据【已经更新保存到数据库】
+                        pipingGetSingleDataThread.updateData(urlFinal);
+                        //更新历史数据，根据piping的location进行判定
+                        coalPipingHistoryService.updateHistory(coalPipingEntity,coalPipingHistory);
 
-                            countDownLatch.countDown();
-                        }
+                        countDownLatch.countDown();
                     }).start();
 
                 }

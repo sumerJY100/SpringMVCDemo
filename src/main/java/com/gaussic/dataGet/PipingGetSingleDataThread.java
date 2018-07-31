@@ -39,19 +39,15 @@ public class PipingGetSingleDataThread extends Thread {
     public void updateData(final String url) {
 //        CoalPipingSetEntity setEntity = coalPipingEntity.getCoalPipingSetEntity();
 //        String url = coalPipingEntity.getCoalPipingSetEntity().getsUrl();
-        //TODO 每个对象的地址需要设置
+        // 直接读取数据库中的存储的URL地址
 //        String url = "http://192.168.1.43:8080/windJsonProject/json.jsp";
         //01、获取设备的jsonp数据，返回一个JsonArray对象
         JSONArray jo = HandleDeviceData.httpRequest(url, "GET");
         //02、jsonArray对象转换为 中间对象“windDataPojo"
         WindDataPojo windDataPojo = new WindDataPojo(jo);
         //03、更新 coalPipingEntity对象的风速与密度
-        System.out.println("风速：" + windDataPojo.getDensityYValue());
         coalPipingEntity = WindPojoToEntityUtil.updateRealData(now.getTime(),coalPipingEntity,windDataPojo);
-        if(coalPipingEntity.getId() == 11){
-            System.out.println("11111111coalPipingEntity:" + coalPipingEntity + "             ," + coalPipingEntity
-                    .getpVelocity());
-        }
+
         //04、数据库更新coalPipingEntity对象
 //        coalPipingRepository.saveAndFlush(coalPipingEntity);
     }

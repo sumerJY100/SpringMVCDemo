@@ -9,9 +9,9 @@ import java.util.Date;
 import java.util.Objects;
 
 @Entity
-@Table(name = "bcoal_piping_history", schema = "wind", catalog = "")
-public class BcoalPipingHistoryEntity implements  CoalPipingHistory{
-    private long id;
+@Table(name = "bcoal_piping_history", schema = "wind")
+public class BcoalPipingHistoryEntity extends   CoalPipingHistory{
+    private Long id;
     private Timestamp hTime;
     private Float hPipeAVelocity;
     private Float hPipeBVelocity;
@@ -33,11 +33,11 @@ public class BcoalPipingHistoryEntity implements  CoalPipingHistory{
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     @Column(name = "id")
-    public long getId() {
+    public Long getId() {
         return id;
     }
 
-    public void setId(long id) {
+    public void setId(Long id) {
         this.id = id;
     }
 
@@ -136,7 +136,7 @@ public class BcoalPipingHistoryEntity implements  CoalPipingHistory{
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         BcoalPipingHistoryEntity that = (BcoalPipingHistoryEntity) o;
-        return id == that.id &&
+        return id.equals( that.id)  &&
                 Objects.equals(hTime, that.hTime) &&
                 Objects.equals(hPipeAVelocity, that.hPipeAVelocity) &&
                 Objects.equals(hPipeBVelocity, that.hPipeBVelocity) &&

@@ -9,9 +9,9 @@ import java.util.Date;
 import java.util.Objects;
 
 @Entity
-@Table(name = "acoal_piping_history", schema = "wind", catalog = "")
-public class AcoalPipingHistoryEntity implements  CoalPipingHistory{
-    private long id;
+@Table(name = "acoal_piping_history", schema = "wind")
+public class AcoalPipingHistoryEntity extends   CoalPipingHistory{
+    private Long id;
     private Timestamp hTime;
     private Float hPipeAVelocity;
     private Float hPipeBVelocity;
@@ -22,6 +22,7 @@ public class AcoalPipingHistoryEntity implements  CoalPipingHistory{
     private Float hPipeCDencity;
     private Float hPipeDDencity;
     private Long hCoalMillId;
+
     public AcoalPipingHistoryEntity(CoalMillEntity coalMillEntity, Date now) {
         this.hTime = new Timestamp(now.getTime());
         this.hCoalMillId = coalMillEntity.getId();
@@ -32,7 +33,7 @@ public class AcoalPipingHistoryEntity implements  CoalPipingHistory{
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     @Column(name = "id")
-    public long getId() {
+    public Long getId() {
         return id;
     }
 
@@ -135,7 +136,7 @@ public class AcoalPipingHistoryEntity implements  CoalPipingHistory{
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         AcoalPipingHistoryEntity that = (AcoalPipingHistoryEntity) o;
-        return id == that.id &&
+        return id.equals( that.id) &&
                 Objects.equals(hTime, that.hTime) &&
                 Objects.equals(hPipeAVelocity, that.hPipeAVelocity) &&
                 Objects.equals(hPipeBVelocity, that.hPipeBVelocity) &&

@@ -1,63 +1,81 @@
 package com.gaussic.model.history;
 
+import org.hibernate.cfg.annotations.HCANNHelper;
+
 import javax.persistence.Basic;
 import javax.persistence.Column;
 import javax.persistence.Id;
 import java.sql.Timestamp;
 import java.util.Objects;
 
-public interface CoalPipingHistory {
+public abstract class CoalPipingHistory {
+    private Long id;
+    private Timestamp hTime;
+    private Float hPipeAVelocity;
+    private Float hPipeBVelocity;
+    private Float hPipeCVelocity;
+    private Float hPipeDVelocity;
+    private Float hPipeADencity;
+    private Float hPipeBDencity;
+    private Float hPipeCDencity;
+    private Float hPipeDDencity;
+    private Long hCoalMillId;
+    public abstract  Long getId();
 
-    long getId();
-
-    void setId(long id);
-
-    Timestamp gethTime();
-
-    void sethTime(Timestamp hTime);
-
-
-    Float gethPipeAVelocity();
-
-    void sethPipeAVelocity(Float hPipeAVelocity);
-
-
-    Float gethPipeBVelocity();
-
-    void sethPipeBVelocity(Float hPipeBVelocity);
+    public void setId(Long id){this.id = id;}
 
 
-    Float gethPipeCVelocity();
+    public abstract  Timestamp gethTime();
 
-    void sethPipeCVelocity(Float hPipeCVelocity);
-
-    Float gethPipeDVelocity();
-
-    void sethPipeDVelocity(Float hPipeDVelocity);
+    public void sethTime(Timestamp hTime){
+        this.hTime = hTime;
+    }
 
 
-    Float gethPipeADencity();
+    public abstract  Float gethPipeAVelocity();
 
-    void sethPipeADencity(Float hPipeADencity);
-
-
-    Float gethPipeBDencity();
-
-    void sethPipeBDencity(Float hPipeBDencity);
+    public void sethPipeAVelocity(Float hPipeAVelocity){this.hPipeAVelocity = hPipeAVelocity;}
 
 
-    Float gethPipeCDencity();
+    public abstract   Float gethPipeBVelocity();
 
-    void sethPipeCDencity(Float hPipeCDencity);
-
-
-    Float gethPipeDDencity();
-
-    void sethPipeDDencity(Float hPipeDDencity);
+    public void sethPipeBVelocity(Float hPipeBVelocity){this.hPipeBVelocity = hPipeBVelocity;}
 
 
-    Long gethCoalMillId();
+    public abstract  Float gethPipeCVelocity();
 
-    void sethCoalMillId(Long hCoalMillId);
+    public void sethPipeCVelocity(Float hPipeCVelocity){this.hPipeCVelocity = hPipeCVelocity;}
+
+    public abstract  Float gethPipeDVelocity();
+
+    public void sethPipeDVelocity(Float hPipeDVelocity){this.hPipeDVelocity = hPipeDVelocity;}
+
+
+    public abstract   Float gethPipeADencity();
+
+    public void sethPipeADencity(Float hPipeADencity){this.hPipeADencity = hPipeADencity;}
+
+
+    public abstract   Float gethPipeBDencity();
+
+    public void sethPipeBDencity(Float hPipeBDencity){this.hPipeBDencity = hPipeBDencity;}
+
+
+    public abstract   Float gethPipeCDencity();
+
+    public void sethPipeCDencity(Float hPipeCDencity){this.hPipeCDencity = hPipeCDencity;}
+
+
+    public abstract  Float gethPipeDDencity();
+
+    public void sethPipeDDencity(Float hPipeDDencity){
+        this.hPipeDDencity = hPipeDDencity;
+    }
+
+
+    public abstract   Long gethCoalMillId();
+
+    public void sethCoalMillId(Long hCoalMillId){this.hCoalMillId = hCoalMillId;}
+
 
 }

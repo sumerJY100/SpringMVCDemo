@@ -3,10 +3,12 @@ package com.gaussic.quartz3;
 import com.gaussic.dataGet.PipingGetData;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Date;
 
 @Component
+@Transactional
 //@Service 都可以
 //public class TaskCool extends QuartzJobBean{
 public class TaskCool {
@@ -16,7 +18,7 @@ public class TaskCool {
      * 第一个定时器测试方法
      */
     public void testJob() {
-//        System.out.println("test first taskJob .... " + new Date());
+        System.out.println("test first taskJob .... " + new Date());
         pipingGetData.getData();
     }
 //

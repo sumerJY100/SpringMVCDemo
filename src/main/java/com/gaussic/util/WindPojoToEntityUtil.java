@@ -7,14 +7,22 @@ import java.sql.Timestamp;
 
 public class WindPojoToEntityUtil {
     /**
+     * 工具类, 解析过渡对象 ,转换为 实际的 entity对象
      * 通过windPojo类获取到CoalPipingEntity的实时数据
      * @param pojo
      */
-    public static void updateRealData(long timeLong,CoalPipingEntity coalPipingEntity,WindDataPojo pojo) {
+    public static CoalPipingEntity updateRealData(long timeLong,CoalPipingEntity coalPipingEntity,WindDataPojo pojo) {
         //TODO 数据读取错误，无法设置成功
 
         coalPipingEntity.setpTime(new Timestamp(timeLong));
-        coalPipingEntity.setpDencity(Float.parseFloat(pojo.getDensityXValue()));
-        coalPipingEntity.setpVelocity(Float.parseFloat(pojo.getSpeedValue()));
+        if(null != pojo) {
+            if (null != pojo.getDensityXValue()) {
+                coalPipingEntity.setpDencity(Float.parseFloat(pojo.getDensityXValue()));
+            }
+            if(null != pojo.getDensityYValue()) {
+                coalPipingEntity.setpVelocity(Float.parseFloat(pojo.getSpeedValue()));
+            }
+        }
+        return coalPipingEntity;
     }
 }

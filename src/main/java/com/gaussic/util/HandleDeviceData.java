@@ -50,15 +50,16 @@ public class HandleDeviceData {
             url = new URL(requestUrl);
         } catch (MalformedURLException e) {
             //TODO IP地址格式不正确，需要正确的返回数据，并记录相应的数据
-//            System.out.println("IP地址格式不正确：" + requestUrl);
-            e.printStackTrace();
+            System.out.println("IP地址格式不正确：" + requestUrl);
+//            e.printStackTrace();
         }
         // http协议传输
         HttpURLConnection httpUrlConn = null;
         try {
             httpUrlConn = (HttpURLConnection) url.openConnection();
         } catch (IOException e) {
-            e.printStackTrace();
+
+//            e.printStackTrace();
         }
         httpUrlConn.setDoOutput(true);
         httpUrlConn.setDoInput(true);
@@ -77,7 +78,9 @@ public class HandleDeviceData {
             } catch (NoRouteToHostException e) {
 
 //                e.printStackTrace();
-            } catch (SocketTimeoutException socketTimeoutException) {
+
+
+            }catch (SocketTimeoutException socketTimeoutException) {
                 httpUrlConn.disconnect();
                 //TODO 超时异常
 //                System.out.println("超时异常：connect timed out,连接地址：" + requestUrl);
@@ -85,8 +88,10 @@ public class HandleDeviceData {
                 // 连接超时异常处理
                 System.out.println("连接超时异常,连接地址：" + requestUrl);
                 System.out.println(httpUrlConn);
-            } catch (IOException e) {
-                e.printStackTrace();
+            } catch (SocketException e) {
+//                e.printStackTrace();
+            }catch(IOException s){
+
             }
         }
         if (connectFlag) {
@@ -132,6 +137,7 @@ public class HandleDeviceData {
         } else {
             buffer.append("josnp([])");
         }
+        System.out.println("buffer:" + buffer.toString());
         return buffer.toString();
     }
 }

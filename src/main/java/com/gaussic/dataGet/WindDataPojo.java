@@ -16,17 +16,17 @@ public class WindDataPojo {
     private static final String speedValueKey = "v";
     private String speedValue;
 
-    private static final String DENSITY_X_KEY = "u";
+    private static final String DENSITY_X_KEY = "n";
     private String densityXKeyValue;
     private static final String DENSITY_X_VALUE_KEY="v";
     private String densityXValue;
 
-    private static final String DENSITY_Y_KEY = "u";
+    private static final String DENSITY_Y_KEY = "n";
     private String densityYKeyValue;
     private static final String DENSITY_Y_VALUE_KEY="v";
     private String densityYValue;
 
-    private static final String ERROR_KEY = "u";
+    private static final String ERROR_KEY = "n";
     private String errorKeyValue ;
     private static final String ERROR_VALUE_KEY = "v";
     private String errorValue;
@@ -38,16 +38,16 @@ public class WindDataPojo {
             this.pipeNumValue = pipeNumPojo.getString(pipeNumKey);
 
             JSONObject pipeSpeedPojo = new JSONObject(jsonArray.get(1).toString());
-            this.speedValue = pipeSpeedPojo.getString(speedValueKey);
+            this.speedValue = String.valueOf(pipeSpeedPojo.getInt(speedValueKey));
 
             JSONObject pipeDensityXPojo = new JSONObject(jsonArray.get(2).toString());
-            this.densityXValue = pipeDensityXPojo.getString(DENSITY_X_VALUE_KEY);
+            this.densityXValue = String.valueOf(pipeDensityXPojo.getInt(DENSITY_X_VALUE_KEY));
 
             JSONObject pipeDensityYPojo = new JSONObject(jsonArray.get(3).toString());
-            this.densityYValue = pipeDensityYPojo.getString(DENSITY_Y_VALUE_KEY);
+            this.densityYValue = String.valueOf(pipeDensityYPojo.getInt(DENSITY_Y_VALUE_KEY));
 
             JSONObject errorPojo = new JSONObject(jsonArray.get(4).toString());
-            this.errorValue = errorPojo.getString(ERROR_VALUE_KEY);
+            this.errorValue = String.valueOf(errorPojo.getInt(ERROR_VALUE_KEY));
         }
     }
 

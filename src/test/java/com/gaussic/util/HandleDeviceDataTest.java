@@ -7,10 +7,10 @@ import org.springframework.beans.BeanUtils;
 
 public class HandleDeviceDataTest {
     public static void main(String[] args) {
-        String url = "http://192.168.1.41:8080/windJsonProject/json.jsp";
-//        JSONArray jo = HandleDeviceData.httpRequest(url, "GET");
-//        WindDataPojo windDataPojo = new WindDataPojo(jo);
-//        System.out.println(windDataPojo);
+        String url = "http://172.18.33.43:8080/pulver";
+        JSONArray jo = HandleDeviceData.httpRequest(url, "GET");
+        WindDataPojo windDataPojo = new WindDataPojo(jo);
+        System.out.println(windDataPojo);
 
 
 

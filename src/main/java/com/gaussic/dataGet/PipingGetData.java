@@ -94,10 +94,6 @@ public class PipingGetData extends Thread {
             for(CoalMillEntity coalMillEntity:coalMillEntityList){
                 List<CoalPipingEntity> coalPipingEntityList = coalMillEntity.getCoalPipingEntityList();
                 for(CoalPipingEntity coalPipingEntity:coalPipingEntityList){
-                    if(coalPipingEntity.getId() == 11){
-                        System.out.println("2222222coalPipingEntity:" + coalPipingEntity + "             ," +
-                                coalPipingEntity.getpVelocity());
-                    }
                     coalPipingRepository.saveAndFlush(coalPipingEntity);
                 }
             }

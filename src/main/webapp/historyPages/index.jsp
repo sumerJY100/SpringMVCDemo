@@ -16,6 +16,7 @@
 
     <script src="<c:url value='/resources/js/Highcharts/highcharts.src.js'/>"></script>
     <script src="<c:url value='/resources/js/Highcharts/modules/exporting.js'/>"></script>
+
     <script src="https://img.hcharts.cn/highcharts-plugins/highcharts-zh_CN.js"></script>
     <script src="<c:url value='/resources/js/Highcharts/themes/dark-unica.js'/>"></script>
 
@@ -27,13 +28,14 @@
     <script src="<c:url value='/resources/js/BootstrapV2/js/bootstrap.js'/>"></script>
     <script src="<c:url value='/resources/js/bootstrap-datetimepicker/js/bootstrap-datetimepicker.js'/>"></script>
     <script src="<c:url value='/resources/js/bootstrap-datetimepicker/js/locales/bootstrap-datetimepicker.zh_CN.js'/>"></script>
-    <style type="text/css" >
-        th{
-            border:1px solid black;
+    <style type="text/css">
+        th {
+            border: 1px solid black;
         }
-        td{
-            border:1px solid black;
-            text-align:center;
+
+        td {
+            border: 1px solid black;
+            text-align: center;
         }
 
     </style>
@@ -56,7 +58,11 @@
         <div>
 
 
-            <label for="densityRadio" class="radio_label" id="densityRadioLabel">密度<input type="radio" value="density" id="densityRadio" checked="true" style="display: none" name="densityOrVelocityRadio"/></label>
+            <label for="densityRadio" class="radio_label" id="densityRadioLabel">密度<input type="radio" value="density"
+                                                                                          id="densityRadio"
+                                                                                          checked="true"
+                                                                                          style="display: none"
+                                                                                          name="densityOrVelocityRadio"/></label>
 
             <label for="velocityRadio" class="radio_label" id="velocityRadioLabel">风速
                 <input type="radio" value="velocity" id="velocityRadio" style="display:none"
@@ -91,38 +97,37 @@
         </tr>
         <tr>
             <td>磨煤机</td>
-            <td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td>
+            <c:forEach begin="1" end="12">
+                <td></td>
+            </c:forEach>
         </tr>
         <tr>
             <td>pipe1</td>
-            <td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td>
+            <c:forEach begin="1" end="12">
+                <td></td>
+            </c:forEach>
         </tr>
         <tr>
             <td>pipe2</td>
-            <td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td>
+            <c:forEach begin="1" end="12">
+                <td></td>
+            </c:forEach>
         </tr>
         <tr>
             <td>pipe3</td>
-            <td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td>
+            <c:forEach begin="1" end="12">
+                <td></td>
+            </c:forEach>
         </tr>
         <tr>
             <td>pipe4</td>
-            <td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td>
+            <c:forEach begin="1" end="12">
+                <td></td>
+            </c:forEach>
         </tr>
     </table>
 
 </div>
-
-
-
-
-
-
-
-
-
-
-
 
 
 <script src="<c:url value='/resources/js/historyPages/indexForDensityContrast.js'/>"></script>
@@ -147,8 +152,8 @@
 
         $queryBtn = $("#queryBtn");
         var queryBtnLeft = $queryBtn.position().left;
-        $("#velocityRadioLabel").css("left",queryBtnLeft - 200);
-        $("#densityRadioLabel").css("left",queryBtnLeft - 100);
+        $("#velocityRadioLabel").css("left", queryBtnLeft - 200);
+        $("#densityRadioLabel").css("left", queryBtnLeft - 100);
 
 
         //给所有的单选按钮点击添加处理
@@ -161,12 +166,12 @@
         });
         $("#densityRadio").click();
 
-        $("[name='densityOrVelocityRadio']").bind("change",function(){
+        $("[name='densityOrVelocityRadio']").bind("change", function () {
             var densityOrVelocityValue = $(this).val();
-            if(densityOrVelocityValue === "density"){
+            if (densityOrVelocityValue === "density") {
                 //显示密度曲线
                 changeChartDataToDensity();
-            }else if(densityOrVelocityValue === "velocity"){
+            } else if (densityOrVelocityValue === "velocity") {
                 //显示风速曲线
                 changeChartDataToVelocity();
             }
@@ -176,11 +181,11 @@
     /**
      * 初始化时间框，结束时间默认时间为当前时间，开始时间为一小时前
      */
-    function initQueryTime(){
+    function initQueryTime() {
         var now = new Date();
-        var endText = dateFtt("yyyy-MM-dd hh:mm",now);
-        var begin = new Date(now.getTime() - 1* 60 * 60 * 1000);
-        var beginText = dateFtt("yyyy-MM-dd hh:mm",begin);
+        var endText = dateFtt("yyyy-MM-dd hh:mm", now);
+        var begin = new Date(now.getTime() - 1 * 60 * 60 * 1000);
+        var beginText = dateFtt("yyyy-MM-dd hh:mm", begin);
         $("#startInputTime").val(beginText);
         $("#endInputTime").val(endText);
         // alert($("#startInputTime").text());
@@ -188,25 +193,26 @@
 
         // initTable();
     }
+
     /**************************************时间格式化处理************************************/
-    function dateFtt(fmt,date)
-    { //author: meizz
+    function dateFtt(fmt, date) { //author: meizz
         var o = {
-            "M+" : date.getMonth()+1,                 //月份
-            "d+" : date.getDate(),                    //日
-            "h+" : date.getHours(),                   //小时
-            "m+" : date.getMinutes(),                 //分
-            "s+" : date.getSeconds(),                 //秒
-            "q+" : Math.floor((date.getMonth()+3)/3), //季度
-            "S"  : date.getMilliseconds()             //毫秒
+            "M+": date.getMonth() + 1,                 //月份
+            "d+": date.getDate(),                    //日
+            "h+": date.getHours(),                   //小时
+            "m+": date.getMinutes(),                 //分
+            "s+": date.getSeconds(),                 //秒
+            "q+": Math.floor((date.getMonth() + 3) / 3), //季度
+            "S": date.getMilliseconds()             //毫秒
         };
-        if(/(y+)/.test(fmt))
-            fmt=fmt.replace(RegExp.$1, (date.getFullYear()+"").substr(4 - RegExp.$1.length));
-        for(var k in o)
-            if(new RegExp("("+ k +")").test(fmt))
-                fmt = fmt.replace(RegExp.$1, (RegExp.$1.length==1) ? (o[k]) : (("00"+ o[k]).substr((""+ o[k]).length)));
+        if (/(y+)/.test(fmt))
+            fmt = fmt.replace(RegExp.$1, (date.getFullYear() + "").substr(4 - RegExp.$1.length));
+        for (var k in o)
+            if (new RegExp("(" + k + ")").test(fmt))
+                fmt = fmt.replace(RegExp.$1, (RegExp.$1.length == 1) ? (o[k]) : (("00" + o[k]).substr(("" + o[k]).length)));
         return fmt;
     }
+
     function initDateTimePicker(inputId, initDate) {
         $("#" + inputId).datetimepicker({
             language: 'zh_CN',

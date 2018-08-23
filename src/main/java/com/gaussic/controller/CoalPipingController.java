@@ -17,7 +17,13 @@ import org.springframework.web.bind.annotation.*;
 
 import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
+import java.time.Instant;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.util.*;
+import java.util.function.Consumer;
+import java.util.function.Function;
+import java.util.function.Supplier;
 
 @Controller
 public class CoalPipingController {
@@ -38,7 +44,8 @@ public class CoalPipingController {
     public String getRealTimeData(@RequestParam(value = "latestTime", required = false) Long latestTime) {
         //TODO 需要进行时间的判定，判断获取的数据是否是最新的数据，如果数据一致不更新，则产生新的时间，数据为0的数据。浓度数据为0，
         //TODO 相对数据则需要重新规划定义
-
+        //TODO 通过hibernate数据分组功能，将数据分组，使用视图的方式，将数据形成新的实体，就不需要对数据进行单独处理了。
+        //TODO 数据采集与处理的时间达到了1.9秒，需要处理
         if (null != latestTime) {
             System.out.println("latestTime:" + latestTime);
         }
@@ -65,6 +72,41 @@ public class CoalPipingController {
         return jsonObject.toString();
     }
 
+
+    public static LocalDateTime getLocalDateTimeFromDate(Date date) {
+        LocalDateTime localDateTime = null;
+        Instant instant = date.toInstant();
+        ZoneId zoneId = ZoneId.systemDefault();
+        localDateTime = instant.atZone(zoneId).toLocalDateTime();
+        return localDateTime;
+    }
+
+    private static class BE {
+        private LocalDateTime begin;
+        private LocalDateTime end;
+
+        public LocalDateTime getBegin() {
+            return begin;
+        }
+
+        public void setBegin(LocalDateTime begin) {
+            this.begin = begin;
+        }
+
+        public LocalDateTime getEnd() {
+            return end;
+        }
+
+        public void setEnd(LocalDateTime end) {
+            this.end = end;
+        }
+
+        public void setBE(Date b, Date e) {
+            this.setBegin(getLocalDateTimeFromDate(b));
+            this.setEnd(getLocalDateTimeFromDate(e));
+        }
+    }
+
     /**
      * 获取A磨的历史数据
      *
@@ -83,25 +125,70 @@ public class CoalPipingController {
         endC.setTimeZone(TimeZone.getDefault());
 
 
+        BE be = new BE();
+
         beginC.set(Calendar.MINUTE, beginC.get(Calendar.MINUTE) - (int) (Math.random() * 30));
 
+        LocalDateTime localDateTimeForBegin = LocalDateTime.now();
+        LocalDateTime localDateTimeForEnd = LocalDateTime.now();
+
+        Optional<Date> beginDateOpt = Optional.ofNullable(beginTime);
+        Optional<Date> endDateOpt = Optional.ofNullable(endTime);
+//        beginDateOpt.ifPresent(endDateOpt.ifPresent());
+//        beginDateOpt.ifPresent(()->endDateOpt.ifPresent(System.out::println));
+        beginDateOpt.ifPresent((b) ->
+                endDateOpt.ifPresent((e) ->
+                        be.setBE(b, e)
+                ));
+        beginDateOpt.map(new Function<Date, Object>() {
+            @Override
+            public Object apply(Date date) {
+                return null;
+            }
+        });
+        beginDateOpt.ifPresent(new Consumer<Date>() {
+            @Override
+            public void accept(Date date) {
+//                localDateTimeForBegin.
+            }
+        });
+        Date newDate = beginDateOpt.orElseGet(new Supplier<Date>() {
+            @Override
+            public Date get() {
+                return null;
+            }
+        });
+
+        Optional<Object> oDate = beginDateOpt.map(new Function<Date, Object>() {
+            @Override
+            public Object apply(Date date) {
+                return null;
+            }
+        });
+
+        Optional<LocalDateTime> t = beginDateOpt.flatMap(new Function<Date, Optional<LocalDateTime>>() {
+            @Override
+            public Optional<LocalDateTime> apply(Date date) {
+                return Optional.empty();
+            }
+        });
 
 
-        if(null!= beginTime && null != endTime){
+        if (null != beginTime && null != endTime) {
             beginC.setTime(beginTime);
             endC.setTime(endTime);
-        }else if(null != beginTime && endTime == null){
+        } else if (null != beginTime && endTime == null) {
             beginC.setTime(beginTime);
             endC.setTime(beginTime);
-            endC.set(Calendar.HOUR,beginC.get(Calendar.HOUR) + 1);
-        }else if(null == beginTime && null != endTime){
+            endC.set(Calendar.HOUR, beginC.get(Calendar.HOUR) + 1);
+        } else if (null == beginTime && null != endTime) {
             endC.setTime(endTime);
             beginC.setTime(endTime);
-            beginC.set(Calendar.HOUR,endC.get(Calendar.HOUR) -1);
-        }else if(null == beginTime && null == endTime){
+            beginC.set(Calendar.HOUR, endC.get(Calendar.HOUR) - 1);
+        } else if (null == beginTime && null == endTime) {
             endC.setTime(new Date());
             beginC.setTime(new Date());
-            beginC.set(Calendar.HOUR,beginC.get(Calendar.HOUR) - 1);
+            beginC.set(Calendar.HOUR, beginC.get(Calendar.HOUR) - 1);
         }
 
 //        beginC.set(Calendar.DAY_OF_MONTH,beginC.get(Calendar.DAY_OF_MONTH) -1);
@@ -113,22 +200,22 @@ public class CoalPipingController {
         //如果数据量大于0，则根据当前时间进行数据填充，最小点时间的数据向前填充，间隔5秒，直至填充的时间小于开始时间，最大点的时间向后填充，直至填充的时间大于结束时间
         //遍历所有数据，如果两个数据之间的时间间隔大于10秒，则根据间隔开始时间进行添加，每个5秒填充一个，直至填充时间大于间隔的结束时间
 
-        if(coalPipeHistoryEntityList.size() == 0){
+        if (coalPipeHistoryEntityList.size() == 0) {
 
             AcoalPipingHistoryEntity e = new AcoalPipingHistoryEntity();
 //            e.sethTime(new Timestamp(endTimeForTemp));
-                e.sethPipeADencity((float) (Math.random()*10));
-                e.sethPipeBDencity((float) (Math.random()*10));
-                e.sethPipeCDencity((float) (Math.random()*10));
-                e.sethPipeDDencity((float) (Math.random()*10));
-                e.sethPipeAVelocity((float) (Math.random()*10));
-                e.sethPipeBVelocity((float) (Math.random()*10));
-                e.sethPipeCVelocity((float) (Math.random()*10));
-                e.sethPipeDVelocity((float) (Math.random()*10));
+            e.sethPipeADencity((float) (Math.random() * 10));
+            e.sethPipeBDencity((float) (Math.random() * 10));
+            e.sethPipeCDencity((float) (Math.random() * 10));
+            e.sethPipeDDencity((float) (Math.random() * 10));
+            e.sethPipeAVelocity((float) (Math.random() * 10));
+            e.sethPipeBVelocity((float) (Math.random() * 10));
+            e.sethPipeCVelocity((float) (Math.random() * 10));
+            e.sethPipeDVelocity((float) (Math.random() * 10));
 //            coalPipeHistoryEntityList.add(e);
             long endTimeForTemp = beginC.getTimeInMillis();
-            long endTimeMillis = endC.getTimeInMillis()-1000*10;
-            while(endTimeForTemp < endTimeMillis){
+            long endTimeMillis = endC.getTimeInMillis() - 1000 * 10;
+            while (endTimeForTemp < endTimeMillis) {
                 AcoalPipingHistoryEntity e1 = new AcoalPipingHistoryEntity();
                 e1.sethTime(new Timestamp(endTimeForTemp));
 //                e1.sethPipeADencity((float) (Math.random()*10) *0  +  -1);
@@ -140,11 +227,11 @@ public class CoalPipingController {
 //                e1.sethPipeCVelocity((float) (Math.random()*10) *0 +  -1);
 //                e1.sethPipeDVelocity((float) (Math.random()*10) *0 +  -1);
                 coalPipeHistoryEntityList.add(e1);
-                endTimeForTemp +=  6 * 1000;
+                endTimeForTemp += 6 * 1000;
             }
         }
 
-        return coalPipingHistoryService.generateJsonStringByHistroyList(coalPipeHistoryEntityList,beginC,endC);
+        return coalPipingHistoryService.generateJsonStringByHistroyList(coalPipeHistoryEntityList, beginC, endC);
     }
 
     /**
@@ -231,6 +318,30 @@ public class CoalPipingController {
         jsonObject.put("millD", millDJsonObj);
         return jsonObject.toString();
     }
+    @RequestMapping(value = "/getMillARealTimeData", method = RequestMethod.GET, produces = "text/html;charset=UTF-8")
+    @ResponseBody
+    public String getMillARealTimeData(){
+        CoalPipingEntity coalMillAPiping1Entity = coalPipingRepository.findOne(11L);
+        CoalPipingEntity coalMillAPiping2Entity = coalPipingRepository.findOne(12L);
+        CoalPipingEntity coalMillAPiping3Entity = coalPipingRepository.findOne(13L);
+        CoalPipingEntity coalMillAPiping4Entity = coalPipingRepository.findOne(14L);
+
+        JSONObject jsonObject = new JSONObject();
+        JSONObject millAPipe1JsonObj = getMillPipingJsonObj(coalMillAPiping1Entity);
+        JSONObject millAPipe2JsonObj = getMillPipingJsonObj(coalMillAPiping2Entity);
+        JSONObject millAPipe3JsonObj = getMillPipingJsonObj(coalMillAPiping3Entity);
+        JSONObject millAPipe4JsonObj = getMillPipingJsonObj(coalMillAPiping4Entity);
+
+        JSONObject millAJsonObj = new JSONObject();
+        millAJsonObj.put("pipe1", millAPipe1JsonObj);
+        millAJsonObj.put("pipe2", millAPipe2JsonObj);
+        millAJsonObj.put("pipe3", millAPipe3JsonObj);
+        millAJsonObj.put("pipe4", millAPipe4JsonObj);
+        jsonObject.put("time", coalMillAPiping1Entity.getpTime().getTime());
+        jsonObject.put("millA", millAJsonObj);
+        return jsonObject.toString();
+    }
+
 
     private JSONObject getMillPipingJsonObj(CoalPipingEntity coalMillAPiping1Entity) {
         JSONObject millAPipe1JsonObj = new JSONObject();
@@ -349,7 +460,6 @@ public class CoalPipingController {
         SimpleDateFormat sf = new SimpleDateFormat("yyyy-MM-dd HH:mm");
         binder.registerCustomEditor(Date.class, new CustomDateEditor(sf, true));
     }
-
 
 
 }

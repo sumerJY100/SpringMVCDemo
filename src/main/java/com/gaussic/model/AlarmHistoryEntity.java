@@ -1,12 +1,13 @@
 package com.gaussic.model;
 
 import javax.persistence.*;
+import java.io.Serializable;
 import java.sql.Timestamp;
 import java.util.Objects;
 
 @Entity
 @Table(name = "alarm_history", schema = "wind", catalog = "")
-public class AlarmHistoryEntity {
+public class AlarmHistoryEntity implements Serializable {
     private long id;
     private Long aDeviceId;
     private Integer aDeviceType;
@@ -16,6 +17,7 @@ public class AlarmHistoryEntity {
     private Timestamp aReAlarmTime;
 
     @Id
+    @GeneratedValue(strategy = GenerationType.AUTO)
     @Column(name = "id")
     public long getId() {
         return id;

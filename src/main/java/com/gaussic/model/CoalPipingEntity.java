@@ -5,6 +5,7 @@ import com.gaussic.dataGet.WindDataPojo;
 import javax.persistence.*;
 import java.sql.Timestamp;
 import java.util.Objects;
+import java.util.Optional;
 
 @Entity
 @Table(name = "coal_piping", schema = "wind", catalog = "")
@@ -95,7 +96,7 @@ public class CoalPipingEntity {
     @Basic
     @Column(name = "p_velocity")
     public Float getpVelocity() {
-        return pVelocity;
+        return Optional.ofNullable(pVelocity).orElse(0f);
     }
 
     public void setpVelocity(Float pVelocity) {
@@ -105,7 +106,7 @@ public class CoalPipingEntity {
     @Basic
     @Column(name = "p_dencity")
     public Float getpDencity() {
-        return pDencity;
+        return Optional.ofNullable(pDencity).orElse(0f);
     }
 
     public void setpDencity(Float pDencity) {

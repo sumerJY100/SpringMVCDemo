@@ -86,8 +86,8 @@ public class HandleDeviceData {
 //                System.out.println("超时异常：connect timed out,连接地址：" + requestUrl);
             } catch (ConnectException connectException) {
                 // 连接超时异常处理
-                System.out.println("连接超时异常,连接地址：" + requestUrl);
-                System.out.println(httpUrlConn);
+//                System.out.println("连接超时异常,连接地址：" + requestUrl);
+//                System.out.println(httpUrlConn);
             } catch (SocketException e) {
 //                e.printStackTrace();
             }catch(IOException s){
@@ -137,7 +137,7 @@ public class HandleDeviceData {
         } else {
             buffer.append("josnp([])");
         }
-        System.out.println("buffer:" + buffer.toString());
+//        System.out.println("buffer:" + buffer.toString());
         return buffer.toString();
     }
 }

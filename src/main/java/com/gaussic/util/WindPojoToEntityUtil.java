@@ -18,10 +18,18 @@ public class WindPojoToEntityUtil {
         if(null != pojo) {
             if (null != pojo.getDensityXValue()) {
                 coalPipingEntity.setpDencity(Float.parseFloat(pojo.getDensityXValue()));
+//                System.out.println(pojo);
+            }else{
+                coalPipingEntity.setpDencity(null);
             }
             if(null != pojo.getDensityYValue()) {
                 coalPipingEntity.setpVelocity(Float.parseFloat(pojo.getSpeedValue()));
+            }else{
+                coalPipingEntity.setpVelocity(null);
             }
+        }else {
+            coalPipingEntity.setpDencity(null);
+            coalPipingEntity.setpVelocity(null);
         }
         return coalPipingEntity;
     }

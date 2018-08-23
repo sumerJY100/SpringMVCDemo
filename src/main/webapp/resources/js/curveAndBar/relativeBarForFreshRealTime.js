@@ -4,13 +4,34 @@
  * @param chart
  * @param barData
  */
-function freshRelativeBar(chart,barData){
+function freshRelativeBar(chart, barData) {
     var series = chart.series;
     series[0].setData([barData.pipe1Data]);
     series[1].setData([barData.pipe2Data]);
     series[2].setData([barData.pipe3Data]);
     series[3].setData([barData.pipe4Data]);
 }
+
+function getRelativeBarWithOptions(divId, titleName, subTile, chartOption) {
+    var chartOptions = {
+        chart: {
+            type: 'column',
+            credits: {enabled: false},
+            events: {
+                load: function () {
+                }
+            }
+        },
+        title: {text: titleName},
+        subtitle: {text: subTile},
+        xAxis: {categories: [""]},
+        yAxis: {title: {text:""}},
+        series: [{name: 'A', data: []}, {name: 'B', data: []}, {name: 'C', data: []}, {name: 'D', data: []}]
+    };
+    $.extend(chartOptions, chartOption);
+    return Highcharts.chart(divId, chartOptions);
+}
+
 
 function getRelativeBar(divId, titleName, subTile) {
     var chart = Highcharts.chart(divId, {
@@ -51,15 +72,12 @@ function getRelativeBar(divId, titleName, subTile) {
         subtitle: {
             text: subTile
         },
-
+        yAxis: {title: {text:""}},
+        exporting:false,
         xAxis: {
-            // categories: ['苹果', '橘子', '梨', '葡萄', '香蕉']
             categories: [""]
         },
-        series: [{
-            name: 'A',
-            data: [5]
-        },{name:'B',data:[-3]},{name:'C',data:[-2]},{name:'D',data:[-4]}]
+        series: [{name: 'A', data: []}, {name: 'B', data: []}, {name: 'C', data: []}, {name: 'D', data: []}]
 
     });
     return chart;

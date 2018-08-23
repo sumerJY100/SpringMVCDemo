@@ -33,21 +33,15 @@ var curveToolTip = {
         hour: '%Y-%m-%d %H:%M'
     }
 };
-
-function getCurveChart(divId, titleName, subtile) {
-    var chartForCurve;
-    chartForCurve = Highcharts.chart(divId, {
+function getCurveChartOptions(titleName,subtitle){
+    var chartOptions = {
         chart: {
             type: 'spline',
             marginRight: 10/*,
             events: getLoadFunction()*/
         },
-        title: {
-            text: titleName
-        },
-        subtitle: {
-            text: subtile
-        },
+        title: {text: titleName},
+        subtitle: {text: subtitle},
         plotOptions: {
             series: {
                 marker: {
@@ -56,25 +50,41 @@ function getCurveChart(divId, titleName, subtile) {
                 }
             }
         },
-        xAxis: {
-            type: 'datetime',
-            tickPixelInterval: 150
-        },
-        yAxis: {
-            title: {
-                text: ""
-            }
-        },
+        xAxis: {type: 'datetime', tickPixelInterval: 150},
+        yAxis: {title: {text: ""}},
         tooltip: curveToolTip,
-        legend: {
-            enabled: true
-        },
-        series: getInitSeriesArray()
-    });
-    //初始化chart的数据图
+        legend: {enabled: true}
+    };
+    return chartOptions;
+}
+
+function getCurveChartWithOptionsAndSeries(divId, titleName, subtitle,chartOption,series) {
+    var chartOptions = getCurveChartOptions(titleName,subtitle);
+    $.extend(chartOptions,{series: series});
+    $.extend(chartOptions,chartOption);
+    return Highcharts.chart(divId,chartOptions);
+}
+function getCurveChartWithOptionsAndSerieNames(divId, titleName, subtitle,chartOption,seriesNames) {
+    var series = [];
+    for(var i=0;i<seriesNames.length;i++){
+        var obj = {name:seriesNames[i],data:[]};
+        series.push(obj);
+    }
+    var chart = getCurveChartWithOptionsAndSeries(divId, titleName, subtitle,chartOption,series);
+    return chart;
+}
+function getCurveChartWithOptions(divId, titleName, subtitle,chartOption) {
+    var series = getInitSeriesArray();
+    var chart = getCurveChartWithOptionsAndSeries(divId, titleName, subtitle,chartOption,series);
+    return chart;
+}
+function getCurveChart(divId, titleName, subtitle) {
+    var chartOptions = getCurveChartOptions(titleName,subtitle);
+    $.extend(chartOptions,{series: getInitSeriesArray()});
+    var chartForCurve = Highcharts.chart(divId, chartOptions);
+    //TODO 初始化chart的数据图,url需要指定
     var getInitDataUrl = "getInitTimeData";
     initCurveChart(getInitDataUrl,chartForCurve);
-
     return chartForCurve;
 }
 
@@ -143,7 +153,7 @@ function getInitSeriesArray() {
     return seriesArray;
 }
 
-function getCurveChart2(divId, titleName, subtile) {
+function getCurveChart2(divId, titleName, subtitle) {
     var chartForCurve = null;
     var getInitDataUrl = "/wind5/getInitTimeData";
     $.getJSON(getInitDataUrl, function (initData) {
@@ -157,7 +167,7 @@ function getCurveChart2(divId, titleName, subtile) {
                 text: titleName
             },
             subtitle: {
-                text: subtile
+                text: subtitle
             },
             plotOptions: {
                 series: {
@@ -187,7 +197,7 @@ function getCurveChart2(divId, titleName, subtile) {
 }
 
 
-function getChart(divId, titleName, subtile) {
+function getChart(divId, titleName, subtitle) {
     var chart = Highcharts.chart(divId, {
         chart: {
             type: 'spline',
@@ -198,7 +208,7 @@ function getChart(divId, titleName, subtile) {
             text: titleName
         },
         subtitle: {
-            text: subtile
+            text: subtitle
         },
         xAxis: {
             type: 'datetime',
@@ -251,6 +261,7 @@ function getLoadFunction() {
             var latestTime = seriesData[seriesData.length - 1].x;
             //  console.log(latestTime)
             setInterval(function () {
+                //TODO 获取实时数据是的URL地址问题，需要解决。
                 $.get("/wind5/getRealTimeData", {"latestTime": latestTime}, function (result) {
                     var time = result.time;
                     var valueData = result.data;

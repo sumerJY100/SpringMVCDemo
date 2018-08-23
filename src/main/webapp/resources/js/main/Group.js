@@ -23,20 +23,20 @@ function Group() {
     this.CCheckBox = null;
     this.DCheckBox = null;
 
-    //ÊµÊ±Ë¢ĞÂÊı¾İ
+    //å®æ—¶åˆ·æ–°æ•°æ®
     this.realTime = null;
     this.densityRealData = null;
     this.densityRealDataForRelative = null;
     this.velocityRealData = null;
     this.velocityRealDataForRelative = null;
 
-    //ÇúÏß³õÊ¼»¯µÄµØÖ·
+    //æ›²çº¿åˆå§‹åŒ–çš„åœ°å€
     this.densityCurveUrl = null;
     this.velocityCurveUrl = null;
 }
 
 /**
- * ¸ù¾İµ±Ç°Ñ¡ÖĞµÄ°´Å¥Óë radioµÄÀàĞÍ£¬·µ»ØÓ¦ÏÔÊ¾µÄDIVµÄjquery¶ÔÏó
+ * æ ¹æ®å½“å‰é€‰ä¸­çš„æŒ‰é’®ä¸ radioçš„ç±»å‹ï¼Œè¿”å›åº”æ˜¾ç¤ºçš„DIVçš„jqueryå¯¹è±¡
  * @param currentBtn
  * @param radioValue
  * @param divArrs
@@ -76,7 +76,7 @@ Group.prototype.findTargetDivByBtn = function (currentBtn, radioValue, divArrs) 
     return targetDiv;
 };
 /**
- * ²éÕÒµ±Ç°±»Ñ¡ÖĞµÄ°´Å¥
+ * æŸ¥æ‰¾å½“å‰è¢«é€‰ä¸­çš„æŒ‰é’®
  * @returns {*}
  */
 Group.prototype.findCurrentBtn = function () {
@@ -100,13 +100,13 @@ Group.prototype.findCurrentBtn = function () {
     return currentBtn;
 };
 /**
- * Ë¢ĞÂµ±Ç°ÕıÔÚÏÔÊ¾µÄÍ¼±í
+ * åˆ·æ–°å½“å‰æ­£åœ¨æ˜¾ç¤ºçš„å›¾è¡¨
  */
 Group.prototype.freshCurrentChart = function () {
-    /*1¡¢Ñ°ÕÒµ½µ±Ç°ÕıÏÔÊ¾µÄDIVµÄID
-      2¡¢¸ù¾İDIVId£¬ÕÒµ½¶ÔÓ¦µÄchart
-      3¡¢¸ù¾İdivId£¬ÕÒµ½¶ÔÓ¦Ë¢ĞÂµÄÊı¾İ
-      4¡¢¸ù¾İ²»Í¬µÄchart£¬Ë¢ĞÂchart
+    /*1ã€å¯»æ‰¾åˆ°å½“å‰æ­£æ˜¾ç¤ºçš„DIVçš„ID
+      2ã€æ ¹æ®DIVIdï¼Œæ‰¾åˆ°å¯¹åº”çš„chart
+      3ã€æ ¹æ®divIdï¼Œæ‰¾åˆ°å¯¹åº”åˆ·æ–°çš„æ•°æ®
+      4ã€æ ¹æ®ä¸åŒçš„chartï¼Œåˆ·æ–°chart
       */
     if (this.divJqueryDom) {
         var baseDivId = this.divJqueryDom.attr("id");
@@ -122,6 +122,7 @@ Group.prototype.freshCurrentChart = function () {
         }
         if ($currentDivDom) {
             var currentDivId = $currentDivDom.attr("id");
+
             if (currentDivId === getDivIdFromChartByChart(this.curveForDensity)) {
                 freshCurveChart(this.curveForDensity, this.realTime, this.densityRealData);
             } else if (currentDivId === getDivIdFromChartByChart(this.curveForVelocity)) {
@@ -131,9 +132,10 @@ Group.prototype.freshCurrentChart = function () {
             }else if(currentDivId === getDivIdFromChartByChart(this.barRelativeForVelocity)){
                 freshRelativeBar(this.barRelativeForVelocity,this.velocityRealDataForRelative);
             }else if(currentDivId === getDivIdFromChartByChart(this.barAbsoluteForDensity)){
-                freshRelativeBar(this.barAbsoluteForDensity,this.densityRealData);
+
+                freshAbsoluteBar(this.barAbsoluteForDensity,this.densityRealData);
             }else if(currentDivId === getDivIdFromChartByChart(this.barAbsoluteForVelocity)){
-                freshRelativeBar(this.barAbsoluteForVelocity,this.velocityRealData);
+                freshAbsoluteBar(this.barAbsoluteForVelocity,this.velocityRealData);
             }
 
 
@@ -141,13 +143,13 @@ Group.prototype.freshCurrentChart = function () {
     }
 };
 /**
- * Èç¹ûµ±Ç°ÊÓÍ¼ÎªÇúÏßÊÓÍ¼£¬Ôò¸øÇúÏß¼ÓÔØ15·ÖÖÓÊı¾İ
+ * å¦‚æœå½“å‰è§†å›¾ä¸ºæ›²çº¿è§†å›¾ï¼Œåˆ™ç»™æ›²çº¿åŠ è½½15åˆ†é’Ÿæ•°æ®
  */
 Group.prototype.initCurveData = function(){
-  /*²éÕÒµ±Ç°ÏÔÊ¾µÄchart
-  * 1¡¢ÅĞ¶Ïµ±Ç°chartÊÇ·ñÊÇÇúÏßÍ¼
-  * 2¡¢Èç¹ûÊÇÇúÏßÍ¼£¬¸ù¾İgroupµÄÇúÏßURL£¬ÖØĞÂ¼ÓÔØÊı¾İ
-  * */
+    /*æŸ¥æ‰¾å½“å‰æ˜¾ç¤ºçš„chart
+    * 1ã€åˆ¤æ–­å½“å‰chartæ˜¯å¦æ˜¯æ›²çº¿å›¾
+    * 2ã€å¦‚æœæ˜¯æ›²çº¿å›¾ï¼Œæ ¹æ®groupçš„æ›²çº¿URLï¼Œé‡æ–°åŠ è½½æ•°æ®
+    * */
     if (this.divJqueryDom) {
         var baseDivId = this.divJqueryDom.attr("id");
         /*var $currentDivDom = $("div[id^='" + baseDivId + "'][display='block']");*/

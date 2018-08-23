@@ -184,6 +184,7 @@ function initGroup() {
     group1.curveForVelocity = curveForVelocity;
     group1.barRelativeForVelocity = relativeBarForVelocity;
     group1.barAbsoluteForVelocity = absoluteBarForVelocity;
+    //TODO 各个磨煤机的URL需要重新设置
     group1.densityCurveUrl = "getInitTimeData";
     group1.velocityCurveUrl = "getInitTimeData";
     group2.divJqueryDom = $("#container2");
@@ -320,25 +321,7 @@ function freshMainPageTable(group,tableDivId){
         // alert(tddom.html())
     }
 }
-function MillData(pipe1Data, pipe2Data, pipe3Data, pipe4Data) {
-    this.pipe1Data = pipe1Data;
-    this.pipe2Data = pipe2Data;
-    this.pipe3Data = pipe3Data;
-    this.pipe4Data = pipe4Data;
-}
 
-function getDensityDataFromMill(mill) {
-    return new MillData(mill.pipe1.density, mill.pipe2.density, mill.pipe3.density, mill.pipe4.density);
-}
-
-function getVelocityDataFromMill(mill) {
-    return new MillData(mill.pipe1.Velocity, mill.pipe2.Velocity, mill.pipe3.Velocity, mill.pipe4.Velocity);
-}
-
-function getMillDataFromAbsoluteToRelative(millData) {
-    var avg = (millData.pipe1Data + millData.pipe2Data + millData.pipe3Data + millData.pipe4Data) / 4;
-    return new MillData(millData.pipe1Data - avg, millData.pipe2Data - avg, millData.pipe3Data - avg, millData.pipe4Data - avg);
-}
 
 /**
  * 隐藏与显示曲线或柱状图

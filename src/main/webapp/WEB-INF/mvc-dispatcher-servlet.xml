@@ -12,7 +12,7 @@
        http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx.xsd">
 
 
-    <bean id="jobFactory" class="com.gaussic.quartz3.MyJobFactory"></bean>
+    <bean id="jobFactory" class="com.gaussic.quartz3.MyJobFactory"/>
     <!--指明 controller 所在包，并扫描其中的注解-->
     <context:component-scan base-package="com.gaussic.controller"/>
     <context:component-scan base-package="com.gaussic.service"/>
@@ -41,7 +41,7 @@
 
     <bean id="entityManagerFactory" class="org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean">
         <property name="persistenceUnitName" value="defaultPersistenceUnit"/>
-        <property name="packagesToScan" value="com.gaussic.model ,com.gaussic.model.history"/>
+        <property name="packagesToScan" value="com.gaussic.model ,com.gaussic.model.history,com.gaussic.model.dcs"/>
         <property name="jpaVendorAdapter">
             <bean class="org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter"/>
         </property>

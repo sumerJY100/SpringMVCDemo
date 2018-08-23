@@ -77,6 +77,7 @@
 <div id="container4V_absoluteBar" class="container container4 divHide" style="">A</div>
 <jsp:include page="mainPages/main_table_D.jsp"></jsp:include>
 
+<script src="<c:url value='/resources/js/curveAndBar/commonHandleData.js'/>" type="text/javascript"></script>
 <script src="<c:url value='/resources/js/curveAndBar/curve_column.js'/>" type="text/javascript"></script>
 <script src="<c:url value='/resources/js/curveAndBar/absoluteBarForFreshRealTime.js'/>" type="text/javascript"></script>
 <script src="<c:url value='/resources/js/curveAndBar/relativeBarForFreshRealTime.js'/>" type="text/javascript"></script>

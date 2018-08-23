@@ -69,6 +69,7 @@ var curveToolTipForContrast = {
  * masterChart 鼠标选择中区域事件
  * @type {{selection: mastreClickEvent.selection}}
  */
+//TODO 当detialchart中含有plotLine时，改变区域，需要将plotline去除。plotline包含millchart与detailchart
 var mastreClickEvent = function(startTime,endTime){
     return {
         // listen to the selection event on the master chart to update the

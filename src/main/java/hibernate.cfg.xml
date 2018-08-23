@@ -8,6 +8,7 @@
         <property name="connection.url">jdbc:mysql://localhost:3306/wind</property>
         <!--数据库驱动配置-->
         <property name="connection.driver_class">com.mysql.jdbc.Driver</property>
+
         <!--数据库用户名配置-->
         <!--数据库密码配置-->
 

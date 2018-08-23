@@ -12,12 +12,16 @@
 <head>
     <title>Title</title>
     <jsp:include page="/common/commonTopMenuJsAndMenu.jsp"></jsp:include>
-    <script src="${ctx}/js/jquery-1.10.2.js"></script>
+    <script src="<c:url value='/resources/js/jquery-1.10.2.js'/>"></script>
 
-    <script src="${ctx}/js/Highcharts/highcharts.src.js"></script>
-    <script src="${ctx}/js/Highcharts/modules/exporting.js"></script>
-    <script src="https://img.hcharts.cn/highcharts-plugins/highcharts-zh_CN.js"></script>
-    <script src="${ctx}/js/Highcharts/themes/dark-unica.js"></script>
+    <script src="<c:url value='/resources/js/Highcharts/highcharts.src.js'/>"></script>
+    <script src="<c:url value='/resources/js/Highcharts/modules/exporting.js'/>"></script>
+    <script src="https://img.hcharts.cn/highcharts-plugins/highcharts-zh_CN.js'/>"></script>
+    <script src="<c:url value='/resources/js/Highcharts/themes/dark-unica.js'/>"></script>
+
+    <link rel="stylesheet" href="<c:url value='/resources/js/svg/jquery.svg.css'/>"/>
+    <script src="<c:url value='/resources/js/communicationPage/main.js'/>"></script>
+    <script src="<c:url value='/resources/js/svg/jquery.svg.js'/>"></script>
 </head>
 <body>
 
@@ -25,13 +29,13 @@
 
 <%--<script src="${ctx}/js/curveAndBar/curve.js" type="text/javascript"></script>--%>
 <%--<script src="${ctx}/js/curveAndBar/absoluteBar.js" type="text/javascript"></script>--%>
-<script src="${ctx}/js/curveAndBar/relativeBarForFreshRealTime.js" type="text/javascript"></script>
+<script src="<c:url value='/resources/js/curveAndBar/relativeBarForFreshRealTime.js'/>" type="text/javascript"></script>
 <%--<script src="${ctx}/js/main/main.js" type="text/javascript"></script>--%>
-<div id="container"></div>
-
+<%--<div id="container"></div>--%>
+<div id="linkStateSvg"  style="height:600px;"></div>
 <script type="text/javascript">
     $(document).ready(function(){
-        var volocityRrelativeBar = getRelativeBar("container","风速","相对值");
+        // var volocityRrelativeBar = getRelativeBar("container","风速","相对值");
     });
 
 </script>

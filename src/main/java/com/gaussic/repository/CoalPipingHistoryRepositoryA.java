@@ -10,7 +10,7 @@ public interface CoalPipingHistoryRepositoryA extends JpaRepository<AcoalPipingH
 
 
 
-     List<AcoalPipingHistoryEntity> findByHTimeAfter(Timestamp latestTime);
+     List<AcoalPipingHistoryEntity> findByHTimeAfterOrderByHTimeAsc(Timestamp latestTime);
 
      List<AcoalPipingHistoryEntity> findByHTimeBetween(Timestamp beginTime,Timestamp endTime);
 }

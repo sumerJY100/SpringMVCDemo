@@ -1,9 +1,11 @@
 package com.gaussic.model;
 
-import com.gaussic.dataGet.WindDataPojo;
+import com.gaussic.model.dcsRemote.DcsRemotePointPojo;
 
 import javax.persistence.*;
+import java.math.BigDecimal;
 import java.sql.Timestamp;
+import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 
@@ -30,6 +32,10 @@ public class CoalPipingEntity {
     private CoalPipingSetEntity coalPipingSetEntity;
     private CoalMillEntity coalMillEntity;
 
+
+    private AlarmHistoryEntity alarmHistoryEntity;
+    private List<DcsRemotePointPojo> dcsRemotePointPojoList;
+
     @Id
     @Column(name = "id")
     public long getId() {
@@ -54,7 +60,7 @@ public class CoalPipingEntity {
     @Column(name = "p_coalMill_id")*/
     @Transient
     public Long getpCoalMillId() {
-        if(null != this.getCoalMillEntity())
+        if (null != this.getCoalMillEntity())
             return this.getCoalMillEntity().getId();
         return pCoalMillId;
     }
@@ -96,6 +102,11 @@ public class CoalPipingEntity {
     @Basic
     @Column(name = "p_velocity")
     public Float getpVelocity() {
+        if(null != this.pVelocity){
+            BigDecimal bigDecimal = new BigDecimal(this.pVelocity);
+            BigDecimal bigDecimal1 = bigDecimal.setScale(6,BigDecimal.ROUND_FLOOR);
+            this.pVelocity = bigDecimal1.floatValue();
+        }
         return Optional.ofNullable(pVelocity).orElse(0f);
     }
 
@@ -106,7 +117,12 @@ public class CoalPipingEntity {
     @Basic
     @Column(name = "p_dencity")
     public Float getpDencity() {
-        return Optional.ofNullable(pDencity).orElse(0f);
+        if(null != this.pDencity){
+            BigDecimal bigDecimal = new BigDecimal(this.pDencity);
+            BigDecimal bigDecimal1 = bigDecimal.setScale(6,BigDecimal.ROUND_FLOOR);
+            this.pDencity = bigDecimal1.floatValue();
+        }
+        return Optional.ofNullable(this.pDencity).orElse(0f);
     }
 
     public void setpDencity(Float pDencity) {
@@ -234,5 +250,26 @@ public class CoalPipingEntity {
 
     public void setCoalMillEntity(CoalMillEntity coalMillEntity) {
         this.coalMillEntity = coalMillEntity;
+    }
+
+    @OneToMany(mappedBy = "coalPipingEntity")
+    public List<DcsRemotePointPojo> getDcsRemotePointPojoList() {
+        return dcsRemotePointPojoList;
+    }
+
+    public void setDcsRemotePointPojoList(List<DcsRemotePointPojo> dcsRemotePointPojoList) {
+        this.dcsRemotePointPojoList = dcsRemotePointPojoList;
+    }
+
+
+
+
+    @Transient
+    public AlarmHistoryEntity getAlarmHistoryEntity() {
+        return alarmHistoryEntity;
+    }
+
+    public void setAlarmHistoryEntity(AlarmHistoryEntity alarmHistoryEntity) {
+        this.alarmHistoryEntity = alarmHistoryEntity;
     }
 }

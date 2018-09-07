@@ -89,6 +89,23 @@ function getCurveChart(divId, titleName, subtitle) {
 }
 
 /**
+ * 将曲线的数据，根据URL读取数据，填充曲线数据
+ * @param divId
+ * @param titleName
+ * @param subtitle
+ * @param url
+ * @returns {Highcharts.Chart}
+ */
+function getCurveChartByUrl(divId,titleName,subtitle,url){
+    var chartOptions = getCurveChartOptions(titleName,subtitle);
+    $.extend(chartOptions,{series: getInitSeriesArray()});
+    var chartForCurve = Highcharts.chart(divId, chartOptions);
+    //TODO 初始化chart的数据图,url需要指定
+    // var getInitDataUrl = "getInitTimeData";
+    initCurveChart(url,chartForCurve);
+    return chartForCurve;
+}
+/**
  * 初始化chart的数据图
  * @param url
  * @param chartForCurve
@@ -135,6 +152,11 @@ function freshCurveChart(chart,time,curveData){
     series[2].addPoint([time,curveData.pipe3Data],true,true);
     series[3].addPoint([time,curveData.pipe4Data],true,true);
 }
+function freshCurveChartForSingleLine(chart,time,data){
+    var series = chart.series;
+    series[0].addPoint([time,data],true,true);
+}
+
 function getInitSeriesArray() {
     var AData = [], BData = [], CData = [], DData = [];
     var seriesArray = [{

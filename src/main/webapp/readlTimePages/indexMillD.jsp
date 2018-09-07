@@ -44,11 +44,11 @@
 
 <div style="position:absolute;margin-left:950px;margin-top:50px;">
 
-    <table cellpadding="0" cellspacing="0">
+    <table cellpadding="0" cellspacing="0" id="realTimeTable">
         <tr>
-            <th rowspan=5 style="width:50px;">磨煤<br/>机A</th>
+            <th rowspan=5 style="width:100px;">磨煤<br/>机D</th>
             <th>状态</th>
-            <th style="width:10px;">值</th>
+            <th style="width:120px;">值</th>
 
             <th style="width:100px;">A</th>
             <th style="width:100px;">B</th>
@@ -94,7 +94,8 @@
 <script src="<c:url value='/resources/js/curveAndBar/relativeBarForFreshRealTime.js'/>" type="text/javascript"></script>
 
 
-<script src="${ctx}/js/realTimePages/main.js" type="text/javascript"></script>
+<script src="<c:url value='/resources/js/realTimePages/main.js'/>" type="text/javascript"></script>
+<script src="<c:url value='/resources/js/realTimePages/millD.js'/>" type="text/javascript"></script>
 <script type="text/javascript">
 
 

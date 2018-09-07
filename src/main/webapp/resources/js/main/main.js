@@ -6,7 +6,6 @@ const densityRadioValue = "2";
 const velocityRadioValue = "1";
 
 
-
 var group1 = new Group(), group2 = new Group(), group3 = new Group(), group4 = new Group();
 
 var groupArr = [group1, group2, group3, group4];
@@ -38,26 +37,28 @@ function findGroupByCurveId(curveId) {
     }
     return targetGroup;
 }
-function findGroupByChartDivId(chartDivid){
+
+function findGroupByChartDivId(chartDivid) {
     var targetGroup;
-    for(var x in groupArr){
+    for (var x in groupArr) {
         var tempGroup = groupArr[x];
-        if(tempGroup){
+        if (tempGroup) {
             var chartArray = tempGroup.getChartArray();
-            for(var m in chartArray){
+            for (var m in chartArray) {
                 var tempChartDivId = getDivIdFromChartByChart(chartArray[m]);
-                if(tempChartDivId === chartDivid){
+                if (tempChartDivId === chartDivid) {
                     targetGroup = tempGroup;
                     break;
                 }
             }
-            if(targetGroup){
+            if (targetGroup) {
                 break;
             }
         }
     }
     return targetGroup;
 }
+
 /**
  * 根据当前正在显示的图表chart，将当前按钮显示为“选中”
  * 并将其它按钮的“选中”样式，去除。
@@ -139,81 +140,56 @@ function getDivIdFromChartByChart(chart) {
     }
     return targetDivId;
 }
+function generatorAndInitGroup(group, baseDivId, chartOptions, millLocation){
+    // var baseDivId = "container1";
+    var absDensityDivId = baseDivId + "_absoluteBar",
+        relativeDensityDiveId = baseDivId + "_relativeBar",
+        velocityCurveDivId = baseDivId + "V",
+        absVelocityDivId = baseDivId + "V_absoluteBar",
+        relativeVelocityDiveId = baseDivId + "V_relativeBar";
+    var absoluteBarForDensity = getAbsoluteBarWithOptions(absDensityDivId, densityChartTitle+"  ("+ absoluteChartSubtitle+")","",chartOptions );
+    var relativeBarForDensity = getRelativeBarWithOptions(relativeDensityDiveId, densityChartTitle+"  ("+ relativeChartSubtitle+")","",chartOptions);
+    var curveForDensity = getCurveChartWithOptions(baseDivId, densityChartTitle, "",chartOptions);
 
+    var absoluteBarForVelocity = getAbsoluteBarWithOptions(absVelocityDivId, velocityChartTitle+"("+absoluteChartSubtitle+")","",chartOptions);
+    var relativeBarForVelocity = getRelativeBarWithOptions(relativeVelocityDiveId, velocityChartTitle+"("+relativeChartSubtitle+")","",chartOptions);
+    var curveForVelocity = getCurveChartWithOptions(velocityCurveDivId, velocityChartTitle, "",chartOptions);
+
+
+    group.divJqueryDom = $("#"+baseDivId);
+    group.curveForDensity = curveForDensity;
+    group.barRelativeForDensity = relativeBarForDensity;
+    group.barAbsoluteForDensity = absoluteBarForDensity;
+    group.curveForVelocity = curveForVelocity;
+    group.barRelativeForVelocity = relativeBarForVelocity;
+    group.barAbsoluteForVelocity = absoluteBarForVelocity;
+    //TODO 各个磨煤机的URL需要重新设置，风速与密度单独列出
+    group.densityCurveUrl = "getDensityRealTime15MinutesDataByMill?mill=" + millLocation;
+    group.velocityCurveUrl = "getVelocityRealTime15MinutesDataByMill?mill=" + millLocation;
+
+    return group;
+}
 /**
  * 初始化Group
  */
 function initGroup() {
-    var absoluteBarForDensity = getAbsoluteBar("container1_absoluteBar", densityChartTitle, absoluteChartSubtitle);
-    var relativeBarForDensity = getRelativeBar("container1_relativeBar", densityChartTitle, relativeChartSubtitle);
-    var curveForDensity = getCurveChart("container1", densityChartTitle, "");
-
-    var absoluteBarForDensity_2 = getAbsoluteBar("container2_absoluteBar", densityChartTitle, absoluteChartSubtitle);
-    var relativeBarForDensity_2 = getRelativeBar("container2_relativeBar", densityChartTitle, relativeChartSubtitle);
-    var curveForDensity_2 = getCurveChart("container2", densityChartTitle, "");
-
-    var absoluteBarForDensity_3 = getAbsoluteBar("container3_absoluteBar", densityChartTitle, absoluteChartSubtitle);
-    var relativeBarForDensity_3 = getRelativeBar("container3_relativeBar", densityChartTitle, relativeChartSubtitle);
-    var curveForDensity_3 = getCurveChart("container3", densityChartTitle, "");
-
-    var relativeBarForDensity_4 = getRelativeBar("container4_relativeBar", densityChartTitle, relativeChartSubtitle);
-    var absoluteBarForDensity_4 = getAbsoluteBar("container4_absoluteBar", densityChartTitle, absoluteChartSubtitle);
-    var curveForDensity_4 = getCurveChart("container4", densityChartTitle, "");
-
-    var absoluteBarForVelocity = getAbsoluteBar("container1V_absoluteBar", velocityChartTitle, absoluteChartSubtitle);
-    var relativeBarForVelocity = getRelativeBar("container1V_relativeBar", velocityChartTitle, relativeChartSubtitle);
-    var curveForVelocity = getCurveChart("container1V", velocityChartTitle, "");
-
-    var absoluteBarForVelocity_2 = getAbsoluteBar("container2V_absoluteBar", velocityChartTitle, absoluteChartSubtitle);
-    var relativeBarForVelocity_2 = getRelativeBar("container2V_relativeBar", velocityChartTitle, relativeChartSubtitle);
-    var curveForVelocity_2 = getCurveChart("container2V", velocityChartTitle, "");
-
-    var absoluteBarForVelocity_3 = getAbsoluteBar("container3V_absoluteBar", velocityChartTitle, absoluteChartSubtitle);
-    var relativeBarForVelocity_3 = getRelativeBar("container3V_relativeBar", velocityChartTitle, relativeChartSubtitle);
-    var curveForVelocity_3 = getCurveChart("container3V", velocityChartTitle, "");
-
-    var relativeBarForVelocity_4 = getRelativeBar("container4V_relativeBar", velocityChartTitle, relativeChartSubtitle);
-    var absoluteBarForVelocity_4 = getAbsoluteBar("container4V_absoluteBar", velocityChartTitle, absoluteChartSubtitle);
-    var curveForVelocity_4 = getCurveChart("container4V", velocityChartTitle, "");
+    var chartOptions = {
+        exporting: {enabled: false},
+        legend: {
+            align: "right",
+            verticalAlign: "top",
+            floating: true,
+            y: 40,
+            itemDistance: 5,
+            itemStyle: {fontFamily: "宋体", fontWeight: 'light'}
+        }
+    };
+    generatorAndInitGroup(group1,"container1",chartOptions,"A");
+    generatorAndInitGroup(group2,"container2",chartOptions,"B");
+    generatorAndInitGroup(group3,"container3",chartOptions,"C");
+    generatorAndInitGroup(group4,"container4",chartOptions,"D");
 
 
-    group1.divJqueryDom = $('#container1');
-    group1.curveForDensity = curveForDensity;
-    group1.barRelativeForDensity = relativeBarForDensity;
-    group1.barAbsoluteForDensity = absoluteBarForDensity;
-    group1.curveForVelocity = curveForVelocity;
-    group1.barRelativeForVelocity = relativeBarForVelocity;
-    group1.barAbsoluteForVelocity = absoluteBarForVelocity;
-    //TODO 各个磨煤机的URL需要重新设置
-    group1.densityCurveUrl = "getInitTimeData";
-    group1.velocityCurveUrl = "getInitTimeData";
-    group2.divJqueryDom = $("#container2");
-    group2.curveForDensity = curveForDensity_2;
-    group2.barRelativeForDensity = relativeBarForDensity_2;
-    group2.barAbsoluteForDensity = absoluteBarForDensity_2;
-    group2.curveForVelocity = curveForVelocity_2;
-    group2.barRelativeForVelocity = relativeBarForVelocity_2;
-    group2.barAbsoluteForVelocity = absoluteBarForVelocity_2;
-    group2.densityCurveUrl = "getInitTimeData";
-    group2.velocityCurveUrl = "getInitTimeData";
-    group3.divJqueryDom = $("#container3");
-    group3.curveForDensity = curveForDensity_3;
-    group3.barRelativeForDensity = relativeBarForDensity_3;
-    group3.barAbsoluteForDensity = absoluteBarForDensity_3;
-    group3.curveForVelocity = curveForVelocity_3;
-    group3.barRelativeForVelocity = relativeBarForVelocity_3;
-    group3.barAbsoluteForVelocity = absoluteBarForVelocity_3;
-    group3.densityCurveUrl = "getInitTimeData";
-    group3.velocityCurveUrl = "getInitTimeData";
-    group4.divJqueryDom = $("#container4");
-    group4.curveForDensity = curveForDensity_4;
-    group4.barRelativeForDensity = relativeBarForDensity_4;
-    group4.barAbsoluteForDensity = absoluteBarForDensity_4;
-    group4.curveForVelocity = curveForVelocity_4;
-    group4.barRelativeForVelocity = relativeBarForVelocity_4;
-    group4.barAbsoluteForVelocity = absoluteBarForVelocity_4;
-    group4.densityCurveUrl = "getInitTimeData";
-    group4.velocityCurveUrl = "getInitTimeData";
 }
 
 
@@ -281,20 +257,21 @@ function freshCurrentChartAndTable(result) {
 //    freshAbsoluteBar(absoluteBarForDensity, millADensityData);
 
 
-    freshMainPageTable(group1,"coalMillTableADiv");
-    freshMainPageTable(group2,"coalMillTableBDiv");
-    freshMainPageTable(group3,"coalMillTableCDiv");
-    freshMainPageTable(group4,"coalMillTableDDiv");
+    freshMainPageTable(group1, "coalMillTableADiv");
+    freshMainPageTable(group2, "coalMillTableBDiv");
+    freshMainPageTable(group3, "coalMillTableCDiv");
+    freshMainPageTable(group4, "coalMillTableDDiv");
 
 
 }
-function freshMainPageTable(group,tableDivId){
+
+function freshMainPageTable(group, tableDivId) {
     var velocityData = group.velocityRealData;
     var velocityDataForRelative = group.velocityRealDataForRelative;
     var densityData = group.densityRealData;
     var densityDataForRelative = group.densityRealDataForRelative;
-    var tableArr = $("#"+tableDivId+">table>tbody");
-    if(tableArr){
+    var tableArr = $("#" + tableDivId + ">table>tbody");
+    if (tableArr) {
 
         var $tableA = $(tableArr[0]);
         // alert($tableA.html())
@@ -344,7 +321,7 @@ function changeDivShowHide($showDiv, hideDivArr) {
     * 1、重新加载曲线数据*/
     var currentGroup;
     currentGroup = findGroupByChartDivId($showDiv.attr("id"));
-    if(currentGroup) {
+    if (currentGroup) {
         currentGroup.initCurveData();
     }
 }
@@ -579,13 +556,14 @@ function AddDensityAndVelocityRadio($container, curveId, radioType, labelName, r
     return $radioForVelocity;
 }
 
-function freshMainPage(){
+function freshMainPage() {
     var latestTime = 100;
     var url = "getAllMillRealTimeData";
     $.get(url, {"latestTime": latestTime}, function (result) {
         freshCurrentChartAndTable(result);
     }, "json");
 }
+
 $(document).ready(function () {
     //初始化Group
     initGroup();

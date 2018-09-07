@@ -23,9 +23,17 @@ import java.util.List;
 public class AlarmHistoryController {
     @Autowired
     private AlarmHistoryRepository alarmHistoryRepository;
+    /*userDefine
 
-    @RequestMapping(value = "getAlarmHistoryPaging", method = RequestMethod.GET)
+     */
+    public void test(){
+
+    }
+
+    @RequestMapping(value = "getAlarmHistoryPaging", method=RequestMethod.GET,produces="text/html;" +
+            "charset=UTF-8")
     @ResponseBody
+
     public String getAlarmHistoryPaging(@RequestParam(value = "limit", required = false) int limit, @RequestParam
             (value = "offset", required = false) int offset) {
 
@@ -35,7 +43,6 @@ public class AlarmHistoryController {
         long totalElements = alarmHistoryEntityPage.getTotalElements();
         long totalPages = alarmHistoryEntityPage.getTotalPages();
         List<AlarmHistoryEntity> list = alarmHistoryEntityPage.getContent();
-        System.out.println("+++ " + list.get(0).getaAlarmTime());
 
         JSONObject jsonObject = new JSONObject();
         jsonObject.put("total", totalElements);
@@ -49,6 +56,29 @@ public class AlarmHistoryController {
             jsonObject1.put("id", a.getId());
             jsonObject1.put("alarmDate", localDate);
             jsonObject1.put("alarmTime", localTime);
+
+            jsonObject1.put("alarmType",a.getAlarmTypeString());
+
+            jsonObject1.put("AlarmDesc",a.getaAlarmNote());
+            jsonObject1.put("coalMillName",a.getaAlarmMillName());
+            jsonObject1.put("pipe",a.getaAlarmPipeString());
+            jsonObject1.put("alarmState",a.getaAlarmStateString());
+            if(null != a.getaAlarmState() && a.getaAlarmState() == 0 && null != a.getaReAlarmTime()) {
+                LocalDateTime localDateTimeForReAlarm = a.getaReAlarmTime().toLocalDateTime();
+                jsonObject1.put("reAlarmDate",localDateTimeForReAlarm.toLocalDate());
+                jsonObject1.put("reAlarmTime",localDateTimeForReAlarm.toLocalTime());
+            }
+
+            jsonObject1.put("confirmOperator",a.getaConfirmString());
+            if(null != a.getaConfirmFlag() && a.getaConfirmFlag() && null != a.getaConfirmTime()){
+                LocalDateTime localDateTime1 = a.getaConfirmTime().toLocalDateTime();
+                jsonObject1.put("confirmDate",localDateTime1.toLocalDate());
+                jsonObject1.put("confirmTime",localDateTime1.toLocalTime());
+            }
+            jsonObject1.put("confirmOperator",a.getaAlarmManagerName());
+
+
+
             jsonArray.put(jsonObject1);
 
         }

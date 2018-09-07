@@ -1,7 +1,6 @@
 package com.gaussic.util;
 
-import com.gaussic.dataGet.WindDataPojo;
-import com.gaussic.util.HandleDeviceData;
+import com.gaussic.dataGet.windPojoHandle.WindDataPojo;
 import org.json.JSONArray;
 import org.springframework.beans.BeanUtils;
 

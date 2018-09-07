@@ -11,9 +11,13 @@ import org.springframework.stereotype.Repository;
 import java.util.List;
 
 @Repository
-public interface  AlarmHistoryRepository extends CrudRepository< AlarmHistoryEntity,Long> {
+public interface  AlarmHistoryRepository extends JpaRepository< AlarmHistoryEntity,Long> {
 
 //    List<AlarmHistoryEntity> findAlarmHistoryByPage(int limit, int offset);
 
     Page<AlarmHistoryEntity> findAll(Pageable pageable);
+//    aAlarmType
+    List<AlarmHistoryEntity> findByAAlarmType(int alarmTypeCommunicationPipe);
+
+    List<AlarmHistoryEntity> findByAAlarmTypeAndAAlarmState(int alarmTypeCommunicationPipe, int alarmState);
 }

@@ -18,6 +18,9 @@
     <context:component-scan base-package="com.gaussic.service"/>
     <!--<context:component-scan base-package="com.gaussic.quartz" />-->
     <context:component-scan base-package="com.gaussic.dataGet" />
+
+    <context:component-scan base-package="com.gaussic.dataGet.dcsHandle"/>
+    <context:component-scan base-package="com.gaussic.dataGet.windPojoHandle"/>
     <!-- 静态资源(js、image等)的访问 -->
     <mvc:default-servlet-handler/>
 
@@ -41,7 +44,8 @@
 
     <bean id="entityManagerFactory" class="org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean">
         <property name="persistenceUnitName" value="defaultPersistenceUnit"/>
-        <property name="packagesToScan" value="com.gaussic.model ,com.gaussic.model.history,com.gaussic.model.dcs"/>
+        <property name="packagesToScan"
+                  value="com.gaussic.model ,com.gaussic.model.history,com.gaussic.model.dcs,com.gaussic.model.dcsRemote"/>
         <property name="jpaVendorAdapter">
             <bean class="org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter"/>
         </property>

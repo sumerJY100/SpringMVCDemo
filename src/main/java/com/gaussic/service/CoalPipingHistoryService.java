@@ -36,6 +36,16 @@ public class CoalPipingHistoryService<T extends CoalPipingHistory> {
 //                                                  Calendar endC){
 //        List<CoP>
 //    }
+    public String generateJsonStringByHistroyList(List<T> coalPipeHistoryEntityList,
+                                                  Timestamp beginT,
+                                                  Timestamp endT) {
+        Calendar beginC = new GregorianCalendar();
+        beginC.setTimeInMillis(beginT.getTime());
+        Calendar endC = new GregorianCalendar();
+        endC.setTimeInMillis(endT.getTime());
+        return generateJsonStringByHistroyList(coalPipeHistoryEntityList,beginC,endC);
+
+    }
 
     public String generateJsonStringByHistroyList(List<T> coalPipeHistoryEntityList,
                                                   Calendar beginC,

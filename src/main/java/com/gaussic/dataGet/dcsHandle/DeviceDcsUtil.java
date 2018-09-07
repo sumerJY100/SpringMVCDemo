@@ -1,4 +1,4 @@
-package com.gaussic.util;
+package com.gaussic.dataGet.dcsHandle;
 
 import com.gaussic.model.dcs.*;
 

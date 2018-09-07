@@ -67,7 +67,7 @@
     </div>
     <table id="tb_departments"></table>
 </div>
-告警页面
+
 <script type="text/javascript">
 
 

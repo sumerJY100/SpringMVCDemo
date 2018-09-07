@@ -167,7 +167,7 @@
         </dependency>
     </dependencies>
     <build>
-        <finalName>wind5</finalName>
+        <finalName>wind7</finalName>
         <plugins>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>

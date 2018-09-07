@@ -46,6 +46,10 @@ public class HistoryReportController {
     @Autowired
     private CoalPipingHistoryRepositoryD coalPipingHistoryRepositoryD;
 
+
+
+
+
     @RequestMapping(value = "/queryHistoryDataForReport", method = RequestMethod.GET, produces = "text/html;charset=UTF-8")
     @ResponseBody
     public String queryHistoryDataForReport(@RequestParam(value = "queryDate", required = false) @DateTimeFormat(pattern =

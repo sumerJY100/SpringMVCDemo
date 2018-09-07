@@ -1,5 +1,7 @@
 package com.gaussic.model.dcs;
 
+import com.gaussic.model.dcsRemote.DcsRemotePointPojo;
+
 import javax.persistence.*;
 import java.util.List;
 import java.util.Objects;
@@ -21,6 +23,7 @@ public class DeviceDcsPojo {
     private Byte deviceStopBits;
     private Byte deviceParity;
     private List<DevicePointPojo> devicePointPojoList;
+    private List<DcsRemotePointPojo> dcsRemotePointPojoList;
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
@@ -104,7 +107,7 @@ public class DeviceDcsPojo {
     }
 
     @Basic
-    @Column(name="device_flowControl_in")
+    @Column(name = "device_flowControl_in")
     public Byte getDeviceFlowControlIn() {
         return deviceFlowControlIn;
     }
@@ -112,8 +115,9 @@ public class DeviceDcsPojo {
     public void setDeviceFlowControlIn(Byte deviceFlowControlIn) {
         this.deviceFlowControlIn = deviceFlowControlIn;
     }
+
     @Basic
-    @Column(name="device_flowControl_out")
+    @Column(name = "device_flowControl_out")
     public Byte getDeviceFlowControlOut() {
         return deviceFlowControlOut;
     }
@@ -121,8 +125,9 @@ public class DeviceDcsPojo {
     public void setDeviceFlowControlOut(Byte deviceFlowControlOut) {
         this.deviceFlowControlOut = deviceFlowControlOut;
     }
+
     @Basic
-    @Column(name="device_dataBits")
+    @Column(name = "device_dataBits")
     public Byte getDeviceDataBits() {
         return deviceDataBits;
     }
@@ -130,8 +135,9 @@ public class DeviceDcsPojo {
     public void setDeviceDataBits(Byte deviceDataBits) {
         this.deviceDataBits = deviceDataBits;
     }
+
     @Basic
-    @Column(name="device_stopBits")
+    @Column(name = "device_stopBits")
     public Byte getDeviceStopBits() {
         return deviceStopBits;
     }
@@ -139,8 +145,9 @@ public class DeviceDcsPojo {
     public void setDeviceStopBits(Byte deviceStopBits) {
         this.deviceStopBits = deviceStopBits;
     }
+
     @Basic
-    @Column(name="device_parity")
+    @Column(name = "device_parity")
     public Byte getDeviceParity() {
         return deviceParity;
     }
@@ -158,12 +165,21 @@ public class DeviceDcsPojo {
         this.devicePointPojoList = devicePointPojoList;
     }
 
+    @OneToMany(mappedBy = "deviceDcsPojo")
+    public List<DcsRemotePointPojo> getDcsRemotePointPojoList() {
+        return dcsRemotePointPojoList;
+    }
+
+    public void setDcsRemotePointPojoList(List<DcsRemotePointPojo> dcsRemotePointPojoList) {
+        this.dcsRemotePointPojoList = dcsRemotePointPojoList;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         DeviceDcsPojo that = (DeviceDcsPojo) o;
-        return deviceId == that.deviceId &&
+        return deviceId.equals(that.deviceId) &&
                 Objects.equals(deviceName, that.deviceName) &&
                 Objects.equals(deviceAddress, that.deviceAddress) &&
                 Objects.equals(devicePort, that.devicePort) &&

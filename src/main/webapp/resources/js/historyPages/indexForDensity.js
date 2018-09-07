@@ -458,8 +458,10 @@ var pipe1ForDensity, pipe2ForDensity, pipe3ForDensity, pipe4ForDensity;
 var pipe1ForVelocity, pipe2ForVelocity,pipe3ForVelocity, pipe4ForVelocity;
 var densityDataArr = [pipe1ForDensity,pipe2ForDensity,pipe3ForDensity,pipe4ForDensity];
 var velocityDataArr = [pipe1ForVelocity,pipe2ForVelocity,pipe3ForVelocity,pipe4ForVelocity];
+
 function initHistoryData() {
-    var url = "../getAMillHistoryData";
+    // var url = "../getAMillHistoryData";
+    var url = getQueryUrl();
     var queryData = $("#queryForm").serialize();
     var chartName = "密度历史曲线";
     $.getJSON(url, queryData, function (result) {

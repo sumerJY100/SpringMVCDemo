@@ -119,7 +119,7 @@ public class DcsConfigController {
             JSONArray jsonArray = new JSONArray();
             devicePointPojoList.forEach((p)->{
                 JSONObject jo = new JSONObject();
-                jo.put("id",p.getPointId());
+                jo.put("pointId",p.getPointId());
                 jo.put("dcsId",p.getDeviceDcsPojo().getDeviceId());
                 jo.put("pointName",p.getPointName());
                 jo.put("pointAddress",p.getPointAddress());
@@ -144,9 +144,13 @@ public class DcsConfigController {
      **/
     @RequestMapping(value="remoteUpdateGetDataIndex",method = RequestMethod.GET,produces = "text/html;charset=UTF-8")
     @ResponseBody
-    public String remoteUpdateGetDataIndex(){
-        StringBuffer buffer = new StringBuffer();
-        return buffer.toString();
+    public String remoteUpdateGetDataIndex(DevicePointPojo devicePointPojo){
+        JSONObject jsonObject = new JSONObject();
+
+        dcsService.saveDevicePointWithMainAttr(devicePointPojo);
+
+        jsonObject.put("data","success");
+        return jsonObject.toString();
     }
     /**
      * @Description 远端发送DCS数据，配置【查询】
@@ -164,7 +168,7 @@ public class DcsConfigController {
         JSONArray jsonArray = new JSONArray();
         dcsRemotePointPojoList.forEach((p)->{
             JSONObject jsonObjectTemp = new JSONObject();
-            jsonObjectTemp.put("remotePointId",p.getDcsRemotePointId());
+            jsonObjectTemp.put("dcsRemotePointId",p.getDcsRemotePointId());
             jsonObjectTemp.put("remotePointName",p.getRemotePointName());
             jsonObjectTemp.put("dcsId",p.getDeviceDcsPojo().getDeviceId());
             jsonObjectTemp.put("address",p.getAddress());
@@ -191,8 +195,12 @@ public class DcsConfigController {
      **/
     @RequestMapping(value="remoteUpdateSendDataIndex",method=RequestMethod.GET,produces = "text/html;charset=UTF-8")
     @ResponseBody
-    public String remoteUpdateSendDataIndex(){
-        StringBuffer buffer = new StringBuffer();
-        return buffer.toString();
+    public String remoteUpdateSendDataIndex(DcsRemotePointPojo dcsRemotePointPojo){
+        JSONObject jsonObject = new JSONObject();
+
+        dcsService.saveDevicePointWithMainAttr(dcsRemotePointPojo);
+
+        jsonObject.put("data","success");
+        return jsonObject.toString();
     }
 }

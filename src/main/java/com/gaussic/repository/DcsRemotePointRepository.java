@@ -10,6 +10,6 @@ import org.springframework.data.jpa.repository.JpaRepository;
  * @Date 18/9/3 15:16
  * @Version 1.0
  */
-public interface DcsRemotePointRepository extends JpaRepository<DcsRemotePointPojo, Long> {
+public interface DcsRemotePointRepository extends JpaRepository<DcsRemotePointPojo, Integer> {
 
 }

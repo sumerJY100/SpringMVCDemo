@@ -70,6 +70,9 @@ public class AlarmHistoryEntity implements Serializable {
 
     private String aAlarmReAlarmNote;
 
+
+
+
     private Timestamp aConfirmTime;
     private Boolean aConfirmFlag;
 

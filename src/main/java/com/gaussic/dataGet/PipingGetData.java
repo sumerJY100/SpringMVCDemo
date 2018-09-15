@@ -69,9 +69,9 @@ public class PipingGetData extends Thread {
         LocalDateTime localDateTime = LocalDateTime.now();
         /****处理DCS数据*****/
         DeviceDcsPojo deviceDcsPojo = deviceDcsRepository.findOne(1L);
-//        dcsGetDataByModbusRtuMaster.handleDCS(deviceDcsPojo,localDateTime);
+        dcsGetDataByModbusRtuMaster.handleDCS(deviceDcsPojo,localDateTime);
         /***处理粉管数据***/
-//        handlePipe(localDateTime);
+        handlePipe(localDateTime);
     }
 
 

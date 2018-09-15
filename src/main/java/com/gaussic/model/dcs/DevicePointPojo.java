@@ -10,6 +10,7 @@ public class DevicePointPojo {
 
 
     private DeviceDcsPojo deviceDcsPojo;
+    //可编辑
     private String pointName;
     private String pointAddress;
     private String pointNote;

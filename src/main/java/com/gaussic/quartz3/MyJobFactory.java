@@ -17,6 +17,7 @@ public class MyJobFactory extends AdaptableJobFactory {
         Object jobInstance = super.createJobInstance(bundle);
         //进行注入,这属于Spring的技术,不清楚的可以查看Spring的API.
         capableBeanFactory.autowireBean(jobInstance);
+
         return jobInstance;
     }
 }

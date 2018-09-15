@@ -47,18 +47,20 @@ var TableInit = function () {
             columns: [{
                 checkbox: true
             }, {
-                field: 'remotePointId',
-                title: '编号'
+                field: 'dcsRemotePointId',
+                title: '编号',
+                visible:false
+
             },
-                generatorColumn('dcsId', 'DCS设备名称', false),
-                generatorColumn('remotePointName', '点名', false),
-                generatorColumn('address', '地址', false),
+                generatorColumn('dcsId', 'DCS设备', false),
+                generatorColumn('remotePointName', '点名', true),
+                generatorColumn('address', '地址', true),
+                generatorColumn('densityOrVelocity', '浓度/密度', true),
+                generatorColumn('slaveId', 'slaveId', true),
                 generatorColumn('currentDate', '日期', false),
                 generatorColumn('currentTime', '时间', false),
                 generatorColumn('currentValue', '值', false),
                 generatorColumn('pipeId', '管道', false),
-                generatorColumn('densityOrVelocity', '浓度/密度', false),
-                generatorColumn('slaveId', 'slaveId', false),
                 generatorColumn('note', '备注', true)
             ],
             onEditableSave: function (field, row, oldValue, $el) {

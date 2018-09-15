@@ -17,27 +17,32 @@ import java.util.Objects;
 @Entity
 @Table(name = "dcs_remote_point", schema = "wind")
 public class DcsRemotePointPojo {
-    private int dcsRemotePointId;
-    private String remotePointName;
+    private Integer dcsRemotePointId;
+
 //    private Integer dcsDeviceId;
     private DeviceDcsPojo deviceDcsPojo;
+    //可编辑
     private String address;
+    private String note;
+    private Integer densityOrVelocity;
+    private Integer slaveId;
+    private String remotePointName;
+
+
     private Timestamp currTime;
     private Float currentValue;
-    private String note;
-    private int densityOrVelocity;
 //    private Integer coalPipingId;
     private CoalPipingEntity coalPipingEntity;
-    private Integer slaveId;
+
 
     @Id
     @Column(name = "dcs_remote_point_id")
     @GeneratedValue(strategy = GenerationType.AUTO)
-    public int getDcsRemotePointId() {
+    public Integer getDcsRemotePointId() {
         return dcsRemotePointId;
     }
 
-    public void setDcsRemotePointId(int dcsRemotePointId) {
+    public void setDcsRemotePointId(Integer dcsRemotePointId) {
         this.dcsRemotePointId = dcsRemotePointId;
     }
 
@@ -117,11 +122,11 @@ public class DcsRemotePointPojo {
     }
     @Basic
     @Column(name="density_or_velocity")
-    public int getDensityOrVelocity() {
+    public Integer getDensityOrVelocity() {
         return densityOrVelocity;
     }
 
-    public void setDensityOrVelocity(int densityOrVelocity) {
+    public void setDensityOrVelocity(Integer densityOrVelocity) {
         this.densityOrVelocity = densityOrVelocity;
     }
     @Basic

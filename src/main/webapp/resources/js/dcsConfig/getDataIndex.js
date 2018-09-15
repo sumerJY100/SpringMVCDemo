@@ -47,7 +47,7 @@ var TableInit = function () {
                 checkbox: true,
                 visible: false
             }, {
-                field: 'id',
+                field: 'pointId',
                 title: '编号',
                 visible: false
             },
@@ -57,7 +57,8 @@ var TableInit = function () {
                 generatorColumn('pointHistoryTableName', '历史表名', true),
                 generatorColumn('pointHistoryColumnName', '字段名称', true),
                 generatorColumn('pointHistoryPropertyName', '属性名称', true),
-                generatorColumn('pointHistoryOffset', '偏移量', true)
+                generatorColumn('pointHistoryOffset', '偏移量', true),
+                generatorColumn('pointNote', '备注', true)
             ],
             onEditableSave: function (field, row, oldValue, $el) {
                 $.ajax({

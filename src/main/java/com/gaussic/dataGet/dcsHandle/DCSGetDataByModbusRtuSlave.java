@@ -137,13 +137,13 @@ public class DCSGetDataByModbusRtuSlave implements InitializingBean {
         ProcessImageListener processImageListener = new ProcessImageListener() {
             @Override
             public void coilWrite(int offset, boolean oldValue, boolean newValue) {
-                System.out.println("offset" + offset + ",oldValue:" + oldValue + ",newValue:" + newValue);
+//                System.out.println("offset" + offset + ",oldValue:" + oldValue + ",newValue:" + newValue);
             }
 
             @Override
             public void holdingRegisterWrite(int offset, short oldValue, short newValue) {
-                System.out.println("hodingRegister:offset" + offset + ",oldValue:" + oldValue + ",newValue:" +
-                        newValue);
+//                System.out.println("hodingRegister:offset" + offset + ",oldValue:" + oldValue + ",newValue:" +
+//                        newValue);
                 //TODO 临时保存数据到临时数据库
                 tDcsService.saveDcsPoint(offset,newValue);
                 //TODO 处理DCS发送过来的数据

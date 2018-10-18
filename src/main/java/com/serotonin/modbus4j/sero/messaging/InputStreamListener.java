@@ -55,13 +55,14 @@ public class InputStreamListener implements Runnable {
     }
 
     public void run() {
+        //TODO slave监测数据，缓存大小与 间隔时间
         byte[] buf = new byte[1024 * 20];
         int readcount;
         try {
             while (running) {
                 try {
                     int avliable = in.available();
-                    System.out.println("in:" + avliable);
+//                    System.out.println("in:" + avliable);
                     if (avliable == 0) {
                         synchronized (this) {
                             try {
@@ -72,12 +73,12 @@ public class InputStreamListener implements Runnable {
                                 // no op
                             }
                         }
-                        System.out.println("continue");
+//                        System.out.println("continue");
                         continue;
                     }
 
                     readcount = in.read(buf);
-                    System.out.println("readCount:" + readcount);
+//                    System.out.println("readCount:" + readcount);
                     consumer.data(buf, readcount);
                 }
                 catch (IOException e) {

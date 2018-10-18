@@ -10,7 +10,7 @@
 <c:set var="ctx" value="${pageContext.request.contextPath}"/>
 <html>
 <head>
-    <title>Title</title>
+    <%--<title>Title</title>--%>
 
     <jsp:include page="/common/commonTopMenuJsAndMenu.jsp"></jsp:include>
     <%--@*1、Jquery组件引用*@--%>

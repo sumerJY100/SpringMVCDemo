@@ -11,7 +11,7 @@
 
 <html>
 <head>
-    <title>Title</title>
+    <%--<title>Title</title>--%>
     <jsp:include page="/common/commonTopMenuJsAndMenu.jsp"></jsp:include>
     <style type="text/css">
         table{

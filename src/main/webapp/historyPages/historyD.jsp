@@ -10,7 +10,7 @@
 <c:set var="ctx" value="${pageContext.request.contextPath}"/>
 <html>
 <head>
-    <title>Title</title>
+    <%--<title>Title</title>--%>
     <jsp:include page="/common/commonTopMenuJsAndMenu.jsp"></jsp:include>
     <script src="<c:url value='/resources/js/jquery-1.10.2.js'/>"></script>
 

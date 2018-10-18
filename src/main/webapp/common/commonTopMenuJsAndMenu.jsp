@@ -1,7 +1,7 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <c:set var="ctx" value="${pageContext.request.contextPath}"/>
-
+<title>5#风粉监测</title>
 <link rel="stylesheet" type="text/css" href="<c:url value='/resources/css/ddsmoothmenu.css'/>"/>
 
 

@@ -12,7 +12,7 @@
 <%@ taglib prefix="form" uri="http://www.springframework.org/tags/form" %>
 <html>
 <head>
-    <title>Title</title>
+    <%--<title>Title</title>--%>
     <link rel="stylesheet" href="<c:url value='/resources/js/BootstrapV3/css/bootstrap.css'/>">
 
     <jsp:include page="/common/commonTopMenuJsAndMenu.jsp"></jsp:include>

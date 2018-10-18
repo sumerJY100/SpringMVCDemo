@@ -12,7 +12,7 @@ function freshAbsoluteBar(chart, barData) {
     series[3].setData([barData.pipe4Data]);
 }
 
-function getAbsoluteBarWithOptions(divId, titleName, subtitleName,chartOption) {
+function getAbsoluteBarWithOptions(divId, titleName, subtitleName,chartOption,seriesNameArr) {
     var chartOptions = {
         chart: {
             type: 'column',
@@ -44,7 +44,7 @@ function getAbsoluteBarWithOptions(divId, titleName, subtitleName,chartOption) {
                 borderWidth: 0
             }
         },
-        series: [{name: 'A', data: []}, {name: 'B', data: []}, {name: 'C', data: []}, {name: 'D', data: []}]
+        series: [{name: seriesNameArr[0], data: []}, {name: seriesNameArr[1], data: []}, {name: seriesNameArr[2], data: []}, {name: seriesNameArr[3], data: []}]
     };
     $.extend(chartOptions,chartOption);
     return Highcharts.chart(divId,chartOptions);

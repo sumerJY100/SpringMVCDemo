@@ -32,9 +32,13 @@ import com.serotonin.modbus4j.sero.util.queue.ByteQueue;
 
 abstract public class ModbusRequest extends ModbusMessage {
     public static ModbusRequest createModbusRequest(ByteQueue queue) throws ModbusTransportException {
+        //复制一个queue
+//        ByteQueue queueConpy =
+//        System.out.print("queue请求："+queue.size() + "   ,功能码：" + );
         int slaveId = ModbusUtils.popUnsignedByte(queue);
         byte functionCode = queue.pop();
-
+//        System.out.println("输出请求的数据，链表形式");
+//        System.out.println("queue请求："+queue.size() + "   ,功能码：" + functionCode);
         ModbusRequest request = null;
         if (functionCode == FunctionCode.READ_COILS)
             request = new ReadCoilsRequest(slaveId);
@@ -58,9 +62,18 @@ abstract public class ModbusRequest extends ModbusMessage {
             request = new ReportSlaveIdRequest(slaveId);
         // else if (functionCode == FunctionCode.WRITE_MASK_REGISTER)
         // request = new WriteMaskRegisterRequest(slaveId);
-        else
+        else {
             request = new ExceptionRequest(slaveId, functionCode, ExceptionCode.ILLEGAL_FUNCTION);
 
+        }
+        byte[] b = queue.popAll();
+        System.out.print("输入的数据：" + b.length + ",");
+        for(int i=0;i<b.length;i++){
+            System.out.print(b[i] + " ");
+        }
+        System.out.println();
+
+        queue.push(b);
         request.readRequest(queue);
 
         return request;

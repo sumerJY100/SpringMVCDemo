@@ -95,7 +95,6 @@ function changeBtnStyleByShowCurveOrBar($curveOrBar) {
                         targetGroup = tempGroup;
                         break;
                     }
-
                 }
             }
             if (targetGroup) {
@@ -119,7 +118,6 @@ function changeBtnStyleByShowCurveOrBar($curveOrBar) {
                     if (barRelativeBtn) {
                         barRelativeBtn.removeClass(btnSelectedClass);
                     }
-
                     $showBtn.addClass("currentBtnClass");
                 }
             }
@@ -142,18 +140,19 @@ function getDivIdFromChartByChart(chart) {
 }
 function generatorAndInitGroup(group, baseDivId, chartOptions, millLocation){
     // var baseDivId = "container1";
+    var seriesNameArr = ["1","2","3","4"];
     var absDensityDivId = baseDivId + "_absoluteBar",
         relativeDensityDiveId = baseDivId + "_relativeBar",
         velocityCurveDivId = baseDivId + "V",
         absVelocityDivId = baseDivId + "V_absoluteBar",
         relativeVelocityDiveId = baseDivId + "V_relativeBar";
-    var absoluteBarForDensity = getAbsoluteBarWithOptions(absDensityDivId, densityChartTitle+"  ("+ absoluteChartSubtitle+")","",chartOptions );
-    var relativeBarForDensity = getRelativeBarWithOptions(relativeDensityDiveId, densityChartTitle+"  ("+ relativeChartSubtitle+")","",chartOptions);
-    var curveForDensity = getCurveChartWithOptions(baseDivId, densityChartTitle, "",chartOptions);
+    var absoluteBarForDensity = getAbsoluteBarWithOptions(absDensityDivId, densityChartTitle+"  ("+ absoluteChartSubtitle+")","",chartOptions ,seriesNameArr);
+    var relativeBarForDensity = getRelativeBarWithOptions(relativeDensityDiveId, densityChartTitle+"  ("+ relativeChartSubtitle+")","",chartOptions,seriesNameArr);
+    var curveForDensity = getCurveChartWithOptions(baseDivId, densityChartTitle, "",chartOptions,seriesNameArr);
 
-    var absoluteBarForVelocity = getAbsoluteBarWithOptions(absVelocityDivId, velocityChartTitle+"("+absoluteChartSubtitle+")","",chartOptions);
-    var relativeBarForVelocity = getRelativeBarWithOptions(relativeVelocityDiveId, velocityChartTitle+"("+relativeChartSubtitle+")","",chartOptions);
-    var curveForVelocity = getCurveChartWithOptions(velocityCurveDivId, velocityChartTitle, "",chartOptions);
+    var absoluteBarForVelocity = getAbsoluteBarWithOptions(absVelocityDivId, velocityChartTitle+"("+absoluteChartSubtitle+")","",chartOptions,seriesNameArr);
+    var relativeBarForVelocity = getRelativeBarWithOptions(relativeVelocityDiveId, velocityChartTitle+"("+relativeChartSubtitle+")","",chartOptions,seriesNameArr);
+    var curveForVelocity = getCurveChartWithOptions(velocityCurveDivId, velocityChartTitle, "",chartOptions,seriesNameArr);
 
 
     group.divJqueryDom = $("#"+baseDivId);
@@ -192,7 +191,22 @@ function initGroup() {
 
 }
 
+function freshCurrentChartAndTableByJsonData(group,time,millJqueryData,tableDiv){
+    var millADensityData = getDensityDataFromMill(millJqueryData);
+    var millADensityDataForRelative = getMillDataFromAbsoluteToRelative(millADensityData);
+    var millAVelocityData = getVelocityDataFromMill(millJqueryData);
+    var millAVelocityDataForRelative = getMillDataFromAbsoluteToRelative(millAVelocityData);
+    group.realTime = time;
+    group.densityRealData = millADensityData;
+    group.densityRealDataForRelative = millADensityDataForRelative;
+    group.velocityRealData = millAVelocityData;
+    group.velocityRealDataForRelative = millAVelocityDataForRelative;
+    group.coalCount = millJqueryData.coalCount;
+    group.millCurrent = millJqueryData.coalCurrent;
 
+    group.freshCurrentChart();
+    freshMainPageTable(group, tableDiv);
+}
 /**
  * 刷新当前正在显示的图表
  * @param result
@@ -204,68 +218,15 @@ function freshCurrentChartAndTable(result) {
     var millC = result.millC;
     var millD = result.millD;
 
-    var millADensityData = getDensityDataFromMill(millA);
-    var millBDensityData = getDensityDataFromMill(millB);
-    var millCDensityData = getDensityDataFromMill(millC);
-    var millDDensityData = getDensityDataFromMill(millD);
-
-    var millAVelocityData = getVelocityDataFromMill(millA);
-    var millBVelocityData = getVelocityDataFromMill(millB);
-    var millCVelocityData = getVelocityDataFromMill(millC);
-    var millDVelocityData = getVelocityDataFromMill(millD);
-
-    var millADensityDataForRelative = getMillDataFromAbsoluteToRelative(millADensityData);
-    var millBDensityDataForRelative = getMillDataFromAbsoluteToRelative(millBDensityData);
-    var millCDensityDataForRelative = getMillDataFromAbsoluteToRelative(millCDensityData);
-    var millDDensityDataForRelative = getMillDataFromAbsoluteToRelative(millDDensityData);
-
-    var millAVelocityDataForRelative = getMillDataFromAbsoluteToRelative(millAVelocityData);
-    var millBVelocityDataForRelative = getMillDataFromAbsoluteToRelative(millBVelocityData);
-    var millCVelocityDataForRelative = getMillDataFromAbsoluteToRelative(millCVelocityData);
-    var millDVelocityDataForRelative = getMillDataFromAbsoluteToRelative(millDVelocityData);
-
-    //判定当前正在显示的图表，刷新正在显示的图表
-
-    group1.realTime = time;
-    group1.densityRealData = millADensityData;
-    group1.densityRealDataForRelative = millADensityDataForRelative;
-    group1.velocityRealData = millAVelocityData;
-    group1.velocityRealDataForRelative = millAVelocityDataForRelative;
-
-    group2.realTime = time;
-    group2.densityRealData = millBDensityData;
-    group2.densityRealDataForRelative = millBDensityDataForRelative;
-    group2.velocityRealData = millBVelocityData;
-    group2.velocityRealDataForRelative = millBVelocityDataForRelative;
-
-    group3.realTime = time;
-    group3.densityRealData = millCDensityData;
-    group3.densityRealDataForRelative = millCDensityDataForRelative;
-    group3.velocityRealData = millCVelocityData;
-    group3.velocityRealDataForRelative = millCVelocityDataForRelative;
-
-    group4.realTime = time;
-    group4.densityRealData = millDDensityData;
-    group4.densityRealDataForRelative = millDDensityDataForRelative;
-    group4.velocityRealData = millDVelocityData;
-    group4.velocityRealDataForRelative = millDVelocityDataForRelative;
-
-    group1.freshCurrentChart();
-    group2.freshCurrentChart();
-    group3.freshCurrentChart();
-    group4.freshCurrentChart();
-//    freshAbsoluteBar(absoluteBarForDensity, millADensityData);
-
-
-    freshMainPageTable(group1, "coalMillTableADiv");
-    freshMainPageTable(group2, "coalMillTableBDiv");
-    freshMainPageTable(group3, "coalMillTableCDiv");
-    freshMainPageTable(group4, "coalMillTableDDiv");
-
+    freshCurrentChartAndTableByJsonData(group1,time,millA,"coalMillTableADiv");
+    freshCurrentChartAndTableByJsonData(group2,time,millB,"coalMillTableBDiv");
+    freshCurrentChartAndTableByJsonData(group3,time,millC,"coalMillTableCDiv");
+    freshCurrentChartAndTableByJsonData(group4,time,millD,"coalMillTableDDiv");
 
 }
 
 function freshMainPageTable(group, tableDivId) {
+
     var velocityData = group.velocityRealData;
     var velocityDataForRelative = group.velocityRealDataForRelative;
     var densityData = group.densityRealData;
@@ -275,6 +236,10 @@ function freshMainPageTable(group, tableDivId) {
 
         var $tableA = $(tableArr[0]);
         // alert($tableA.html())
+        //磨煤机电流
+        $tableA.find("tr:eq(1) th:eq(0)").html(group.millCurrent );
+        //磨煤机煤量
+        $tableA.find("tr:eq(3) td:eq(0)").html(group.coalCount);
         //pipe1绝对浓度
         $tableA.find("tr:eq(1) td:eq(1)").html(velocityData.pipe1Data);
         $tableA.find("tr:eq(1) td:eq(2)").html(velocityData.pipe2Data);
@@ -413,12 +378,12 @@ function divAddBtnAndBindClickFunction(curveId) {
     var checkBoxDTop = checkBoxCTop;
 
     var checkBoxName = curveId + "Checkbox";
-
+/**
     var $ACheckBox = addCheckBox($container, curveId, checkBoxName, "checkBoxIdA", "A", checkBoxALeft, checkBoxATop);
     var $BCheckBox = addCheckBox($container, curveId, checkBoxName, "checkBoxIdB", "B", checkBoxBLeft, checkBoxBTop);
     var $CCheckBox = addCheckBox($container, curveId, checkBoxName, "checkBoxIdC", "C", checkBoxCLeft, checkBoxCTop);
     var $DCheckBox = addCheckBox($container, curveId, checkBoxName, "checkBoxIdD", "D", checkBoxDLeft, checkBoxDTop);
-
+*/
     //柱状图与曲线图切换按钮
     var btnLeft = baseLeft + "px";
     var top_relativeBar = top;
@@ -465,10 +430,10 @@ function divAddBtnAndBindClickFunction(curveId) {
         currentGroup.densityRadio = $densityRadio;
         currentGroup.velocityRadio = $velocityRadio;
 
-        currentGroup.ACheckBox = $ACheckBox;
-        currentGroup.BCheckBox = $BCheckBox;
-        currentGroup.CCheckBox = $CCheckBox;
-        currentGroup.DCheckBox = $DCheckBox;
+        // currentGroup.ACheckBox = $ACheckBox;
+        // currentGroup.BCheckBox = $BCheckBox;
+        // currentGroup.CCheckBox = $CCheckBox;
+        // currentGroup.DCheckBox = $DCheckBox;
     }
 }
 

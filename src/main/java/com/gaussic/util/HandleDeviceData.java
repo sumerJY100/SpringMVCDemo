@@ -115,46 +115,49 @@ public class HandleDeviceData {
             } catch (IOException e) {
                 //TODO 记录日志
                 handleDataErrorMsg += "数据流解析异常";
+                inputStream = null;
 //                e.printStackTrace();
             }
             InputStreamReader inputStreamReader = null;
-            try {
-                inputStreamReader = new InputStreamReader(inputStream, "utf-8");
-            } catch (UnsupportedEncodingException e) {
-                //TODO 记录日志
-                handleDataErrorMsg += "编码解析异常";
+            if(null != inputStream) {
+                try {
+                    inputStreamReader = new InputStreamReader(inputStream, "utf-8");
+                } catch (UnsupportedEncodingException e) {
+                    //TODO 记录日志
+                    handleDataErrorMsg += "编码解析异常";
 //                e.printStackTrace();
-            }
-            BufferedReader bufferedReader = new BufferedReader(inputStreamReader);
+                }
+                BufferedReader bufferedReader = new BufferedReader(inputStreamReader);
 
-            String str = null;
-            try {
-                while ((str = bufferedReader.readLine()) != null) buffer.append(str);
-            } catch (IOException ioException) {
-                //TODO 记录日志
-                handleDataErrorMsg += "流读取异常";
+                String str = null;
+                try {
+                    while ((str = bufferedReader.readLine()) != null) buffer.append(str);
+                } catch (IOException ioException) {
+                    //TODO 记录日志
+                    handleDataErrorMsg += "流读取异常";
 //                ioException.printStackTrace();
-            }
-            try {
-                bufferedReader.close();
-            } catch (IOException e) {
-                handleDataErrorMsg += "流关闭异常1";
+                }
+                try {
+                    bufferedReader.close();
+                } catch (IOException e) {
+                    handleDataErrorMsg += "流关闭异常1";
 //                e.printStackTrace();
-            }
-            try {
-                inputStreamReader.close();
-            } catch (IOException e) {
-                //TODO 记录日常
-                handleDataErrorMsg += "流关闭异常2";
+                }
+                try {
+                    inputStreamReader.close();
+                } catch (IOException e) {
+                    //TODO 记录日常
+                    handleDataErrorMsg += "流关闭异常2";
 //                e.printStackTrace();
-            }
-            // 释放资源
-            try {
-                inputStream.close();
-            } catch (IOException e) {
-                //TODO 记录日志
-                handleDataErrorMsg += "流关闭异常3";
-                e.printStackTrace();
+                }
+                // 释放资源
+                try {
+                    inputStream.close();
+                } catch (IOException e) {
+                    //TODO 记录日志
+                    handleDataErrorMsg += "流关闭异常3";
+                    e.printStackTrace();
+                }
             }
             inputStream = null;
             httpUrlConn.disconnect();
@@ -180,7 +183,7 @@ public class HandleDeviceData {
 //            buffer.append(handleError.toCharArray(),buffer.toString().length() - 2,handleError.length());
         }
 
-        System.out.println("buffer:" + buffer.toString());
+//        System.out.println("buffer:" + buffer.toString());
         return buffer.toString();
     }
 }

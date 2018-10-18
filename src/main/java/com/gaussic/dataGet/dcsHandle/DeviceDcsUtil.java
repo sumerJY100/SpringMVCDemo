@@ -31,7 +31,7 @@ public class DeviceDcsUtil {
             if (historyTableName.equals(DevicePointHistory1Pojo.TABLE_NAME)) {
                 target = devicePointHistory1Pojo;
                 targetClass = DevicePointHistory1Pojo.class;
-//                Method method = DevicePointHistory1Pojo.class.getMethod(methodName, Float.class);
+//                Method method = DevicePointHistory14Pojo.class.getMethod(methodName, Float.class);
 //                method.invoke(devicePointHistory1Pojo, pointValue.floatValue());
             }else if(historyTableName.equals(DevicePointHistory2Pojo.TABLE_NAME)){
                 target = devicePointHistory2Pojo;

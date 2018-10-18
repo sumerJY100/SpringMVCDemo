@@ -94,10 +94,10 @@ public class PipeHandler {
 //                point.getDevicePointRealtimePojo();
 //            });
 //            int slaveId = Integer.parseInt(deviceDcsPojo.getDeviceAddress());
-//            DevicePointHistory1Pojo devicePointHistory1Pojo = new DevicePointHistory1Pojo(localDateTime);
-//            DevicePointHistory2Pojo devicePointHistory2Pojo = new DevicePointHistory2Pojo(localDateTime);
-//            DevicePointHistory3Pojo devicePointHistory3Pojo = new DevicePointHistory3Pojo(localDateTime);
-//            DevicePointHistory4Pojo devicePointHistory4Pojo = new DevicePointHistory4Pojo(localDateTime);
+//            DevicePointHistory14Pojo devicePointHistory1Pojo = new DevicePointHistory14Pojo(localDateTime);
+//            DevicePointHistory11Pojo devicePointHistory2Pojo = new DevicePointHistory11Pojo(localDateTime);
+//            DevicePointHistory12Pojo devicePointHistory3Pojo = new DevicePointHistory12Pojo(localDateTime);
+//            DevicePointHistory13Pojo devicePointHistory4Pojo = new DevicePointHistory13Pojo(localDateTime);
 //            new Thread(() -> {
 //                handelDcsData(devicePointPojoList, slaveId, localDateTime, devicePointHistory1Pojo, devicePointHistory2Pojo, devicePointHistory3Pojo, devicePointHistory4Pojo);
 //            }).start();
@@ -130,16 +130,20 @@ public class PipeHandler {
                     String url = coalPipingEntity.getCoalPipingSetEntity().getsUrl();
                     final String urlFinal = new String(url);
                     new Thread(() -> {
-                        PipingGetSingleDataThread pipingGetSingleDataThread = new PipingGetSingleDataThread();
-                        pipingGetSingleDataThread.setCoalPipingEntity(coalPipingEntity);
-                        pipingGetSingleDataThread.setNow(now);
-                        //采集数据，并更新实时数据【不进行更新保存到数据库】
-                        //TODO 历史数据录入，进行判定告警信息，此线程中，无法调用spring管理的bean
-                        //TODO 粉管数据关键处理类
-                        /************关键处理类****************/
-                        pipingGetSingleDataThread.updateData(urlFinal);
-
-                        countDownLatch.countDown();
+                        try {
+                            PipingGetSingleDataThread pipingGetSingleDataThread = new PipingGetSingleDataThread();
+                            pipingGetSingleDataThread.setCoalPipingEntity(coalPipingEntity);
+                            pipingGetSingleDataThread.setNow(now);
+                            //采集数据，并更新实时数据【不进行更新保存到数据库】
+                            //TODO 历史数据录入，进行判定告警信息，此线程中，无法调用spring管理的bean
+                            //TODO 粉管数据关键处理类
+                            /************关键处理类****************/
+                            pipingGetSingleDataThread.updateData(urlFinal);
+//                            System.out.println("---------------coalPipingEntity:" + coalPipingEntity.getpName() + "," + coalPipingEntity + "," + coalPipingEntity.getpDencity() );
+                            countDownLatch.countDown();
+                        }catch (Exception e){
+                            e.printStackTrace();
+                        }
                     }).start();
 
                 }
@@ -149,7 +153,19 @@ public class PipeHandler {
             countDownLatch.await();
             //02、将数据更新后的实体类，更新到数据库中。
             //02-01、更新coalPipingHistory数据
+//            System.out.println("更新历史数据");
+            //TODO 更新历史数据
+            for(CoalMillEntity coalMillEntity:coalMillEntityList){
+                List<CoalPipingEntity> coalPipingEntityList = coalMillEntity.getCoalPipingEntityList();
+                for(CoalPipingHistory coalPipingHistory:coalPipingHistorieList){
+//                    if(coalPipingHistory.getPip)
+                }
+            }
+
+            coalPipingHistoryService.updateCoalPipintHistoryData(coalPipingHistorieList,coalMillEntityList);
+            //todo 历史数据更新到数据库
             for (CoalPipingHistory coalPipingHistory : coalPipingHistorieList) {
+
                 coalPipingHistoryService.updateCoalPipingHistory(coalPipingHistory.gethCoalMillId(), coalPipingHistory);
             }
             //02-02、更新coalpipingEntity，粉管的浓度、密度、运行状态、告警状态
@@ -157,6 +173,8 @@ public class PipeHandler {
             for (CoalMillEntity coalMillEntity : coalMillEntityList) {
                 List<CoalPipingEntity> coalPipingEntityList = coalMillEntity.getCoalPipingEntityList();
                 for (CoalPipingEntity coalPipingEntity : coalPipingEntityList) {
+//                    System.out.println("保存数据" + coalPipingEntity.getpName() + "," + coalPipingEntity.getpDencity() +
+//                            "," + coalPipingEntity.getpVelocity());
                     coalPipingRepository.saveAndFlush(coalPipingEntity);
                     //告警信息的录入
                     if(null != coalPipingEntity){

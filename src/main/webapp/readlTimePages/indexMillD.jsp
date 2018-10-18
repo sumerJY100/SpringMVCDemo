@@ -33,7 +33,7 @@
 <div id="container" class="container containerCurve " style=""></div>
 <div id="container_relativeBar" class="container containerRelativeBar " style="">R</div>
 <div id="container_absoluteBar" class="container containerAbsoluteBar " style="">A</div>
-实时曲线
+
 <div id="container_V" class="container containerVCurve " style=""></div>
 <div id="container_V_relativeBar" class="container containerVRelativeBar " style="">R</div>
 <div id="container_V_absoluteBar" class="container containerVAbsoluteBar " style="">A</div>
@@ -41,49 +41,51 @@
 <%--<script src="${ctx}/js/curveAndBar/curve.js" type="text/javascript"></script>
 <script src="${ctx}/js/curveAndBar/absoluteBar.js" type="text/javascript"></script>
 <script src="${ctx}/js/curveAndBar/relativeBar.js" type="text/javascript"></script>--%>
-
+<div style="text-align:center;margin-top:5px;font-size:24px;">
+    #40磨煤机
+</div>
 <div style="position:absolute;margin-left:950px;margin-top:50px;">
 
     <table cellpadding="0" cellspacing="0" id="realTimeTable">
         <tr>
-            <th rowspan=5 style="width:100px;">磨煤<br/>机D</th>
+            <th rowspan=5 style="width:100px;">#40<br/>磨煤机</th>
             <th>状态</th>
             <th style="width:120px;">值</th>
 
-            <th style="width:100px;">A</th>
-            <th style="width:100px;">B</th>
-            <th style="width:100px;">C</th>
-            <th style="width:100px;">D</th>
+            <th style="width:100px;">管道41</th>
+            <th style="width:100px;">管道42</th>
+            <th style="width:100px;">管道43</th>
+            <th style="width:100px;">管道44</th>
         </tr>
         <tr>
             <th rowspan="2" style="width:60px;">运行中</th>
             <td>风速[绝对]</td>
             <td>0</td>
-            <td>01</td>
-            <td>02</td>
-            <td>03</td>
+            <td>0</td>
+            <td>0</td>
+            <td>0</td>
         </tr>
         <tr>
             <td>风速[相对]</td>
             <td>0</td>
-            <td>01</td>
-            <td>02</td>
-            <td>03</td>
+            <td>0</td>
+            <td>0</td>
+            <td>0</td>
         </tr>
         <tr>
             <td rowspan="2">0</td>
             <td>浓度[绝对]</td>
-            <td>11</td>
-            <td>12</td>
-            <td>13</td>
-            <td>14</td>
+            <td>0</td>
+            <td>0</td>
+            <td>0</td>
+            <td>0</td>
         </tr>
         <tr>
             <td>浓度[相对]</td>
-            <td>21</td>
-            <td>22</td>
-            <td>23</td>
-            <td>24</td>
+            <td>0</td>
+            <td>0</td>
+            <td>0</td>
+            <td>0</td>
         </tr>
     </table>
 </div>

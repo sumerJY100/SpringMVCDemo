@@ -20,17 +20,17 @@ $(document).ready(function () {
     //初始化曲线图，柱图
     //密度
     var chartOptions = {exporting:{enabled:false},legend:{align:"right",verticalAlign:"top",floating:true,y:40,itemDistance:5,itemStyle:{fontFamily:"宋体",fontWeight:'light'}}};
-
+    var seriesNameArr = ["1","2","3","4"];
     var curveOptions = $.extend({},chartOptions);
     curveOptions.legend.y = 10;
-    millCurve = getCurveChartWithOptionsAndSerieNames("container_Mill", "磨煤机", "",curveOptions,["磨煤量"]);
-     absoluteBarForDensity = getAbsoluteBarWithOptions("container_absoluteBar", densityChartTitle+"("+ relativeChartSubtitle + ")" ,"",chartOptions);
-     relativeBarForDensity = getRelativeBarWithOptions("container_relativeBar", densityChartTitle+"("+ relativeChartSubtitle + ")" ,"",chartOptions);
-     curveForDensity = getCurveChartWithOptions("container", densityChartTitle, "",curveOptions);
+    millCurve = getCurveChartWithOptionsAndSerieNames("container_Mill", "磨煤量", "",curveOptions,["磨煤量"]);
+     absoluteBarForDensity = getAbsoluteBarWithOptions("container_absoluteBar", densityChartTitle+"("+ relativeChartSubtitle + ")" ,"",chartOptions,seriesNameArr);
+     relativeBarForDensity = getRelativeBarWithOptions("container_relativeBar", densityChartTitle+"("+ relativeChartSubtitle + ")" ,"",chartOptions,seriesNameArr);
+     curveForDensity = getCurveChartWithOptions("container", densityChartTitle, "",curveOptions,seriesNameArr);
     //风速
-     absoluteBarForVelocity = getAbsoluteBarWithOptions("container_V_absoluteBar", velocityChartTitle + "(" + absoluteChartSubtitle+")", "",chartOptions);
-     relativeBarForVelocity = getRelativeBarWithOptions("container_V_relativeBar", velocityChartTitle+ "(" + absoluteChartSubtitle+")", "",chartOptions);
-     curveForVelocity = getCurveChartWithOptions("container_V", velocityChartTitle, "",curveOptions);
+     absoluteBarForVelocity = getAbsoluteBarWithOptions("container_V_absoluteBar", velocityChartTitle + "(" + absoluteChartSubtitle+")", "",chartOptions,seriesNameArr);
+     relativeBarForVelocity = getRelativeBarWithOptions("container_V_relativeBar", velocityChartTitle+ "(" + absoluteChartSubtitle+")", "",chartOptions,seriesNameArr);
+     curveForVelocity = getCurveChartWithOptions("container_V", velocityChartTitle, "",curveOptions,seriesNameArr);
 
      // curveForVelocity.len
      //初始化曲线图数据
@@ -144,7 +144,7 @@ function freshCurrentChartAndTable(result) {
 
     //刷新表格
     //TODO 刷新实时画面的窗口
-    freshRealTimeMainPageTable(millADensityData,millAVelocityData,millADensityDataForRelative,millAVelocityDataForRelative,result.millData);
+    freshRealTimeMainPageTable(millADensityData,millAVelocityData,millADensityDataForRelative,millAVelocityDataForRelative,result.millData,result.millCurrent);
 
 
 
@@ -153,10 +153,12 @@ function freshCurrentChartAndTable(result) {
 /**
  * 刷新实时画面的表格
  */
-function freshRealTimeMainPageTable(millADensityData,millAVelocityData,millADensityDataForRelative,millAVelocityDataForRelative,mill){
+function freshRealTimeMainPageTable(millADensityData,millAVelocityData,millADensityDataForRelative,millAVelocityDataForRelative,mill,millCurrent){
     var $table = $("#realTimeTable");
+    // alert(millCurrent);
     //运行状态
-    $table.find("tr:eq(1) th:eq(0)").html("运行中");
+    $table.find("tr:eq(1) th:eq(0)").html(millCurrent);
+    // alert($table.find("tr:eq(1) th:eq(0)").html());
     //磨煤机磨煤量
     $table.find("tr:eq(3) td:eq(0)").html(mill);
 

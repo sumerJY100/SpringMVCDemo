@@ -54,9 +54,12 @@ var TableInit = function () {
                 generatorColumn('dcsId', 'DCS设备名称', false),
                 generatorColumn('pointName', '点名', true),
                 generatorColumn('pointAddress', '地址', true),
+                generatorColumn('realDate', '时间', false),
+                generatorColumn('realValue', '值', false),
                 generatorColumn('pointHistoryTableName', '历史表名', true),
                 generatorColumn('pointHistoryColumnName', '字段名称', true),
                 generatorColumn('pointHistoryPropertyName', '属性名称', true),
+
                 generatorColumn('pointHistoryOffset', '偏移量', true),
                 generatorColumn('pointNote', '备注', true)
             ],

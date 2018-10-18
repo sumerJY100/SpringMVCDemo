@@ -47,7 +47,7 @@
 <div align="center">
 
     <DIV>
-        磨煤机A
+        磨煤机10#
     </DIV>
     <div class="row from-inline">
         <form id="queryForm" role="form" class="form-inline" style="margin-top:10px;margin-bottom:10px;">

@@ -30,6 +30,9 @@ function Group() {
     this.velocityRealData = null;
     this.velocityRealDataForRelative = null;
 
+    this.coalCount = null;
+    this.coalCurrent = null;
+
     //曲线初始化的地址
     this.densityCurveUrl = null;
     this.velocityCurveUrl = null;

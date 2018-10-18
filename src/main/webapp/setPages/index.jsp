@@ -50,10 +50,11 @@
             <th>粉管编号</th>
 
             <th>粉管位置</th>
+            <th>浓度</th>
+            <th>风速</th>
             <th>粉管参数一</th>
             <th>粉管参数二</th>
-            <th>粉管参数三</th>
-            <th>粉管参数四</th>
+
             <th>设备地址</th>
             <th>测试</th>
             <th>修改</th>
@@ -75,10 +76,10 @@
                 <td> ${coalPiping.pNumUserDefined} </td>
 
                 <td>${coalPiping.pLocationUserDefined}</td>
+                <td>${coalPiping.pDencity}</td>
+                <td>${coalPiping.pVelocity}</td>
                 <td>${pipingSet.sParam1}</td>
                 <td>${pipingSet.sParam2}</td>
-                <td>${pipingSet.sParam3}</td>
-                <td>${pipingSet.sParam4}</td>
                 <td>${pipingSet.sUrl}</td>
                 <td><input type="button" id="testBtn" value="测试"></td>
                 <td><a href="editPipingSet?piping.id=${coalPiping.id}">修改</a></td>

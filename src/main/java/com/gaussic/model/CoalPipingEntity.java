@@ -102,10 +102,14 @@ public class CoalPipingEntity {
     @Basic
     @Column(name = "p_velocity")
     public Float getpVelocity() {
-        if(null != this.pVelocity){
+        if(null != this.pVelocity ){
+//            System.out.println("+++++++++0000000+++++++++++++"+this.pVelocity +"," + this.pVelocity.toString() + "," +
+//                    "name:" + this.pName);
             BigDecimal bigDecimal = new BigDecimal(this.pVelocity);
-            BigDecimal bigDecimal1 = bigDecimal.setScale(6,BigDecimal.ROUND_FLOOR);
+            BigDecimal bigDecimal1 = bigDecimal.setScale(2,BigDecimal.ROUND_FLOOR);
             this.pVelocity = bigDecimal1.floatValue();
+//            System.out.println("++++++++++11111111++++++++++++"+this.pVelocity +"," + this.pVelocity.toString() + "," +
+//                    "name:" + this.pName);
         }
         return Optional.ofNullable(pVelocity).orElse(0f);
     }
@@ -117,7 +121,7 @@ public class CoalPipingEntity {
     @Basic
     @Column(name = "p_dencity")
     public Float getpDencity() {
-        if(null != this.pDencity){
+        if(null != this.pDencity && this.pDencity > 0){
             BigDecimal bigDecimal = new BigDecimal(this.pDencity);
             BigDecimal bigDecimal1 = bigDecimal.setScale(6,BigDecimal.ROUND_FLOOR);
             this.pDencity = bigDecimal1.floatValue();

@@ -13,6 +13,10 @@
 .ddsmoothmenu-v ul li{
     position: relative;
     float: none;
+
+}
+li{
+    /*height:50px;*/
 }
 
 /* Top level menu links style */

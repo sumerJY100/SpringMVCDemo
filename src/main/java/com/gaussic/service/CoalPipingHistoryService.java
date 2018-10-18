@@ -162,8 +162,10 @@ public class CoalPipingHistoryService<T extends CoalPipingHistory> {
      * @param coalPipingHistoryEntity
      */
     public void updateCoalPipingHistory(Long coalMillId, CoalPipingHistory coalPipingHistoryEntity) {
-
+//        System.out.println("更新历史数据：" + coalMillId.intValue() + "," + coalPipingHistoryEntity.gethPipeADencity() + ","
+//                + coalPipingHistoryEntity.getPipeADensityNotNull());
         switch (coalMillId.intValue()) {
+
             case 1:
                 coalPipingHistoryRepositoryA.saveAndFlush((AcoalPipingHistoryEntity) coalPipingHistoryEntity);
                 break;
@@ -194,6 +196,31 @@ public class CoalPipingHistoryService<T extends CoalPipingHistory> {
         updateCoalPipingHistory(coalPipingEntityList.get(0).getpCoalMillId(), coalPipingHistoryEntity);
     }
 
+    public void updateCoalPipintHistoryData(List<CoalPipingHistory> coalPipingHistorieList,List<CoalMillEntity>
+            coalMillEntityList){
+        for(CoalMillEntity coalMillEntity:coalMillEntityList){
+            List<CoalPipingEntity> coalPipingEntityList = coalMillEntity.getCoalPipingEntityList();
+            CoalPipingHistory coalPipingHistoryByCoalMill = getCoalPipingHistoryListByCoalMill
+                    (coalMillEntity,coalPipingHistorieList);
+            //更新一台磨煤机的风管历史数据
+            for(CoalPipingEntity coalPipingEntity:coalPipingEntityList){
+                setCoalPipingHistory(coalPipingEntity,coalPipingHistoryByCoalMill);
+            }
+        }
+    }
+    public CoalPipingHistory getCoalPipingHistoryListByCoalMill(CoalMillEntity coalMillEntity,List<CoalPipingHistory>
+            coalPipingHistories){
+        CoalPipingHistory coalPipingHistory = null;
+        Long coalMillId = coalMillEntity.getId();
+        for(CoalPipingHistory coalPipingHistoryTemp:coalPipingHistories){
+            Long millIdForTemp = coalPipingHistoryTemp.gethCoalMillId();
+            if(coalMillId.equals(millIdForTemp)){
+                coalPipingHistory = coalPipingHistoryTemp;
+                break;
+            }
+        }
+        return coalPipingHistory;
+    }
     /**
      * 根据coalPiping的实时数据，更新历史数据
      *

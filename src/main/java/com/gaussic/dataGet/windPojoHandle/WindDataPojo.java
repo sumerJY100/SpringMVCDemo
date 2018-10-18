@@ -40,6 +40,7 @@ public class WindDataPojo {
     private String handelDataValue;
 
     public WindDataPojo(JSONArray jsonArray){
+//        System.out.println("jsonArray:" + jsonArray + ",      " +jsonArray.length());
         if(null != jsonArray && jsonArray.length() == 5){
             JSONObject pipeNumPojo = new JSONObject(jsonArray.get(0).toString());
             this.pipeNumValue = pipeNumPojo.getString(pipeNumKey);
@@ -63,6 +64,7 @@ public class WindDataPojo {
 //            communicationValue = errorJsonObj.getString(CONNECT_ERROR);
 //            handelDataValue = errorJsonObj.getString(HANDLE_DATA_ERROR);
             Iterator<String> iterable = errorJsonObj.keys();
+//            System.out.println("json异常");
             for (Iterator<String> it = iterable; it.hasNext(); ) {
                 String key = it.next();
                 if(key.equals(CONNECT_ERROR)){

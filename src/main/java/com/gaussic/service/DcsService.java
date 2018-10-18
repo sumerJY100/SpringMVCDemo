@@ -70,12 +70,16 @@ public class DcsService {
     }
 
     public void saveDeviceDcsWithMainAttr(DeviceDcsPojo deviceDcsPojo) {
-        if (null != deviceDcsPojo && null != deviceDcsPojo.getDeviceId()) {
-            DeviceDcsPojo deviceDcsPojoFromDb = deviceDcsRepository.findOne(deviceDcsPojo.getDeviceId());
-            for (int i = 0; i < deviceDcsAttrsList.size(); i++) {
-                setNewAttributeValue(deviceDcsPojo, deviceDcsPojoFromDb, deviceDcsAttrsList.get(i));
+        try {
+            if (null != deviceDcsPojo && null != deviceDcsPojo.getDeviceId()) {
+                DeviceDcsPojo deviceDcsPojoFromDb = deviceDcsRepository.findOne(deviceDcsPojo.getDeviceId());
+                for (int i = 0; i < deviceDcsAttrsList.size(); i++) {
+                    setNewAttributeValue( deviceDcsPojo, deviceDcsPojoFromDb,deviceDcsAttrsList.get(i));
+                }
+                deviceDcsRepository.saveAndFlush(deviceDcsPojoFromDb);
             }
-            deviceDcsRepository.saveAndFlush(deviceDcsPojoFromDb);
+        }catch (Exception e){
+            e.printStackTrace();
         }
     }
 
@@ -94,6 +98,8 @@ public class DcsService {
                     setMethod.invoke(newObj, (Integer) getMethod.invoke(oldObj));
                 } else if (paramTypeClass.getSimpleName().equals("String")) {
                     setMethod.invoke(newObj, (String) getMethod.invoke(oldObj));
+                } else if(paramTypeClass.getSimpleName().equals("Byte")){
+                    setMethod.invoke(newObj,(Byte)getMethod.invoke(oldObj));
                 }
             }
         } catch (Exception e) {

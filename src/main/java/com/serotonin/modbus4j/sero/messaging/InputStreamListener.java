@@ -55,24 +55,29 @@ public class InputStreamListener implements Runnable {
     }
 
     public void run() {
-        byte[] buf = new byte[1024];
+        byte[] buf = new byte[1024 * 20];
         int readcount;
         try {
             while (running) {
                 try {
-                    if (in.available() == 0) {
+                    int avliable = in.available();
+                    System.out.println("in:" + avliable);
+                    if (avliable == 0) {
                         synchronized (this) {
                             try {
-                                wait(readDelay);
+                                wait(readDelay * 20);
+//                                wait(300);
                             }
                             catch (InterruptedException e) {
                                 // no op
                             }
                         }
+                        System.out.println("continue");
                         continue;
                     }
 
                     readcount = in.read(buf);
+                    System.out.println("readCount:" + readcount);
                     consumer.data(buf, readcount);
                 }
                 catch (IOException e) {

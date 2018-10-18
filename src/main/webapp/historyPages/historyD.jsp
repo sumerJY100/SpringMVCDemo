@@ -46,7 +46,7 @@
 <jsp:include page="/common/commonTopMenuBody.jsp"></jsp:include>
 <div align="center">
     <DIV>
-        磨煤机D
+        磨煤机40#
     </DIV>
     <div class="row from-inline">
         <form id="queryForm" role="form" class="form-inline" style="margin-top:10px;margin-bottom:10px;">

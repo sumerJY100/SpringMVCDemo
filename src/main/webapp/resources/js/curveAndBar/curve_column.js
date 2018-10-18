@@ -73,8 +73,8 @@ function getCurveChartWithOptionsAndSerieNames(divId, titleName, subtitle,chartO
     var chart = getCurveChartWithOptionsAndSeries(divId, titleName, subtitle,chartOption,series);
     return chart;
 }
-function getCurveChartWithOptions(divId, titleName, subtitle,chartOption) {
-    var series = getInitSeriesArray();
+function getCurveChartWithOptions(divId, titleName, subtitle,chartOption,seriesNameArr) {
+    var series = getInitSeriesArray(seriesNameArr);
     var chart = getCurveChartWithOptionsAndSeries(divId, titleName, subtitle,chartOption,series);
     return chart;
 }
@@ -157,19 +157,19 @@ function freshCurveChartForSingleLine(chart,time,data){
     series[0].addPoint([time,data],true,true);
 }
 
-function getInitSeriesArray() {
+function getInitSeriesArray(seriesNameArr) {
     var AData = [], BData = [], CData = [], DData = [];
     var seriesArray = [{
-        name: 'A',
+        name: seriesNameArr[0],
         data: AData
     }, {
-        name: 'B',
+        name: seriesNameArr[1],
         data: BData
     }, {
-        name: 'C',
+        name: seriesNameArr[2],
         data: CData
     }, {
-        name: 'D',
+        name: seriesNameArr[3],
         data: DData
     }];
     return seriesArray;

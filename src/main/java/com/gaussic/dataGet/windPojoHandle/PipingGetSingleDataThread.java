@@ -37,9 +37,10 @@ public class PipingGetSingleDataThread extends Thread {
         //02、jsonArray对象转换为 中间对象“windDataPojo"
         //错误信息录入到Windpojo里面
         WindDataPojo windDataPojo = new WindDataPojo(jo);
+//        System.out.println("1111111111111111windDataPojo:" + windDataPojo + ",--------" + windDataPojo.getSpeedValue());
         //03、更新 coalPipingEntity对象的风速与密度
         coalPipingEntity = WindPojoToEntityUtil.updateRealData(now.getTime(),coalPipingEntity,windDataPojo);
-
+//        System.out.println("coalPipintEntity:" + coalPipingEntity.getpDencity());
     }
 
 

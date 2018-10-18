@@ -1,4 +1,4 @@
-historyA.jsp<%--
+<%--
   Created by IntelliJ IDEA.
   User: admin
   Date: 2018/6/27
@@ -46,7 +46,7 @@ historyA.jsp<%--
 <jsp:include page="/common/commonTopMenuBody.jsp"></jsp:include>
 <div align="center">
     <DIV>
-        磨煤机B
+        磨煤机20#
     </DIV>
     <div class="row from-inline">
         <form id="queryForm" role="form" class="form-inline" style="margin-top:10px;margin-bottom:10px;">

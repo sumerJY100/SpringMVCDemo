@@ -22,10 +22,11 @@ public class WindPojoToEntityUtil {
         //TODO 数据恢复以后，通讯中断的状态需要及时更新。
 
         coalPipingEntity.setpTime(new Timestamp(timeLong));
-        if (null != pojo) {
+        if (null != pojo && null == pojo.getCommunicationValue() ) {
             //TODO 设置风管浓度
             handlePipeDensityValue(coalPipingEntity,pojo);
             //TODO 风速数据，获取到的数据，使用指定的距离除以时间量，就是速度
+//            System.out.println("处理速度-------------------------------------");
             handlePipeSpeedValue(coalPipingEntity,pojo);
             //TODO 设置通讯状态，如果中断，则新增告警，如果正常，检查是否有中断的告警，如果有，则解警
             handlePipeCommunication(coalPipingEntity,pojo);
@@ -83,7 +84,7 @@ public class WindPojoToEntityUtil {
             //TODO 增加告警处理，当X与Y的值偏差大于5%的时候，需要增加一个告警信息
             float dencity = (Float.parseFloat(pojo.getDensityXValue()) + Float.parseFloat(pojo.getDensityYValue())) / 2;
             coalPipingEntity.setpDencity(dencity);
-//                System.out.println(pojo);
+//            System.out.println("pojo.dencity:" + dencity);
         } else {
             coalPipingEntity.setpDencity(null);
         }
@@ -97,10 +98,24 @@ public class WindPojoToEntityUtil {
      * @return
      **/
     private static void handlePipeSpeedValue(CoalPipingEntity coalPipingEntity,WindDataPojo pojo) {
-        if (null != pojo.getSpeedValue()) {
-            float distance = 0.05F;
-            float speed = distance / Float.parseFloat(pojo.getSpeedValue());
-            coalPipingEntity.setpVelocity(speed);
+        if (null != pojo.getSpeedValue() ) {
+            try {
+//                System.out.println("=================================");
+                Float pojoSpeedValue = Float.parseFloat(pojo.getSpeedValue());
+                if(pojoSpeedValue > 0) {
+                    float distance = 0.05F;
+                    float speed = distance / pojoSpeedValue;
+                    coalPipingEntity.setpVelocity(speed);
+                }else{
+                    coalPipingEntity.setpVelocity(0f);
+                }
+//                System.out.println("=================================");
+            }catch (Exception e){
+//                e.printStackTrace();
+                //TODO 速度为0的时候进行判断
+                coalPipingEntity.setpVelocity(0f);
+            }
+
         } else {
             coalPipingEntity.setpVelocity(null);
         }

@@ -111,28 +111,40 @@ public class DcsConfigController {
     @RequestMapping(value="remoteGetDataIndex" ,method=RequestMethod.GET,produces="text/html;charset=UTF-8")
     @ResponseBody
     public String remoteGetDataIndex(){
-        List<DevicePointPojo> devicePointPojoList = devicePointRepository.findAll();
         JSONObject jsonObject = new JSONObject();
+        try {
+            List<DevicePointPojo> devicePointPojoList = devicePointRepository.findAll();
 
-        if(null != devicePointPojoList && devicePointPojoList.size() >0) {
-            jsonObject.put("total", devicePointPojoList.size());
-            JSONArray jsonArray = new JSONArray();
-            devicePointPojoList.forEach((p)->{
-                JSONObject jo = new JSONObject();
-                jo.put("pointId",p.getPointId());
-                jo.put("dcsId",p.getDeviceDcsPojo().getDeviceId());
-                jo.put("pointName",p.getPointName());
-                jo.put("pointAddress",p.getPointAddress());
-                jo.put("pointNote",p.getPointNote());
-                jo.put("pointHistoryTableName",p.getPointHistoryDeviceTableName());
-                jo.put("pointHistoryColumnName",p.getPointHistoryColumnName());
-                jo.put("pointHistoryPropertyName",p.getPointHistoryPorpertyName());
-                jo.put("pointHistoryOffset",p.getPointHistoryOffset());
-                jsonArray.put(jo);
-            });
-            jsonObject.put("rows",jsonArray );
-        }
+            if (null != devicePointPojoList && devicePointPojoList.size() > 0) {
+                jsonObject.put("total", devicePointPojoList.size());
+                JSONArray jsonArray = new JSONArray();
+                devicePointPojoList.forEach((p) -> {
+                    JSONObject jo = new JSONObject();
+                    jo.put("pointId", p.getPointId());
+                    jo.put("dcsId", p.getDeviceDcsPojo().getDeviceId());
+                    jo.put("pointName", p.getPointName());
+                    jo.put("pointAddress", p.getPointAddress());
+                    jo.put("pointNote", p.getPointNote());
+                    jo.put("pointHistoryTableName", p.getPointHistoryDeviceTableName());
+                    jo.put("pointHistoryColumnName", p.getPointHistoryColumnName());
+                    jo.put("pointHistoryPropertyName", p.getPointHistoryPorpertyName());
+                    jo.put("pointHistoryOffset", null==p.getPointHistoryOffset()?"":p.getPointHistoryOffset());
+//                    jo.put("unit",p.getUnit());
+                    if(null != p.getDevicePointRealtimePojo()) {
+                        jo.put("realValue", p.getDevicePointRealtimePojo().getPointValue());
+                        jo.put("realDate", p.getDevicePointRealtimePojo().getrTime());
+                    }else{
+                        jo.put("realData", "--");
+                        jo.put("realTime", "--");
+                    }
+                    jsonArray.put(jo);
+                });
+                jsonObject.put("rows", jsonArray);
+            }
 //        System.out.println(jsonObject.toString());
+        }catch (Exception e){
+            e.printStackTrace();
+        }
         return jsonObject.toString();
     }
     /**
@@ -162,28 +174,33 @@ public class DcsConfigController {
     @RequestMapping(value="remoteSendDataIndex",method=RequestMethod.GET,produces = "text/html;charset=UTF-8")
     @ResponseBody
     public String remoteSendDataIndex(){
-        List<DcsRemotePointPojo> dcsRemotePointPojoList = dcsRemotePointRepository.findAll();
+
         JSONObject jsonObject = new JSONObject();
-        jsonObject.put("total",dcsRemotePointPojoList.size());
-        JSONArray jsonArray = new JSONArray();
-        dcsRemotePointPojoList.forEach((p)->{
-            JSONObject jsonObjectTemp = new JSONObject();
-            jsonObjectTemp.put("dcsRemotePointId",p.getDcsRemotePointId());
-            jsonObjectTemp.put("remotePointName",p.getRemotePointName());
-            jsonObjectTemp.put("dcsId",p.getDeviceDcsPojo().getDeviceId());
-            jsonObjectTemp.put("address",p.getAddress());
-            jsonObjectTemp.put("currentDate",p.getCurrTime().toLocalDateTime().toLocalDate());
-            jsonObjectTemp.put("currentTime",p.getCurrTime().toLocalDateTime().toLocalTime());
-            jsonObjectTemp.put("currentValue",p.getCurrentValue());
-            jsonObjectTemp.put("note",p.getNote()==null?"":p.getNote());
-            jsonObjectTemp.put("pipeId",p.getCoalPipingEntity().getId());
-            jsonObjectTemp.put("densityOrVelocity",p.getDensityOrVelocity());
-            jsonObjectTemp.put("slaveId",p.getSlaveId());
+        try {
+            List<DcsRemotePointPojo> dcsRemotePointPojoList = dcsRemotePointRepository.findAll();
+            jsonObject.put("total", dcsRemotePointPojoList.size());
+            JSONArray jsonArray = new JSONArray();
+            dcsRemotePointPojoList.forEach((p) -> {
+                JSONObject jsonObjectTemp = new JSONObject();
+                jsonObjectTemp.put("dcsRemotePointId", p.getDcsRemotePointId());
+                jsonObjectTemp.put("remotePointName", p.getRemotePointName());
+                jsonObjectTemp.put("dcsId", p.getDeviceDcsPojo().getDeviceId());
+                jsonObjectTemp.put("address", p.getAddress());
+                jsonObjectTemp.put("currentDate", p.getCurrTime().toLocalDateTime().toLocalDate());
+                jsonObjectTemp.put("currentTime", p.getCurrTime().toLocalDateTime().toLocalTime());
+                jsonObjectTemp.put("currentValue", p.getCurrentValue());
+                jsonObjectTemp.put("note", p.getNote() == null ? "" : p.getNote());
+                jsonObjectTemp.put("pipeId", p.getCoalPipingEntity().getId());
+                jsonObjectTemp.put("densityOrVelocity", p.getDensityOrVelocity());
+                jsonObjectTemp.put("slaveId", p.getSlaveId());
 
 //            jsonObjectTemp.put("devcieName",p.getDevice)
-            jsonArray.put(jsonObjectTemp);
-        });
-        jsonObject.put("rows",jsonArray);
+                jsonArray.put(jsonObjectTemp);
+            });
+            jsonObject.put("rows", jsonArray);
+        }catch (Exception e){
+            e.printStackTrace();
+        }
         return jsonObject.toString();
     }
     /**

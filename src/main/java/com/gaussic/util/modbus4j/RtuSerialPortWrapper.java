@@ -15,9 +15,9 @@ import java.io.InputStream;
 import java.io.OutputStream;
 
 /**
- * 
+ *
  * This class is not finished
- * 
+ *
  * @author Terry Packer
  *
  */
@@ -37,8 +37,7 @@ public class RtuSerialPortWrapper implements SerialPortWrapper {
 		super();
 	}
 
-	public RtuSerialPortWrapper(String commPortId, int baudRate, int flowControlIn, int flowControlOut, int dataBits,
-                                int stopBits, int parity) {
+	public RtuSerialPortWrapper(String commPortId, int baudRate, int flowControlIn, int flowControlOut, int dataBits, int stopBits, int parity) {
 		this.commPortId = commPortId;
 		this.baudRate = baudRate;
 		this.flowControlIn = flowControlIn;
@@ -98,11 +97,10 @@ public class RtuSerialPortWrapper implements SerialPortWrapper {
 		// 判断是不是串口
 		if (commPort instanceof SerialPort) {
 			serialPort = (SerialPort) commPort;
+//			System.out.println("seriaPort:" + serialPort);
 			try {
 				// 设置一下串口的波特率等参数
-				// serialPort.setSerialPortParams(baudRate,
-				// SerialPort.DATABITS_8, SerialPort.STOPBITS_1,
-				// SerialPort.PARITY_NONE);
+				 serialPort.setSerialPortParams(baudRate, dataBits, stopBits, parity);
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
@@ -119,7 +117,6 @@ public class RtuSerialPortWrapper implements SerialPortWrapper {
 		InputStream in = null;
 		try {
 			in = serialPort.getInputStream();
-
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

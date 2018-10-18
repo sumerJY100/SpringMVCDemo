@@ -57,6 +57,7 @@ abstract public class ReadNumericRequest extends ModbusRequest {
     protected void readRequest(ByteQueue queue) {
         startOffset = ModbusUtils.popUnsignedShort(queue);
         numberOfRegisters = ModbusUtils.popUnsignedShort(queue);
+//        System.out.println("start:" + startOffset + ",numbers:" + numberOfRegisters);
     }
 
     protected byte[] getData(ProcessImage processImage) throws ModbusTransportException {

@@ -41,6 +41,7 @@ public class RtuMessageRequest extends RtuMessage implements OutgoingRequestMess
         ModbusUtils.checkCRC(rtuRequest.modbusMessage, queue);
 
         // Return the data.
+
         return rtuRequest;
     }
 

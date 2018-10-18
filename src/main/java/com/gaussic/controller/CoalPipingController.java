@@ -1,6 +1,9 @@
 package com.gaussic.controller;
 
+import com.gaussic.model.CoalMillEntity;
 import com.gaussic.model.CoalPipingEntity;
+import com.gaussic.model.dcs.DevicePointPojo;
+import com.gaussic.model.dcs.DevicePointRealtimePojo;
 import com.gaussic.model.history.*;
 import com.gaussic.repository.*;
 import com.gaussic.service.CoalPipingHistoryService;
@@ -8,7 +11,6 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.propertyeditors.CustomDateEditor;
-import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.*;
@@ -28,6 +30,8 @@ public class CoalPipingController {
     @Autowired
     private CoalPipingRepository coalPipingRepository;
     @Autowired
+    private CoalMillRepository coalMillRepository;
+    @Autowired
     private CoalPipingHistoryRepositoryA coalPipingHistoryRepositoryA;
     @Autowired
     private CoalPipingHistoryRepositoryB coalPipingHistoryRepositoryB;
@@ -37,6 +41,7 @@ public class CoalPipingController {
     private CoalPipingHistoryRepositoryD coalPipingHistoryRepositoryD;
     @Autowired
     private CoalPipingHistoryService coalPipingHistoryService;
+    private List<? extends CoalPipingHistory> list;
 
     /**
      * 获取A磨当前浓度实时数据，格式为{time:1111,data[ADensity,B,C,D]}
@@ -329,10 +334,30 @@ public class CoalPipingController {
         JSONObject millDPipe4JsonObj = getMillPipingJsonObj(coalMillDPiping4Entity);
 
 
+        CoalMillEntity coalMillEntityA = coalMillRepository.findOne(1L);
+        CoalMillEntity coalMillEntityB = coalMillRepository.findOne(2L);
+        CoalMillEntity coalMillEntityC = coalMillRepository.findOne(3L);
+        CoalMillEntity coalMillEntityD = coalMillRepository.findOne(4L);
+
+
+
         JSONObject millAJsonObj = new JSONObject();
         JSONObject millBJsonObj = new JSONObject();
         JSONObject millCJsonObj = new JSONObject();
         JSONObject millDJsonObj = new JSONObject();
+
+
+        millAJsonObj.put("coalCount",coalMillEntityA.getDeviceDcsPojoForCoalCount().getDevicePointRealtimePojo().getPointValue());
+        millBJsonObj.put("coalCount",coalMillEntityB.getDeviceDcsPojoForCoalCount().getDevicePointRealtimePojo().getPointValue());
+        millCJsonObj.put("coalCount",coalMillEntityC.getDeviceDcsPojoForCoalCount().getDevicePointRealtimePojo().getPointValue());
+        millDJsonObj.put("coalCount",coalMillEntityD.getDeviceDcsPojoForCoalCount().getDevicePointRealtimePojo().getPointValue());
+
+        millAJsonObj.put("coalCurrent",coalMillEntityA.getDeviceDcsPojoForCoalCount().getDevicePointRealtimePojo().getPointValue());
+        millBJsonObj.put("coalCurrent",coalMillEntityB.getDeviceDcsPojoForCoalCount().getDevicePointRealtimePojo().getPointValue());
+        millCJsonObj.put("coalCurrent",coalMillEntityC.getDeviceDcsPojoForCoalCount().getDevicePointRealtimePojo().getPointValue());
+        millDJsonObj.put("coalCurrent",coalMillEntityD.getDeviceDcsPojoForCoalCount().getDevicePointRealtimePojo()
+                .getPointValue());
+
         millAJsonObj.put("pipe1", millAPipe1JsonObj);
         millAJsonObj.put("pipe2", millAPipe2JsonObj);
         millAJsonObj.put("pipe3", millAPipe3JsonObj);
@@ -396,25 +421,32 @@ public class CoalPipingController {
         CoalPipingEntity coalMillPiping1Entity, coalMillPiping2Entity, coalMillPiping3Entity, coalMillPiping4Entity;
         JSONObject jsonObject = new JSONObject();
         if (null != mill) {
+            Float millData = 0f,millCurrent = 0f;
             long pipe1Id = 11L, pipe2Id = 12L, pipe3Id = 13L, pipe4Id = 14L;
+            CoalMillEntity coalMillEntity = null;
             if (mill.equals("A")) {
-
+                coalMillEntity= coalMillRepository.findOne(1L);
             } else if (mill.equals("B")) {
                 pipe1Id = 21L;
                 pipe2Id = 22L;
                 pipe3Id = 23L;
                 pipe4Id = 24L;
+                coalMillEntity= coalMillRepository.findOne(2L);
             } else if (mill.equals("C")) {
                 pipe1Id = 31L;
                 pipe2Id = 32L;
                 pipe3Id = 33L;
                 pipe4Id = 34L;
+                coalMillEntity= coalMillRepository.findOne(3L);
             } else if (mill.equals("D")) {
                 pipe1Id = 41L;
                 pipe2Id = 42L;
                 pipe3Id = 43L;
                 pipe4Id = 44L;
+                coalMillEntity= coalMillRepository.findOne(4L);
             }
+            millData = getMillCount(coalMillEntity);
+            millCurrent = getMillCurrent(coalMillEntity);
             coalMillPiping1Entity = coalPipingRepository.findOne(pipe1Id);
             coalMillPiping2Entity = coalPipingRepository.findOne(pipe2Id);
             coalMillPiping3Entity = coalPipingRepository.findOne(pipe3Id);
@@ -434,10 +466,38 @@ public class CoalPipingController {
             millAJsonObj.put("pipe4", millAPipe4JsonObj);
             jsonObject.put("time", coalMillPiping1Entity.getpTime().getTime());
             //TODO 当前负荷生成一个json对象
-            jsonObject.put("millData", (int) (Math.random() * 100) + 30);
+            //TODO 磨煤机的磨煤量数据
+            jsonObject.put("millData", millData);
+            jsonObject.put("millCurrent", millCurrent);
+
             jsonObject.put("millA", millAJsonObj);
         }
         return jsonObject.toString();
+    }
+
+    private Float getMillCount(CoalMillEntity coalMillEntity) {
+        Float millValue = 0f;
+        DevicePointPojo devicePointPojoForCoalCount = coalMillEntity.getDeviceDcsPojoForCoalCount();
+
+        if(null != devicePointPojoForCoalCount){
+            DevicePointRealtimePojo devicePointRealtimePojoForCoalCount = devicePointPojoForCoalCount.getDevicePointRealtimePojo();
+            if(null != devicePointRealtimePojoForCoalCount){
+                millValue = devicePointRealtimePojoForCoalCount.getPointValue();
+            }
+        }
+        return millValue;
+    }
+    private Float getMillCurrent(CoalMillEntity coalMillEntity) {
+        DevicePointPojo devicePointPojoForMillCurrent = coalMillEntity.getDeviceDcsPojoForCurrent();
+        Float millCurrent = 0f;
+        if(null != devicePointPojoForMillCurrent){
+            DevicePointRealtimePojo devicePointRealtimePojoForCoalCurrent = devicePointPojoForMillCurrent
+                    .getDevicePointRealtimePojo();
+            if(null != devicePointRealtimePojoForCoalCurrent){
+                millCurrent = devicePointRealtimePojoForCoalCurrent.getPointValue();
+            }
+        }
+        return millCurrent;
     }
 
     private JSONObject getMillPipingJsonObj(CoalPipingEntity coalMillAPiping1Entity) {

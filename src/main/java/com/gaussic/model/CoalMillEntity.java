@@ -1,5 +1,8 @@
 package com.gaussic.model;
 
+import com.gaussic.model.dcs.DeviceDcsPojo;
+import com.gaussic.model.dcs.DevicePointPojo;
+
 import javax.persistence.*;
 import java.sql.Timestamp;
 import java.util.ArrayList;
@@ -18,6 +21,11 @@ public class CoalMillEntity {
     private Integer cStartOrStopState;
     private Integer cAlarmState;
     private String cNote;
+
+    //磨煤机电流
+    private DevicePointPojo deviceDcsPojoForCurrent;
+    //磨煤机煤量
+    private DevicePointPojo deviceDcsPojoForCoalCount;
 
     private List<CoalPipingEntity> coalPipingEntityList;
 
@@ -156,5 +164,25 @@ public class CoalMillEntity {
 
     public void setCoalPipingEntityList(List<CoalPipingEntity> coalPipingEntityList) {
         this.coalPipingEntityList = coalPipingEntityList;
+    }
+
+    @ManyToOne
+    @JoinColumn(name = "mill_current_device_point_id")
+    public DevicePointPojo getDeviceDcsPojoForCurrent() {
+        return deviceDcsPojoForCurrent;
+    }
+
+    public void setDeviceDcsPojoForCurrent(DevicePointPojo deviceDcsPojoForCurrent) {
+        this.deviceDcsPojoForCurrent = deviceDcsPojoForCurrent;
+    }
+
+    @ManyToOne
+    @JoinColumn(name = "coal_count_device_point_id")
+    public DevicePointPojo getDeviceDcsPojoForCoalCount() {
+        return deviceDcsPojoForCoalCount;
+    }
+
+    public void setDeviceDcsPojoForCoalCount(DevicePointPojo deviceDcsPojoForCoalCount) {
+        this.deviceDcsPojoForCoalCount = deviceDcsPojoForCoalCount;
     }
 }

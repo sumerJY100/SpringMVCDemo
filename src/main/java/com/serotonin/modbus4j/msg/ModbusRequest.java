@@ -67,12 +67,13 @@ abstract public class ModbusRequest extends ModbusMessage {
 
         }
         byte[] b = queue.popAll();
-        System.out.print("输入的数据：" + b.length + ",");
+        /*********输出语句   begin***************/
+        System.out.print("输入的数据长度：" + b.length + ",开始地址："+b[1] + ",地址个数：" +b[3]+",数据个数："+b[4]+",报文内容:");
         for(int i=0;i<b.length;i++){
-            System.out.print(b[i] + " ");
+            System.out.printf("%02x " , b[i] );
         }
         System.out.println();
-
+        /*********输出语句    end***************/
         queue.push(b);
         request.readRequest(queue);
 

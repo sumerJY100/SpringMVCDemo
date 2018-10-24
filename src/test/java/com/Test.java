@@ -20,6 +20,11 @@ public class Test {
 
         System.out.println(2&4);
         System.out.println(2|7);
+
+        byte a = -1;
+        System.out.printf("-56:%x\n",a);
+        System.out.println("a:" + a);
+        System.out.println(0xff);
     }
 
     private static void o(int a){

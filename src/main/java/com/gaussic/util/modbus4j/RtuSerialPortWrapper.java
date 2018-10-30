@@ -92,7 +92,6 @@ public class RtuSerialPortWrapper implements SerialPortWrapper {
 		System.out.println(commPortId);
 		CommPortIdentifier portIdentifier = CommPortIdentifier.getPortIdentifier(commPortId);
 		// 打开端口，并给端口名字和一个timeout（打开操作的超时时间）
-		System.out.println(commPortId);
 		CommPort commPort = portIdentifier.open(commPortId, 2000);
 		// 判断是不是串口
 		if (commPort instanceof SerialPort) {

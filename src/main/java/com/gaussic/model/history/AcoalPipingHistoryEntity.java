@@ -23,6 +23,9 @@ public class AcoalPipingHistoryEntity extends   CoalPipingHistory{
     private Float hPipeDDencity;
     private Long hCoalMillId;
 
+
+
+
     public AcoalPipingHistoryEntity(CoalMillEntity coalMillEntity, Date now) {
         this.hTime = new Timestamp(now.getTime());
         this.hCoalMillId = coalMillEntity.getId();
@@ -162,5 +165,129 @@ public class AcoalPipingHistoryEntity extends   CoalPipingHistory{
 
     public void sethCoalMillId(Long hCoalMillId) {
         this.hCoalMillId = hCoalMillId;
+    }
+
+
+
+
+    private Float hPipeAX;
+    private Float hPipeAY;
+    private Float hPipeAV;
+    private Float hPipeBX;
+    private Float hPipeBY;
+    private Float hPipeBV;
+    private Float hPipeCX;
+    private Float hPipeCY;
+    private Float hPipeCV;
+    private Float hPipeDX;
+    private Float hPipeDY;
+    private Float hPipeDV;
+    @Basic
+    @Column(name = "h_pipeA_x")
+    public Float gethPipeAX() {
+        return hPipeAX;
+    }
+
+    public void sethPipeAX(Float hPipeAX) {
+        this.hPipeAX = hPipeAX;
+    }
+    @Basic
+    @Column(name = "h_pipeA_y")
+    public Float gethPipeAY() {
+        return hPipeAY;
+    }
+
+    public void sethPipeAY(Float hPipeAY) {
+        this.hPipeAY = hPipeAY;
+    }
+    @Basic
+    @Column(name = "h_pipeA_v")
+    public Float gethPipeAV() {
+        return hPipeAV;
+    }
+
+    public void sethPipeAV(Float hPipeAV) {
+        this.hPipeAV = hPipeAV;
+    }
+    @Basic
+    @Column(name = "h_pipeB_x")
+    public Float gethPipeBX() {
+        return hPipeBX;
+    }
+
+    public void sethPipeBX(Float hPipeBX) {
+        this.hPipeBX = hPipeBX;
+    }
+    @Basic
+    @Column(name = "h_pipeB_Y")
+    public Float gethPipeBY() {
+        return hPipeBY;
+    }
+
+    public void sethPipeBY(Float hPipeBY) {
+        this.hPipeBY = hPipeBY;
+    }
+    @Basic
+    @Column(name = "h_pipeB_v")
+    public Float gethPipeBV() {
+        return hPipeBV;
+    }
+
+    public void sethPipeBV(Float hPipeBV) {
+        this.hPipeBV = hPipeBV;
+    }
+    @Basic
+    @Column(name = "h_pipeC_x")
+    public Float gethPipeCX() {
+        return hPipeCX;
+    }
+
+    public void sethPipeCX(Float hPipeCX) {
+        this.hPipeCX = hPipeCX;
+    }
+    @Basic
+    @Column(name = "h_pipeC_Y")
+    public Float gethPipeCY() {
+        return hPipeCY;
+    }
+
+    public void sethPipeCY(Float hPipeCY) {
+        this.hPipeCY = hPipeCY;
+    }
+    @Basic
+    @Column(name = "h_pipeC_v")
+    public Float gethPipeCV() {
+        return hPipeCV;
+    }
+
+    public void sethPipeCV(Float hPipeCV) {
+        this.hPipeCV = hPipeCV;
+    }
+    @Basic
+    @Column(name = "h_pipeD_x")
+    public Float gethPipeDX() {
+        return hPipeDX;
+    }
+
+    public void sethPipeDX(Float hPipeDX) {
+        this.hPipeDX = hPipeDX;
+    }
+    @Basic
+    @Column(name = "h_pipeD_y")
+    public Float gethPipeDY() {
+        return hPipeDY;
+    }
+
+    public void sethPipeDY(Float hPipeDY) {
+        this.hPipeDY = hPipeDY;
+    }
+    @Basic
+    @Column(name = "h_pipeD_v")
+    public Float gethPipeDV() {
+        return hPipeDV;
+    }
+
+    public void sethPipeDV(Float hPipeDV) {
+        this.hPipeDV = hPipeDV;
     }
 }

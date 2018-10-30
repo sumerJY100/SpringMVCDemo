@@ -24,7 +24,7 @@ public class TDcsService {
             CM4_COAL = 78,
             CM1_WIND = 79,
             CM2_WIND = 80,
-            CM3_WIND = 80,
+            CM3_WIND = 81,
             CM4_WIND = 82;
 
     @Autowired
@@ -63,7 +63,7 @@ public class TDcsService {
     public void saveDcsPoint(int offSet, int value) {
         Timestamp timestamp = Timestamp.valueOf(LocalDateTime.now());
         float v = Integer.valueOf(value).floatValue();
-
+        offSet = offSet + 1;
         if(offSet == BE_OFFSET){
             TBePojo t = new TBePojo();
             t.setvTime(timestamp);

@@ -108,7 +108,7 @@ public class ModbusUtils {
     public static int calculateCRC(ModbusMessage modbusMessage) {
         ByteQueue queue = new ByteQueue();
         modbusMessage.write(queue);
-
+//        System.out.println("-02-");
         int high = 0xff;
         int low = 0xff;
         int nextByte = 0;

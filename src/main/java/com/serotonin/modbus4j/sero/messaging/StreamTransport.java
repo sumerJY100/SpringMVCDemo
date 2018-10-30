@@ -50,17 +50,17 @@ public class StreamTransport implements Transport, Runnable {
     }
 
     public void write(byte[] data) throws IOException {
-        System.out.print("输出数据：" );
+       /* System.out.print("输出数据：" );
         for(int i=0;i<data.length;i++){
             System.out.print(data[i] + " ");
         }
-        System.out.println();
+        System.out.println();*/
         out.write(data);
         out.flush();
     }
 
     public void write(byte[] data, int len) throws IOException {
-        System.out.println("输出数据2："+len + "," + data);
+//        System.out.println("输出数据2："+len + "," + data);
         out.write(data, 0, len);
         out.flush();
     }

@@ -43,20 +43,20 @@ public class Modbus4jRtuMasterUtil {
         ModbusMaster modbusMaster = getModbusRtuMaster(commPortId, baudRate, flowControlIn, flowControlOut,
                 dataBits, stopBits, parity);
         try {
-            System.out.println(modbusMaster.getTimeout());
+//            System.out.println("modbusMaster.timeout:" +modbusMaster.getTimeout());
             modbusMaster.init();
 
-            System.out.println(modbusMaster.isConnected());
-            System.out.println(modbusMaster.isInitialized());
+//            System.out.println(modbusMaster.isConnected());
+//            System.out.println(modbusMaster.isInitialized());
         } catch (ModbusInitException e) {
-            System.out.println("modbus 生成异常" + e.getClass().getName());
-            System.out.println(e.getMessage());
+//            System.out.println("modbus 生成异常" + e.getClass().getName());
+//            System.out.println(e.getMessage());
             e.printStackTrace();
         }
         BaseLocator<Number> loc = BaseLocator.holdingRegister(1, Integer.parseInt("100"), DataType.TWO_BYTE_INT_UNSIGNED);
         try {
             Number number = modbusMaster.getValue(loc);
-            System.out.println("number: " + number);
+//            System.out.println("number: " + number);
         } catch (ModbusTransportException e) {
             e.printStackTrace();
         } catch (ErrorResponseException e) {

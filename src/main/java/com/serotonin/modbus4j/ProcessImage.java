@@ -109,6 +109,8 @@ public interface ProcessImage {
      */
     void writeHoldingRegister(int offset, short value) throws IllegalDataAddressException;
 
+    void writeHoldingRegister(int offset, short[] value) throws IllegalDataAddressException;
+
     //
     // /
     // / Input registers

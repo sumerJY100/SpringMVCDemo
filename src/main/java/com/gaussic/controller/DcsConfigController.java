@@ -66,6 +66,8 @@ public class DcsConfigController {
         jsonObject.put("deviceId",deviceDcsPojo.getDeviceId());
         jsonObject.put("deviceName",deviceDcsPojo.getDeviceName());
         jsonObject.put("deviceAddress",deviceDcsPojo.getDeviceAddress());
+
+
         jsonObject.put("devicePort",deviceDcsPojo.getDevicePort());
         jsonObject.put("deviceBoundRate",deviceDcsPojo.getDeviceBoundRate());
         jsonObject.put("deviceLinkState",deviceDcsPojo.getDeviceLinkState());
@@ -113,17 +115,23 @@ public class DcsConfigController {
     public String remoteGetDataIndex(){
         JSONObject jsonObject = new JSONObject();
         try {
-            List<DevicePointPojo> devicePointPojoList = devicePointRepository.findAll();
+            List<DevicePointPojo> devicePointPojoList = devicePointRepository.findByPointNameNotLike("");
 
             if (null != devicePointPojoList && devicePointPojoList.size() > 0) {
+
                 jsonObject.put("total", devicePointPojoList.size());
                 JSONArray jsonArray = new JSONArray();
                 devicePointPojoList.forEach((p) -> {
+                    if(null == p.getPointName()){
+                        System.out.println("---------------------");
+                    }
                     JSONObject jo = new JSONObject();
                     jo.put("pointId", p.getPointId());
                     jo.put("dcsId", p.getDeviceDcsPojo().getDeviceId());
                     jo.put("pointName", p.getPointName());
                     jo.put("pointAddress", p.getPointAddress());
+                    //数据类型参照 DataType的数据类型进行配置
+                    jo.put("dataTyper", p.getDataTyper());
                     jo.put("pointNote", p.getPointNote());
                     jo.put("pointHistoryTableName", p.getPointHistoryDeviceTableName());
                     jo.put("pointHistoryColumnName", p.getPointHistoryColumnName());

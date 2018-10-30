@@ -67,6 +67,7 @@ abstract public class ModbusRequest extends ModbusMessage {
 
         }
         byte[] b = queue.popAll();
+<<<<<<< Updated upstream
         /*********输出语句   begin***************/
         System.out.print("输入的数据长度：" + b.length + ",开始地址："+b[1] + ",地址个数：" +b[3]+",数据个数："+b[4]+",报文内容:");
         for(int i=0;i<b.length;i++){
@@ -74,6 +75,14 @@ abstract public class ModbusRequest extends ModbusMessage {
         }
         System.out.println();
         /*********输出语句    end***************/
+=======
+        /*System.out.print("输入的数据：" + b.length + ",");
+        for(int i=0;i<b.length;i++){
+            System.out.print(Integer.valueOf(String.format("%x",b[i]),16) + " ");
+        }
+        System.out.println();*/
+
+>>>>>>> Stashed changes
         queue.push(b);
         request.readRequest(queue);
 

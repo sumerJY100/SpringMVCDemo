@@ -16,6 +16,7 @@
     <!--指明 controller 所在包，并扫描其中的注解-->
     <context:component-scan base-package="com.gaussic.controller"/>
     <context:component-scan base-package="com.gaussic.service"/>
+    <context:component-scan base-package="com.gaussic.service.dcs"/>
     <!--<context:component-scan base-package="com.gaussic.quartz" />-->
     <context:component-scan base-package="com.gaussic.dataGet" />
 
@@ -43,11 +44,12 @@
 
     <!-- 表示JPA Repository所在的包 -->
     <jpa:repositories base-package="com.gaussic.repository"/>
+    <jpa:repositories base-package="com.gaussic.repository.dcs_history"/>
 
     <bean id="entityManagerFactory" class="org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean">
         <property name="persistenceUnitName" value="defaultPersistenceUnit"/>
         <property name="packagesToScan"
-                  value="com.gaussic.model ,com.gaussic.model.history,com.gaussic.model.dcs,com.gaussic.model.dcsRemote"/>
+                  value="com.gaussic.model ,com.gaussic.model.history,com.gaussic.model.dcs,com.gaussic.model.dcsRemote,com.gaussic.model.dcs_history"/>
         <property name="jpaVendorAdapter">
             <bean class="org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter"/>
         </property>
@@ -105,5 +107,17 @@
 
     <!--引入定时器任务-->
     <import resource="spring-quartz3.xml"/>
+    <import resource="spring-quartzForDcsCache.xml"/>
 
+
+    <!-- ======================== 调度工厂 ======================== -->
+    <bean id="SpringJobSchedulerFactoryBean" class="org.springframework.scheduling.quartz.SchedulerFactoryBean">
+        <property name="triggers">
+            <list>
+                <ref bean="simpleTrigger"/>
+                <ref bean="dcsCacheTrigger"/>
+            </list>
+        </property>
+        <property name="jobFactory" ref="jobFactory"></property>
+    </bean>
 </beans>

@@ -126,6 +126,6 @@ abstract public class ModbusResponse extends ModbusMessage {
     public static void main(String[] args) throws Exception {
         ByteQueue queue = new ByteQueue(new byte[] { 3, 2 });
         ModbusResponse r = createModbusResponse(queue);
-        System.out.println(r);
+//        System.out.println(r);
     }
 }

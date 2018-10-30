@@ -50,6 +50,11 @@ public class Modbus4jSlaveDemo1 {
             public void holdingRegisterWrite(int offset, short oldValue, short newValue) {
                 System.out.println("offset" + offset + ",oldValue:" + oldValue + ",newValue:" + newValue);
             }
+
+            @Override
+            public void holdingRegisterWrite(int offset, short[] value) {
+
+            }
         };
         BasicProcessImage processImage = new BasicProcessImage(slaveId);
         processImage.setHoldingRegister(100, new short[]{1, 2, 3, 4, 5, 6, 7, 8, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9,

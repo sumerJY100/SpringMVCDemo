@@ -18,6 +18,8 @@ public class DevicePointPojo {
     private String pointHistoryColumnName;
     private String pointHistoryPorpertyName;
     private Integer pointHistoryOffset;
+    private Integer dataTyper;
+
 
     private DevicePointRealtimePojo devicePointRealtimePojo;
 
@@ -92,6 +94,15 @@ public class DevicePointPojo {
 
     public void setPointHistoryPorpertyName(String pointHistoryPorpertyName) {
         this.pointHistoryPorpertyName = pointHistoryPorpertyName;
+    }
+    @Basic
+    @Column(name = "data_typer")
+    public Integer getDataTyper() {
+        return dataTyper;
+    }
+
+    public void setDataTyper(Integer dataTyper) {
+        this.dataTyper = dataTyper;
     }
 
     @Basic

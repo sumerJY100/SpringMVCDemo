@@ -29,6 +29,11 @@ public class CoalPipingEntity {
     private String pLocationUserDefined;
 
 
+    private Float x;
+    private Float y;
+    private Float v;
+
+
     private CoalPipingSetEntity coalPipingSetEntity;
     private CoalMillEntity coalMillEntity;
 
@@ -275,5 +280,30 @@ public class CoalPipingEntity {
 
     public void setAlarmHistoryEntity(AlarmHistoryEntity alarmHistoryEntity) {
         this.alarmHistoryEntity = alarmHistoryEntity;
+    }
+
+    @Transient
+    public Float getX() {
+        return x;
+    }
+
+    public void setX(Float x) {
+        this.x = x;
+    }
+    @Transient
+    public Float getY() {
+        return y;
+    }
+
+    public void setY(Float y) {
+        this.y = y;
+    }
+    @Transient
+    public Float getV() {
+        return v;
+    }
+
+    public void setV(Float v) {
+        this.v = v;
     }
 }

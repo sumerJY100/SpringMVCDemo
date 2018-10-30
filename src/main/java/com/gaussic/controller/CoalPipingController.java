@@ -4,9 +4,12 @@ import com.gaussic.model.CoalMillEntity;
 import com.gaussic.model.CoalPipingEntity;
 import com.gaussic.model.dcs.DevicePointPojo;
 import com.gaussic.model.dcs.DevicePointRealtimePojo;
+import com.gaussic.model.dcs_history.H000Pojo_Base;
 import com.gaussic.model.history.*;
 import com.gaussic.repository.*;
 import com.gaussic.service.CoalPipingHistoryService;
+import com.gaussic.service.dcs.DcsHistoryService;
+import com.gaussic.util.HandlDcsHistoryListUtil;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,6 +18,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.*;
 
+import java.sql.Time;
 import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
 import java.time.Instant;
@@ -41,6 +45,9 @@ public class CoalPipingController {
     private CoalPipingHistoryRepositoryD coalPipingHistoryRepositoryD;
     @Autowired
     private CoalPipingHistoryService coalPipingHistoryService;
+
+    @Autowired
+    private DcsHistoryService dcsHistoryService;
     private List<? extends CoalPipingHistory> list;
 
     /**
@@ -55,9 +62,7 @@ public class CoalPipingController {
         //TODO 相对数据则需要重新规划定义
         //TODO 通过hibernate数据分组功能，将数据分组，使用视图的方式，将数据形成新的实体，就不需要对数据进行单独处理了。
         //TODO 数据采集与处理的时间达到了1.9秒，需要处理
-        if (null != latestTime) {
-            System.out.println("latestTime:" + latestTime);
-        }
+
 
         CoalPipingEntity coalPipingEntityForA = coalPipingRepository.findOne(11L);
         CoalPipingEntity coalPipingEntityForB = coalPipingRepository.findOne(12L);
@@ -95,7 +100,7 @@ public class CoalPipingController {
         private Timestamp endTimestamp;
 
         public BE(Date beginTime,Date endTime){
-            System.out.println(beginTime + ", " + endTime);
+//            System.out.println(beginTime + ", " + endTime);
 //        if(null!=beginTime && )
             Calendar beginC = new GregorianCalendar();
             beginC.setTimeZone(TimeZone.getDefault());
@@ -657,21 +662,31 @@ public class CoalPipingController {
     @ResponseBody
     public String getInitTimeDataForDensity(@RequestParam(value = "mill", required = false) String mill) {
         LocalDateTime localDateTime = LocalDateTime.now();
-        LocalDateTime localDateTimeBefore = localDateTime.minusMinutes(15);
+        LocalDateTime localDateTimeBefore = localDateTime.minusMinutes(30);
+        Timestamp begin = Timestamp.valueOf(localDateTimeBefore);
+        Timestamp end = Timestamp.valueOf(localDateTime);
         JSONArray jsonArray = new JSONArray();
         if (null != mill) {
             List<? extends CoalPipingHistory> list = null;
+            List<Float> millHistoryList = new ArrayList<>();
+            List<H000Pojo_Base> hList = null;
             if (mill.equals("A")) {
-                list = coalPipingHistoryRepositoryA.findByHTimeAfterOrderByHTimeAsc(Timestamp.valueOf(localDateTimeBefore));
+                list = coalPipingHistoryRepositoryA.findByHTimeAfterOrderByHTimeAsc(begin);
+                hList = dcsHistoryService.findByTime(75,begin,end);
             } else if (mill.equals("B")) {
-                list = coalPipingHistoryRepositoryB.findByHTimeAfterOrderByHTimeAsc(Timestamp.valueOf(localDateTimeBefore));
+                list = coalPipingHistoryRepositoryB.findByHTimeAfterOrderByHTimeAsc(begin);
+                hList = dcsHistoryService.findByTime(76,begin,end);
             } else if (mill.equals("C")) {
-                list = coalPipingHistoryRepositoryC.findByHTimeAfterOrderByHTimeAsc(Timestamp.valueOf(localDateTimeBefore));
+                list = coalPipingHistoryRepositoryC.findByHTimeAfterOrderByHTimeAsc(begin);
+                hList = dcsHistoryService.findByTime(77,begin,end);
             } else if (mill.equals("D")) {
-                list = coalPipingHistoryRepositoryD.findByHTimeAfterOrderByHTimeAsc(Timestamp.valueOf(localDateTimeBefore));
+                list = coalPipingHistoryRepositoryD.findByHTimeAfterOrderByHTimeAsc(begin);
+                hList = dcsHistoryService.findByTime(78,begin,end);
             }
             //TODO 查询15分钟内的磨煤机数据
-            List<Float> millHistoryList = new ArrayList<>();
+
+            millHistoryList = HandlDcsHistoryListUtil.getMilHistoryList(list,hList);
+
             jsonArray = generateInitDataJsonArray(list, millHistoryList);
         }
         return jsonArray.toString();
@@ -694,9 +709,12 @@ public class CoalPipingController {
                 jsonObject.put("BV", coalPipingHistory.getPipeBVelocityNotNull());
                 jsonObject.put("CV", coalPipingHistory.getPipeCVelocityNotNull());
                 jsonObject.put("DV", coalPipingHistory.getPipeDVelocityNotNull());
-
+                //TODO 磨煤机 模拟数据
                 jsonObject.put("m", (Math.random() * 100) + 20);
 
+                if(null != coalPipingHistory.getCoalMillValue()){
+                    jsonObject.put("m", coalPipingHistory.getCoalMillValue());
+                }
                 jsonArray.put(jsonObject);
             }
             //TODO 添加锅炉负荷的15分钟数据

@@ -54,6 +54,8 @@ var TableInit = function () {
                 generatorColumn('dcsId', 'DCS设备名称', false),
                 generatorColumn('pointName', '点名', true),
                 generatorColumn('pointAddress', '地址', true),
+                //数据类型根据DataType的数据类型进行配置，2表示TWO_BYTE_INT_UNSIGNED，3表示TWO_BYTE_INT_SIGNED
+                generatorColumn('dataTyper', '数据类型', true),
                 generatorColumn('realDate', '时间', false),
                 generatorColumn('realValue', '值', false),
                 generatorColumn('pointHistoryTableName', '历史表名', true),

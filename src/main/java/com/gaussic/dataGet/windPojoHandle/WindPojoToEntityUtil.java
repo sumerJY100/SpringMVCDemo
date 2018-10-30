@@ -85,6 +85,9 @@ public class WindPojoToEntityUtil {
             float dencity = (Float.parseFloat(pojo.getDensityXValue()) + Float.parseFloat(pojo.getDensityYValue())) / 2;
             coalPipingEntity.setpDencity(dencity);
 //            System.out.println("pojo.dencity:" + dencity);
+            //TODO x环与Y环的数据
+            coalPipingEntity.setX(Float.parseFloat(pojo.getDensityXValue()));
+            coalPipingEntity.setY(Float.parseFloat(pojo.getDensityYValue()));
         } else {
             coalPipingEntity.setpDencity(null);
         }
@@ -103,11 +106,17 @@ public class WindPojoToEntityUtil {
 //                System.out.println("=================================");
                 Float pojoSpeedValue = Float.parseFloat(pojo.getSpeedValue());
                 if(pojoSpeedValue > 0) {
+                    //TODO 风速
                     float distance = 0.05F;
                     float speed = distance / pojoSpeedValue;
                     coalPipingEntity.setpVelocity(speed);
+
+                    coalPipingEntity.setpVelocity(pojoSpeedValue);
+                    //TODO 风速原始值
+                    coalPipingEntity.setV(pojoSpeedValue);
                 }else{
                     coalPipingEntity.setpVelocity(0f);
+                    coalPipingEntity.setV(0F);
                 }
 //                System.out.println("=================================");
             }catch (Exception e){

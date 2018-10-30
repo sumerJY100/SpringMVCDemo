@@ -11,4 +11,6 @@ import java.util.List;
 @Repository
 public interface DevicePointRepository extends JpaRepository<DevicePointPojo,Long> {
     List<DevicePointPojo> findByPointAddress(String s);
+    List<DevicePointPojo> findByPointNameNotNull();
+    List<DevicePointPojo> findByPointNameNotLike(String notLike);
 }

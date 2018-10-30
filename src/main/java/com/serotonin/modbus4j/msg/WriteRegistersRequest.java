@@ -27,6 +27,9 @@ import com.serotonin.modbus4j.code.FunctionCode;
 import com.serotonin.modbus4j.exception.ModbusTransportException;
 import com.serotonin.modbus4j.sero.util.queue.ByteQueue;
 
+import java.time.Duration;
+import java.time.Instant;
+
 public class WriteRegistersRequest extends ModbusRequest {
     private int startOffset;
     private byte[] data;
@@ -55,14 +58,23 @@ public class WriteRegistersRequest extends ModbusRequest {
         ModbusUtils.pushShort(queue, startOffset);
         ModbusUtils.pushShort(queue, data.length / 2);
         ModbusUtils.pushByte(queue, data.length);
+//        System.out.println("-01-");
         queue.push(data);
     }
 
     @Override
     ModbusResponse handleImpl(ProcessImage processImage) throws ModbusTransportException {
         short[] sdata = convertToShorts(data);
-        for (int i = 0; i < sdata.length; i++)
-            processImage.writeHoldingRegister(startOffset + i, sdata[i]);
+//        Instant instant0 = Instant.now();
+        processImage.writeHoldingRegister(startOffset,sdata);
+        //TODO 修改源码
+//        for (int i = 0; i < sdata.length; i++)
+//            processImage.writeHoldingRegister(startOffset + i, sdata[i]);
+
+ /*       Instant instant1 = Instant.now();
+        Duration duration = Duration.between(instant0,instant1);
+        System.out.println("数量："+sdata.length+",间隔：" + duration.getSeconds() + ","+duration.getNano());
+*/
         return new WriteRegistersResponse(slaveId, startOffset, sdata.length);
     }
 

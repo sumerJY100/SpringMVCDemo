@@ -303,7 +303,16 @@ public class BasicProcessImage implements ProcessImage {
         for (ProcessImageListener l : writeListeners)
             l.holdingRegisterWrite(offset, old, value);
     }
+    @Override
+    public synchronized void writeHoldingRegister(int offset, short[] value) throws IllegalDataAddressException {
+        short old = getShort(offset, holdingRegisters);
+        for(int i=0;i<value.length;i++) {
+            setHoldingRegister(offset+i, value[i]);
+        }
 
+        for (ProcessImageListener l : writeListeners)
+            l.holdingRegisterWrite(offset,  value);
+    }
     //
     // Input registers
     @Override

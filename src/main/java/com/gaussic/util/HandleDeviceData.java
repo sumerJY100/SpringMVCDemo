@@ -29,9 +29,17 @@ public class HandleDeviceData {
      * @return
      */
     private static String handleJsonP(String jsonPStr) {
-        int startIndex = jsonPStr.indexOf("(");
-        int endIndex = jsonPStr.lastIndexOf(")");
-        String jsonStr = "" + jsonPStr.substring(startIndex + 1, endIndex) + "";
+        String jsonStr = null;
+        if(jsonPStr.length() > 0) {
+            int startIndex = jsonPStr.indexOf("(");
+            if(startIndex > -1) {
+                int endIndex = jsonPStr.lastIndexOf(")");
+                if(endIndex >-1) {
+                    jsonStr = "" + jsonPStr.substring(startIndex + 1, endIndex) + "";
+                }
+            }
+        }
+
         return jsonStr;
     }
 
@@ -179,7 +187,9 @@ public class HandleDeviceData {
             if(buffer.toString().length() > 9){
                 handleError = ","+ handleError;
             }
-            buffer.insert(buffer.toString().length() - 2,handleError);
+            if(buffer.toString().length() > 2) {
+                buffer.insert(buffer.toString().length() - 2, handleError);
+            }
 //            buffer.append(handleError.toCharArray(),buffer.toString().length() - 2,handleError.length());
         }
 

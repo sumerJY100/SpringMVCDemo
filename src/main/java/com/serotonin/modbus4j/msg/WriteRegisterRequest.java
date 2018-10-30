@@ -55,6 +55,7 @@ public class WriteRegisterRequest extends ModbusRequest {
     @Override
     ModbusResponse handleImpl(ProcessImage processImage) throws ModbusTransportException {
         processImage.writeHoldingRegister(writeOffset, (short) writeValue);
+   //     System.out.println("-------------------------");
         return new WriteRegisterResponse(slaveId, writeOffset, writeValue);
     }
 

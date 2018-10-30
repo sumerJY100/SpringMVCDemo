@@ -46,6 +46,7 @@ public class ExceptionRequest extends ModbusRequest {
 
     @Override
     protected void writeRequest(ByteQueue queue) {
+
         throw new ShouldNeverHappenException("wha");
     }
 

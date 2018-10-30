@@ -24,6 +24,16 @@ public abstract class CoalPipingHistory {
     private Float hPipeDDencity;
     private Long hCoalMillId;
 
+    private Float coalMillValue;
+
+    public Float getCoalMillValue() {
+        return coalMillValue;
+    }
+
+    public void setCoalMillValue(Float coalMillValue) {
+        this.coalMillValue = coalMillValue;
+    }
+
     public abstract Long getId();
 
     public void setId(Long id) {
@@ -195,5 +205,117 @@ public abstract class CoalPipingHistory {
             e.printStackTrace();
         }
         return coalPipingHistory;
+    }
+
+
+
+
+    private Float hPipeAX;
+    private Float hPipeAY;
+    private Float hPipeAV;
+    private Float hPipeBX;
+    private Float hPipeBY;
+    private Float hPipeBV;
+    private Float hPipeCX;
+    private Float hPipeCY;
+    private Float hPipeCV;
+    private Float hPipeDX;
+    private Float hPipeDY;
+    private Float hPipeDV;
+
+    public Float gethPipeAX() {
+        return hPipeAX;
+    }
+
+    public void sethPipeAX(Float hPipeAX) {
+        this.hPipeAX = hPipeAX;
+    }
+
+    public Float gethPipeAY() {
+        return hPipeAY;
+    }
+
+    public void sethPipeAY(Float hPipeAY) {
+        this.hPipeAY = hPipeAY;
+    }
+
+    public Float gethPipeAV() {
+        return hPipeAV;
+    }
+
+    public void sethPipeAV(Float hPipeAV) {
+        this.hPipeAV = hPipeAV;
+    }
+
+    public Float gethPipeBX() {
+        return hPipeBX;
+    }
+
+    public void sethPipeBX(Float hPipeBX) {
+        this.hPipeBX = hPipeBX;
+    }
+
+    public Float gethPipeBY() {
+        return hPipeBY;
+    }
+
+    public void sethPipeBY(Float hPipeBY) {
+        this.hPipeBY = hPipeBY;
+    }
+
+    public Float gethPipeBV() {
+        return hPipeBV;
+    }
+
+    public void sethPipeBV(Float hPipeBV) {
+        this.hPipeBV = hPipeBV;
+    }
+
+    public Float gethPipeCX() {
+        return hPipeCX;
+    }
+
+    public void sethPipeCX(Float hPipeCX) {
+        this.hPipeCX = hPipeCX;
+    }
+
+    public Float gethPipeCY() {
+        return hPipeCY;
+    }
+
+    public void sethPipeCY(Float hPipeCY) {
+        this.hPipeCY = hPipeCY;
+    }
+
+    public Float gethPipeCV() {
+        return hPipeCV;
+    }
+
+    public void sethPipeCV(Float hPipeCV) {
+        this.hPipeCV = hPipeCV;
+    }
+
+    public Float gethPipeDX() {
+        return hPipeDX;
+    }
+
+    public void sethPipeDX(Float hPipeDX) {
+        this.hPipeDX = hPipeDX;
+    }
+
+    public Float gethPipeDY() {
+        return hPipeDY;
+    }
+
+    public void sethPipeDY(Float hPipeDY) {
+        this.hPipeDY = hPipeDY;
+    }
+
+    public Float gethPipeDV() {
+        return hPipeDV;
+    }
+
+    public void sethPipeDV(Float hPipeDV) {
+        this.hPipeDV = hPipeDV;
     }
 }

@@ -47,17 +47,17 @@
     <bean id="simpleTrigger"  class="org.springframework.scheduling.quartz.SimpleTriggerFactoryBean">
         <property name="jobDetail" ref="simpleJobDetail" />
         <property name="startDelay" value="1000" />
-        <property name="repeatInterval" value="5000" />
+        <property name="repeatInterval" value="1000" />
     </bean>
 
     <!-- ======================== 调度工厂 ======================== -->
-    <bean id="SpringJobSchedulerFactoryBean" class="org.springframework.scheduling.quartz.SchedulerFactoryBean">
+ <!--   <bean id="SpringJobSchedulerFactoryBean" class="org.springframework.scheduling.quartz.SchedulerFactoryBean">
         <property name="triggers">
             <list>
                 <ref bean="simpleTrigger"/>
             </list>
         </property>
         <property name="jobFactory" ref="jobFactory"></property>
-    </bean>
+    </bean>-->
 
 </beans>

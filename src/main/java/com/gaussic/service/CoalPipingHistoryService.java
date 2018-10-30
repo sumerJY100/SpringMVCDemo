@@ -130,22 +130,37 @@ public class CoalPipingHistoryService<T extends CoalPipingHistory> {
         String pipingLocation = coalPipingEntity.getpLocation();
         Float velocity = coalPipingEntity.getpVelocity();
         Float density = coalPipingEntity.getpDencity();
+        Float x = coalPipingEntity.getX();
+        Float y = coalPipingEntity.getY();
+        Float v = coalPipingEntity.getV();
         switch (pipingLocation) {
             case "A":
                 coalPipingHistoryEntity.sethPipeADencity(density);
                 coalPipingHistoryEntity.sethPipeAVelocity(velocity);
+                coalPipingHistoryEntity.sethPipeAX(x);
+                coalPipingHistoryEntity.sethPipeAY(y);
+                coalPipingHistoryEntity.sethPipeAV(v);
                 break;
             case "B":
                 coalPipingHistoryEntity.sethPipeBDencity(density);
                 coalPipingHistoryEntity.sethPipeBVelocity(velocity);
+                coalPipingHistoryEntity.sethPipeBX(x);
+                coalPipingHistoryEntity.sethPipeBY(y);
+                coalPipingHistoryEntity.sethPipeBV(v);
                 break;
             case "C":
                 coalPipingHistoryEntity.sethPipeCDencity(density);
                 coalPipingHistoryEntity.sethPipeCVelocity(velocity);
+                coalPipingHistoryEntity.sethPipeCX(x);
+                coalPipingHistoryEntity.sethPipeCY(y);
+                coalPipingHistoryEntity.sethPipeCV(v);
                 break;
             case "D":
                 coalPipingHistoryEntity.sethPipeDDencity(density);
                 coalPipingHistoryEntity.sethPipeDVelocity(velocity);
+                coalPipingHistoryEntity.sethPipeDX(x);
+                coalPipingHistoryEntity.sethPipeDY(y);
+                coalPipingHistoryEntity.sethPipeDV(v);
                 break;
             default:
                 break;

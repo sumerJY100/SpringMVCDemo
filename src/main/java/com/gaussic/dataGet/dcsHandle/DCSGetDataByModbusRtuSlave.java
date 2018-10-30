@@ -5,11 +5,21 @@ import com.gaussic.model.dcs.DeviceDcsPojo;
 import com.gaussic.model.dcs.DevicePointPojo;
 import com.gaussic.model.dcs.DevicePointRealtimePojo;
 import com.gaussic.model.dcsRemote.DcsRemotePointPojo;
+import com.gaussic.model.dcs_history.H001Pojo;
+import com.gaussic.model.dcs_history.H002Pojo;
+import com.gaussic.model.dcs_history.H003Pojo;
 import com.gaussic.repository.*;
+import com.gaussic.repository.dcs_history.H000Rep;
+import com.gaussic.repository.dcs_history.H001Rep;
+import com.gaussic.repository.dcs_history.H002Rep;
+import com.gaussic.repository.dcs_history.H003Rep;
+import com.gaussic.service.DevicePointRealtimeService;
 import com.gaussic.service.TDcsService;
+import com.gaussic.service.dcs.DcsHistoryService;
 import com.gaussic.util.modbus4j.Modbus4jSendValues;
 import com.gaussic.util.modbus4j.RtuSerialPortWrapper;
 import com.serotonin.modbus4j.*;
+import com.serotonin.modbus4j.code.DataType;
 import com.serotonin.modbus4j.exception.IllegalDataAddressException;
 import com.serotonin.modbus4j.exception.ModbusInitException;
 import com.serotonin.modbus4j.serial.SerialPortWrapper;
@@ -18,11 +28,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.sql.Timestamp;
+import java.time.Duration;
 import java.time.Instant;
 import java.time.LocalDateTime;
-import java.util.Comparator;
-import java.util.Date;
-import java.util.List;
+import java.util.*;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
@@ -39,6 +48,8 @@ public class DCSGetDataByModbusRtuSlave implements InitializingBean {
     private static ModbusSlaveSet modbusSlaveSet;
     private static BasicProcessImage processImage;
 
+    @Autowired
+        private DcsHistoryService dcsHistoryService;
     /**是否启动 从站读取*/
     private static final boolean runSlave = true;
 
@@ -54,10 +65,37 @@ public class DCSGetDataByModbusRtuSlave implements InitializingBean {
     private DevicePointRepository devicePointRepository;
     @Autowired
     private TDcsService tDcsService;
+    @Autowired
+    private DevicePointRealtimeService devicePointRealtimeService;
 
+
+
+
+    private static Map<Integer ,Integer> registersDataTypeMap = new HashMap<>();
+
+
+    private static List<DevicePointPojo> devicePointPojoList = null;
+    private static Map<Integer,DevicePointPojo> devicePointPojoMap = new HashMap<>();
     @Override
     public void afterPropertiesSet() {
+//        List<DevicePointPojo> devicePointPojoListAll = devicePointRepository.findAll();
+//        devicePointPojoListAll.forEach((DevicePointPojo d) ->{
+//            String tableName = "H_";
+//            String pointAddress = String.format("%03s",d.getPointAddress());
+//            tableName += pointAddress;
+//            d.setPointHistoryDeviceTableName(tableName);
+//            devicePointRepository.saveAndFlush(d);
+//        });
+
+
+
         if(runSlave) {
+            devicePointPojoList = devicePointRepository.findByPointNameNotLike("");
+            devicePointPojoList.forEach((p)->{
+                Integer address = Integer.parseInt(p.getPointAddress());
+                devicePointPojoMap.put(address,p);
+            });
+
             System.out.println("初始化执行一次————————————————————————————————");
             DeviceDcsPojo deviceDcsPojo = deviceDcsRepository.findOne(1L);
             //TODO 从站地址，固定为1
@@ -114,6 +152,12 @@ public class DCSGetDataByModbusRtuSlave implements InitializingBean {
 
     private BasicProcessImage initProcessImage(int slaveId) {
         BasicProcessImage processImage = new BasicProcessImage(slaveId);
+
+        List<DevicePointPojo> devicePointPojoList = devicePointRepository.findAll();
+        devicePointPojoList.forEach((p)->{
+            registersDataTypeMap.put(Integer.valueOf(p.getPointAddress()),p.getDataTyper());
+        });
+
         short[] data = new short[1000];
         for(int i=0;i<data.length;i++){
             data[i ] = 0;
@@ -144,29 +188,111 @@ public class DCSGetDataByModbusRtuSlave implements InitializingBean {
             public void holdingRegisterWrite(int offset, short oldValue, short newValue) {
 //                System.out.println("hodingRegister:offset" + offset + ",oldValue:" + oldValue + ",newValue:" +
 //                        newValue);
-                //TODO 临时保存数据到临时数据库
-                tDcsService.saveDcsPoint(offset,newValue);
-                //TODO 处理DCS发送过来的数据
+                try {
+                    Integer dataType = registersDataTypeMap.get(offset + 1);
+                    int v = getValue(offset,newValue);
+
+                    int value = v;
+
+
+                    //TODO 临时保存数据到临时数据库
+//                tDcsService.saveDcsPoint(offset,v);
+                //更新DCS点的实时数据
+                updateDcsRealTimeValues(offset + 1,v);
+                //更新历史数据库
+            //    dcsHistoryService.save(offset,v,Timestamp.valueOf(LocalDateTime.now()));
+
+
+                    //TODO 处理DCS发送过来的数据
 //                handleAIData( offset, newValue);
-//
-//
-//                List<DevicePointPojo> deviceDcsPojoList = devicePointRepository.findByPointAddress(String.valueOf(offset));
-//                if(null != deviceDcsPojoList &&deviceDcsPojoList.size() >0) {
-//                    DevicePointPojo devicePointPojo = deviceDcsPojoList.get(0);
-//                    List<DevicePointRealtimePojo> devicePointRealtimePojoList = devicePointRealtimeRepository
-//                            .findByDevicePointPojo(devicePointPojo);
-//                    if(null != devicePointRealtimePojoList && devicePointRealtimePojoList.size() >0){
-//                        DevicePointRealtimePojo devicePointRealtimePojo = devicePointRealtimePojoList.get(0);
-//                        //TODO 时间需要进行设定
-////                        devicePointRealtimePojo.setrTime();
-//                        devicePointRealtimePojo.setPointValue((float) newValue);
-//                        devicePointRealtimeRepository.saveAndFlush(devicePointRealtimePojo);
-//                        //TODO 保存历史数据，未编写
-//                    }
-//                }
+
+
+                }catch (Exception e){
+                    e.printStackTrace();
+                }
+            }
+
+            @Override
+            public void holdingRegisterWrite(int offset, short[] value) {
+                int[] arr = new int[value.length];
+                for(int i=0;i<value.length;i++){
+                    int v = getValue(offset +i,value[i]);
+                    arr[i] = v;
+                }
+                //更新DCS点的实时数据
+                updateDcsRealTimeValues(offset,arr);
+                //更新历史数据库
+                /*for(int i=0;i<value.length;i++) {
+                    dcsHistoryService.save(offset +i, value[i], Timestamp.valueOf(LocalDateTime.now()));
+                }*/
+
+                dcsHistoryService.save(offset ,arr,Timestamp.valueOf(LocalDateTime.now()));
+//                dcsHistoryService.save(offset ,arr,Timestamp.valueOf(LocalDateTime.now()));
             }
         };
         return processImageListener;
+    }
+
+
+    public int getValue(int offset,short newValue){
+        Integer dataType = registersDataTypeMap.get(offset + 1);
+        int v = newValue;
+        if (null != dataType) {
+            if (dataType == DataType.TWO_BYTE_INT_SIGNED) {
+//                        System.out.println("有符号 输出值为：" + newValue);
+                v = newValue;
+            } else if (dataType == DataType.TWO_BYTE_INT_UNSIGNED) {
+                String hex = String.format("%x", newValue);
+                v = Integer.valueOf(hex, 16);
+//                        System.out.println("无符号 输出值为：" + v);
+            }
+        }
+        return v;
+    }
+    private void updateDcsRealTimeValues(int offset,int[] newValue) {
+        offset = offset +1;
+        List<DevicePointRealtimePojo> devicePointRealtimePojoList = new ArrayList<>();
+        for(int i=0;i<newValue.length;i++){
+            DevicePointPojo devicePointPojo = devicePointPojoMap.get(offset +i);
+            if(null != devicePointPojo){
+                DevicePointRealtimePojo devicePointRealtimePojo = devicePointPojo.getDevicePointRealtimePojo();
+                devicePointRealtimePojo.setPointValue((float) newValue[i]);
+                devicePointRealtimePojo.setrTime(Timestamp.valueOf(LocalDateTime.now()));
+                devicePointRealtimePojo.setDevicePointPojo(devicePointPojo);
+//                devicePointRealtimeRepository.saveAndFlush(devicePointRealtimePojo);
+                devicePointRealtimePojoList.add(devicePointRealtimePojo);
+            }
+        }
+        //TODO 批量保存
+        try {
+            devicePointRealtimeRepository.save(devicePointRealtimePojoList);
+//            devicePointRealtimeService.batchUpdate(devicePointRealtimePojoList);
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+        devicePointRealtimePojoList.clear();
+
+    }
+    private void updateDcsRealTimeValues(int offset,int newValue) {
+        List<DevicePointPojo> devicePointPojoList = devicePointRepository.findByPointAddress(String.valueOf(offset));
+        if(null != devicePointPojoList && devicePointPojoList.size() > 0) {
+            DevicePointPojo devicePointPojo = devicePointPojoList.get(0);
+            //2、生成一个或者查询到一个devicePointReal，并更更新数据
+            DevicePointRealtimePojo devicePointRealtimePojo = null;
+            List<DevicePointRealtimePojo> devicePointRealtimePojoList = devicePointRealtimeRepository
+                    .findByDevicePointPojo(devicePointPojo);
+            if (null != devicePointRealtimePojoList && devicePointRealtimePojoList.size() > 0) {
+                devicePointRealtimePojo = devicePointRealtimePojoList.get(0);
+            } else {
+                devicePointRealtimePojo = new DevicePointRealtimePojo();
+            }
+            if (null != devicePointRealtimePojo) {
+                devicePointRealtimePojo.setPointValue((float) newValue);
+                devicePointRealtimePojo.setrTime(Timestamp.valueOf(LocalDateTime.now()));
+                devicePointRealtimePojo.setDevicePointPojo(devicePointPojo);
+                devicePointRealtimeRepository.saveAndFlush(devicePointRealtimePojo);
+            }
+        }
     }
 
     /**
@@ -180,29 +306,11 @@ public class DCSGetDataByModbusRtuSlave implements InitializingBean {
          * 3、根据devicePointPojo这个对象，产生一个DevciePointHistory_Pojo对象【根据当前时间生成】
          * 4、对这个DevciePointHistory_Pojo对象进行赋值。，并保存
          * */
-        //1、根据offset查询数据库中数据，得到一个 devicePointPojo
-        List<DevicePointPojo> devicePointPojoList = devicePointRepository.findByPointAddress(String.valueOf(offset));
-        if(null != devicePointPojoList && devicePointPojoList.size() > 0){
-            DevicePointPojo devicePointPojo = devicePointPojoList.get(0);
-            //2、生成一个或者查询到一个devicePointReal，并更更新数据
-            DevicePointRealtimePojo devicePointRealtimePojo = null;
-            List<DevicePointRealtimePojo> devicePointRealtimePojoList = devicePointRealtimeRepository
-                    .findByDevicePointPojo(devicePointPojo);
-            if(null != devicePointRealtimePojoList &&devicePointRealtimePojoList.size() > 0){
-                devicePointRealtimePojo = devicePointRealtimePojoList.get(0);
-            }else{
-                devicePointRealtimePojo = new DevicePointRealtimePojo();
-            }
-            if(null != devicePointRealtimePojo) {
-                devicePointRealtimePojo.setPointValue((float) newValue);
-                devicePointRealtimePojo.setrTime(Timestamp.valueOf(LocalDateTime.now()));
-                devicePointRealtimePojo.setDevicePointPojo(devicePointPojo);
-                devicePointRealtimeRepository.saveAndFlush(devicePointRealtimePojo);
-            }
+        updateDcsRealTimeValues(offset,newValue);
             //TODO 3、产生一个DevciePointHistory_Pojo对象【根据当前时间生成】
             //TODO 4、对这个DevciePointHistory_Pojo对象进行赋值。，并保存
 
-        }
+
     }
 
 

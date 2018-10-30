@@ -109,6 +109,11 @@ public class Slave2Test extends SlaveTest{
                 Float.toHexString(3f);
 //                Float.floatToRawIntBits()
             }
+
+            @Override
+            public void holdingRegisterWrite(int offset, short[] value) {
+
+            }
         };
     }
 
@@ -123,6 +128,11 @@ public class Slave2Test extends SlaveTest{
             @Override
             public void holdingRegisterWrite(int offset, short oldValue, short newValue) {
                 System.out.println("offset" + offset + ",oldValue:" + oldValue + ",newValue:" + newValue);
+            }
+
+            @Override
+            public void holdingRegisterWrite(int offset, short[] value) {
+
             }
         };
     }

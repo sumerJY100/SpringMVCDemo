@@ -1,6 +1,13 @@
 package com.dcs;
 
+import com.gaussic.dataGet.dcsHandle.DCSDataHandle;
 import com.gaussic.util.modbus4j.RtuSerialPortWrapper;
+import com.serotonin.modbus4j.BasicProcessImage;
+import com.serotonin.modbus4j.ModbusFactory;
+import com.serotonin.modbus4j.ModbusSlaveSet;
+import com.serotonin.modbus4j.ProcessImageListener;
+import com.serotonin.modbus4j.exception.IllegalDataAddressException;
+import com.serotonin.modbus4j.exception.ModbusInitException;
 
 /**
  * @ClassName SlaveTest
@@ -10,22 +17,16 @@ import com.gaussic.util.modbus4j.RtuSerialPortWrapper;
  * @Version 1.0
  */
 public class SlaveTest {
-<<<<<<< Updated upstream
-    protected static final String commPortId = "COM2";
-    protected static final int baudRate = 9600,
-=======
+
 
     private static final String commPortId = "COM1";
-    private static final int baudRate = 9600,
->>>>>>> Stashed changes
-            flowControlIn = 0,
+    private static final int baudRate = 9600,flowControlIn = 0,
             flowControlOut = 0,
             dataBits = 8,
             stopBits = 1,
             parity = 1;
-<<<<<<< Updated upstream
-    protected static RtuSerialPortWrapper getWrapper() {
-=======
+
+
     /**
      * 主站读取与写入的数据，需要全部初始化
      */
@@ -167,8 +168,8 @@ public class SlaveTest {
 //        System.out.println("更新数据" + (i++));
     }
     static int i = 0;
-    private static RtuSerialPortWrapper getWrapper() {
->>>>>>> Stashed changes
+    protected static RtuSerialPortWrapper getWrapper() {
+
         return new RtuSerialPortWrapper(commPortId, baudRate, flowControlIn, flowControlOut, dataBits, stopBits, parity);
     }
 }

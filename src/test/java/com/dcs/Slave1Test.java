@@ -126,6 +126,11 @@ public class Slave1Test extends  SlaveTest{
             public void holdingRegisterWrite(int offset, short oldValue, short newValue) {
                 System.out.println("offset" + offset + ",oldValue:" + oldValue + ",newValue:" + newValue);
             }
+
+            @Override
+            public void holdingRegisterWrite(int offset, short[] value) {
+
+            }
         };
     }
 

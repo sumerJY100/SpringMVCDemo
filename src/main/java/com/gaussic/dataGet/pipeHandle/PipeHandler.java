@@ -14,6 +14,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.Resource;
+import java.time.Duration;
+import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.util.ArrayList;
@@ -42,6 +44,8 @@ public class PipeHandler {
     @Autowired
     private AlarmHistoryRepository alarmHistoryRepository;
 
+
+    private static  List<CoalMillEntity> coalMillEntityList ;
     /**
      * 粉管设备数据读取处理
      * @param localDateTime
@@ -50,7 +54,9 @@ public class PipeHandler {
         try {
             //TODO 后期进行历史数据优化，例如长时间没有数据，可以对数据进行删除，或记录数据的状态。在查询的时候，不至于某一段时间没有数据
             //生成四条历史记录，每台磨煤机一条历史记录
-            List<CoalMillEntity> coalMillEntityList = coalMillService.findAll();
+            if(null == coalMillEntityList) {
+                coalMillEntityList = coalMillService.findAll();
+            }
             //遍历告警信息，将  ”粉管通讯中断”  的告警信息查询出来,并设置到coalPipingEntity中
             //查询当前粉管是否存在通讯中断告警，并且是正在告警中的状态。
             //设置完成后，coalPipingEntity将存在alarmHistoryEntity对象。
@@ -116,6 +122,7 @@ public class PipeHandler {
     private void handlPipeUrlData(List<CoalMillEntity> coalMillEntityList ,List<CoalPipingHistory>
             coalPipingHistorieList,Date now) {
         //TODO 使用16个线程，16根粉管的数据读取结束以后，进行数据的更新，历史数据的存储
+//        Instant instant00 = Instant.now();
         final CountDownLatch countDownLatch = new CountDownLatch(16);
         try {
             //01、使用16个线程读取与处理数据，并将处理后的数据更新到实体类中【未保存到数据库】。
@@ -125,12 +132,17 @@ public class PipeHandler {
                 coalPipingHistorieList.add(coalPipingHistory);
                 List<CoalPipingEntity> coalPipingEntityList_temp = coalMillEntity.getCoalPipingEntityList();
 
+
+
                 for (int m = 0; m < coalPipingEntityList_temp.size(); m++) {
                     CoalPipingEntity coalPipingEntity = coalPipingEntityList_temp.get(m);
                     String url = coalPipingEntity.getCoalPipingSetEntity().getsUrl();
                     final String urlFinal = new String(url);
                     new Thread(() -> {
                         try {
+
+                            /*Instant instant10 = Instant.now();*/
+
                             PipingGetSingleDataThread pipingGetSingleDataThread = new PipingGetSingleDataThread();
                             pipingGetSingleDataThread.setCoalPipingEntity(coalPipingEntity);
                             pipingGetSingleDataThread.setNow(now);
@@ -140,13 +152,21 @@ public class PipeHandler {
                             /************关键处理类****************/
                             pipingGetSingleDataThread.updateData(urlFinal);
 //                            System.out.println("---------------coalPipingEntity:" + coalPipingEntity.getpName() + "," + coalPipingEntity + "," + coalPipingEntity.getpDencity() );
+
+
+                           /* Instant instant11 = Instant.now();
+                            Duration duration1011 = Duration.between(instant10,instant11);
+                            System.out.println("采集单根根管，时间：" + duration1011.getSeconds() + "秒,"+duration1011.getNano()
+                                    /1000/1000 +"毫秒");*/
                             countDownLatch.countDown();
+
                         }catch (Exception e){
                             e.printStackTrace();
                         }
                     }).start();
 
                 }
+
             }
 
             //16个线程结束以后执行的代码
@@ -154,18 +174,22 @@ public class PipeHandler {
             //02、将数据更新后的实体类，更新到数据库中。
             //02-01、更新coalPipingHistory数据
 //            System.out.println("更新历史数据");
-            //TODO 更新历史数据
-            for(CoalMillEntity coalMillEntity:coalMillEntityList){
-                List<CoalPipingEntity> coalPipingEntityList = coalMillEntity.getCoalPipingEntityList();
-                for(CoalPipingHistory coalPipingHistory:coalPipingHistorieList){
-//                    if(coalPipingHistory.getPip)
-                }
-            }
 
+
+  /*              Instant instant01 = Instant.now();
+                Duration duration0001 = Duration.between(instant00,instant01);
+                System.out.println("采集16根管，时间：" + duration0001.getSeconds() + "秒,"+duration0001.getNano()/1000/1000 +"毫秒");
+*/
+
+            // 更新历史数据的ABCD的浓度与风速
             coalPipingHistoryService.updateCoalPipintHistoryData(coalPipingHistorieList,coalMillEntityList);
-            //todo 历史数据更新到数据库
-            for (CoalPipingHistory coalPipingHistory : coalPipingHistorieList) {
 
+/*                Instant instant02 = Instant.now();
+                Duration duration0002 = Duration.between(instant00,instant02);
+                System.out.println("保存粉管数据，时间：" + duration0002.getSeconds() + "秒,"+duration0002.getNano()/1000/1000 +"毫秒");*/
+
+            //历史数据更新到数据库
+            for (CoalPipingHistory coalPipingHistory : coalPipingHistorieList) {
                 coalPipingHistoryService.updateCoalPipingHistory(coalPipingHistory.gethCoalMillId(), coalPipingHistory);
             }
             //02-02、更新coalpipingEntity，粉管的浓度、密度、运行状态、告警状态
@@ -184,6 +208,12 @@ public class PipeHandler {
                     }
                 }
             }
+
+/*            Instant instant03 = Instant.now();
+            Duration duration0003 = Duration.between(instant00,instant03);
+            System.out.println("更新粉管实时数据，时间：" + duration0002.getSeconds() + "秒,"+duration0002.getNano()/1000/1000
+                    +"毫秒");*/
+
 
 //            coalPipingRepository.batchUpate(coalPipingEntityListAll);
         } catch (Exception e) {

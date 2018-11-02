@@ -5,6 +5,11 @@ import org.json.JSONArray;
 
 import java.io.*;
 import java.net.*;
+import java.time.Duration;
+import java.time.Instant;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.concurrent.CountDownLatch;
 
 public class HandleDeviceData {
     /**
@@ -30,11 +35,11 @@ public class HandleDeviceData {
      */
     private static String handleJsonP(String jsonPStr) {
         String jsonStr = null;
-        if(jsonPStr.length() > 0) {
+        if (jsonPStr.length() > 0) {
             int startIndex = jsonPStr.indexOf("(");
-            if(startIndex > -1) {
+            if (startIndex > -1) {
                 int endIndex = jsonPStr.lastIndexOf(")");
-                if(endIndex >-1) {
+                if (endIndex > -1) {
                     jsonStr = "" + jsonPStr.substring(startIndex + 1, endIndex) + "";
                 }
             }
@@ -42,6 +47,11 @@ public class HandleDeviceData {
 
         return jsonStr;
     }
+
+
+
+
+
 
     /**
      * 读取URL数据，读取正常时，返回字符串
@@ -88,7 +98,7 @@ public class HandleDeviceData {
         }
         if ("GET".equalsIgnoreCase(requestMethod)) {
             try {
-                httpUrlConn.setConnectTimeout(1500);
+                httpUrlConn.setConnectTimeout(200);
                 httpUrlConn.connect();
                 connectFlag = true;
             } catch (NoRouteToHostException e) {
@@ -127,7 +137,7 @@ public class HandleDeviceData {
 //                e.printStackTrace();
             }
             InputStreamReader inputStreamReader = null;
-            if(null != inputStream) {
+            if (null != inputStream) {
                 try {
                     inputStreamReader = new InputStreamReader(inputStream, "utf-8");
                 } catch (UnsupportedEncodingException e) {
@@ -173,27 +183,37 @@ public class HandleDeviceData {
             buffer.append("josnp([])");
         }
 
+        buffer = handleExceptionMessage(buffer, connectErrorMsg, handleDataErrorMsg);
+
+
+        return buffer.toString();
+    }
+
+
+    private static StringBuffer handleExceptionMessage(StringBuffer buffer, String connectErrorMsg, String
+            handleDataErrorMsg) {
         //返回异常数据处理
         if (connectErrorMsg != null && connectErrorMsg.length() > 0) {
-            String connectionError = "{\""+WindDataPojo.CONNECT_ERROR+"\":\"" + connectErrorMsg + "\"}";
-            if(buffer.toString().length() > 9){
-                connectionError = ","+ connectionError;
+            String connectionError = "{\"" + WindDataPojo.CONNECT_ERROR + "\":\"" + connectErrorMsg + "\"}";
+            if (buffer.toString().length() > 9) {
+                connectionError = "," + connectionError;
             }
-            buffer.insert(buffer.toString().length() - 2,connectionError);
+            buffer.insert(buffer.toString().length() - 2, connectionError);
 //            buffer.append(connectionError.toCharArray(),buffer.toString().length() - 2,connectionError.length());
         }
-        if (handleDataErrorMsg != null && handleDataErrorMsg.length()> 0) {
-            String handleError = "{\""+ WindDataPojo.HANDLE_DATA_ERROR+"\":\"" +handleDataErrorMsg +"\"}";
-            if(buffer.toString().length() > 9){
-                handleError = ","+ handleError;
+        if (handleDataErrorMsg != null && handleDataErrorMsg.length() > 0) {
+            String handleError = "{\"" + WindDataPojo.HANDLE_DATA_ERROR + "\":\"" + handleDataErrorMsg + "\"}";
+            if (buffer.toString().length() > 9) {
+                handleError = "," + handleError;
             }
-            if(buffer.toString().length() > 2) {
+            if (buffer.toString().length() > 2) {
                 buffer.insert(buffer.toString().length() - 2, handleError);
             }
 //            buffer.append(handleError.toCharArray(),buffer.toString().length() - 2,handleError.length());
         }
 
 //        System.out.println("buffer:" + buffer.toString());
-        return buffer.toString();
+
+        return buffer;
     }
 }

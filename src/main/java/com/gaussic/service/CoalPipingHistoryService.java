@@ -2,11 +2,14 @@ package com.gaussic.service;
 
 import com.gaussic.model.CoalMillEntity;
 import com.gaussic.model.CoalPipingEntity;
+import com.gaussic.model.dcs_history.H000Pojo_Base;
 import com.gaussic.model.history.*;
 import com.gaussic.repository.CoalPipingHistoryRepositoryA;
 import com.gaussic.repository.CoalPipingHistoryRepositoryB;
 import com.gaussic.repository.CoalPipingHistoryRepositoryC;
 import com.gaussic.repository.CoalPipingHistoryRepositoryD;
+import com.gaussic.util.DataHandleUtil.PipeHandlerUtil;
+import com.gaussic.util.HandlDcsHistoryListUtil;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -46,50 +49,128 @@ public class CoalPipingHistoryService<T extends CoalPipingHistory> {
         return generateJsonStringByHistroyList(coalPipeHistoryEntityList,beginC,endC);
 
     }
+    public String generateJsonStringByHistroyList(List<T> coalPipeHistoryEntityList, Timestamp beginT, Timestamp
+            endT, List<H000Pojo_Base> hList) {
+        if(null == hList){
+            return generateJsonStringByHistroyList(coalPipeHistoryEntityList,beginT,endT);
+        }else{
+            Calendar beginC = new GregorianCalendar();
+            beginC.setTimeInMillis(beginT.getTime());
+            Calendar endC = new GregorianCalendar();
+            endC.setTimeInMillis(endT.getTime());
+            return generateJsonStringByHistroyList(coalPipeHistoryEntityList,beginC,endC,hList);
+        }
 
+
+
+    }
+    public String generateJsonStringByHistroyList(List<T> coalPipeHistoryEntityList,
+                                                  Calendar beginC,
+                                                  Calendar endC,List<H000Pojo_Base> hList) {
+        //TODO 将磨煤机的磨煤量设置到coalpipingHistory中
+        HandlDcsHistoryListUtil.getMilHistoryListNoChange(coalPipeHistoryEntityList,hList);
+
+        return generateJsonStringByHistroyList(coalPipeHistoryEntityList,beginC,endC);
+
+    }
     public String generateJsonStringByHistroyList(List<T> coalPipeHistoryEntityList,
                                                   Calendar beginC,
                                                   Calendar endC) {
         JSONObject jsonObject = new JSONObject();
-        JSONArray jsonArrayForPipe1Density = new JSONArray();
-        JSONArray jsonArrayForPipe2Density = new JSONArray();
-        JSONArray jsonArrayForPipe3Density = new JSONArray();
-        JSONArray jsonArrayForPipe4Density = new JSONArray();
-        JSONArray jsonArrayForPipe1Velocity = new JSONArray();
-        JSONArray jsonArrayForPipe2Velocity = new JSONArray();
-        JSONArray jsonArrayForPipe3Velocity = new JSONArray();
-        JSONArray jsonArrayForPipe4Velocity = new JSONArray();
-        if (null != coalPipeHistoryEntityList) {
-            for (CoalPipingHistory h : coalPipeHistoryEntityList) {
-                jsonArrayForPipe1Density.put(h.gethPipeADencity());
-                jsonArrayForPipe2Density.put(h.gethPipeBDencity());
-                jsonArrayForPipe3Density.put(h.gethPipeCDencity());
-                jsonArrayForPipe4Density.put(h.gethPipeDDencity());
+        try {
+            JSONArray jsonArrayForPipe1Density = new JSONArray();
+            JSONArray jsonArrayForPipe2Density = new JSONArray();
+            JSONArray jsonArrayForPipe3Density = new JSONArray();
+            JSONArray jsonArrayForPipe4Density = new JSONArray();
+            JSONArray jsonArrayForPipe1Velocity = new JSONArray();
+            JSONArray jsonArrayForPipe2Velocity = new JSONArray();
+            JSONArray jsonArrayForPipe3Velocity = new JSONArray();
+            JSONArray jsonArrayForPipe4Velocity = new JSONArray();
+            JSONArray jsonArrayForCoalMill = new JSONArray();
+            if (null != coalPipeHistoryEntityList) {
+                int size = coalPipeHistoryEntityList.size();
+                float[] density1Avg = new float[size];
+                float[] density2Avg = new float[size];
+                float[] density3Avg = new float[size];
+                float[] density4Avg = new float[size];
+                float[] velocity1Avg = new float[size];
+                float[] velocity2Avg = new float[size];
+                float[] velocity3Avg = new float[size];
+                float[] velocity4Avg = new float[size];
+                for (int i = 0; i < size; i++) {
+                    CoalPipingHistory c = coalPipeHistoryEntityList.get(i);
 
-                jsonArrayForPipe1Velocity.put(h.gethPipeAVelocity());
-                jsonArrayForPipe2Velocity.put(h.gethPipeBVelocity());
-                jsonArrayForPipe3Velocity.put(h.gethPipeCVelocity());
-                jsonArrayForPipe4Velocity.put(h.gethPipeDVelocity());
+                    density1Avg[i] = c.getPipeADensityNotNull();
+                    density2Avg[i] = c.getPipeBDensityNotNull();
+                    density3Avg[i] = c.getPipeCDensityNotNull();
+                    density4Avg[i] = c.getPipeDDensityNotNull();
+
+                    velocity1Avg[i] = c.getPipeAVelocityNotNull();
+                    velocity2Avg[i] = c.getPipeAVelocityNotNull();
+                    velocity3Avg[i] = c.getPipeAVelocityNotNull();
+                    velocity4Avg[i] = c.getPipeAVelocityNotNull();
+                }
+
+                float[] d1 = new PipeHandlerUtil().getHandleData(density1Avg);
+                float[] d2 = new PipeHandlerUtil().getHandleData(density2Avg);
+                float[] d3 = new PipeHandlerUtil().getHandleData(density3Avg);
+                float[] d4 = new PipeHandlerUtil().getHandleData(density4Avg);
+
+                float[] v1 = new PipeHandlerUtil().getHandleData(velocity1Avg);
+                float[] v2 = new PipeHandlerUtil().getHandleData(velocity2Avg);
+                float[] v3 = new PipeHandlerUtil().getHandleData(velocity3Avg);
+                float[] v4 = new PipeHandlerUtil().getHandleData(velocity4Avg);
+
+
+                for (int i = 0; i < d1.length; i++) {
+                    jsonArrayForPipe1Density.put(d1[i]);
+                    jsonArrayForPipe2Density.put(d2[i]);
+                    jsonArrayForPipe3Density.put(d3[i]);
+                    jsonArrayForPipe4Density.put(d4[i]);
+
+                    jsonArrayForPipe1Velocity.put(v1[i]);
+                    jsonArrayForPipe2Velocity.put(v2[i]);
+                    jsonArrayForPipe3Velocity.put(v3[i]);
+                    jsonArrayForPipe4Velocity.put(v4[i]);
+                }
+
+
+                for (CoalPipingHistory h : coalPipeHistoryEntityList) {
+//                jsonArrayForPipe1Density.put(h.gethPipeADencity());
+//                jsonArrayForPipe2Density.put(h.gethPipeBDencity());
+//                jsonArrayForPipe3Density.put(h.gethPipeCDencity());
+//                jsonArrayForPipe4Density.put(h.gethPipeDDencity());
+//
+//                jsonArrayForPipe1Velocity.put(h.gethPipeAVelocity());
+//                jsonArrayForPipe2Velocity.put(h.gethPipeBVelocity());
+//                jsonArrayForPipe3Velocity.put(h.gethPipeCVelocity());
+//                jsonArrayForPipe4Velocity.put(h.gethPipeDVelocity());
+
+                    jsonArrayForCoalMill.put(h.getCoalMillValue());
+                }
             }
+
+            jsonObject.put("startTime", beginC.getTimeInMillis());
+            jsonObject.put("endTime", endC.getTimeInMillis());
+            SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm");
+            jsonObject.put("startTimeStr", simpleDateFormat.format(beginC.getTime()));
+            jsonObject.put("endTimeStr", simpleDateFormat.format(endC.getTime()));
+
+            jsonObject.put("pipe1Density", jsonArrayForPipe1Density);
+            jsonObject.put("pipe2Density", jsonArrayForPipe2Density);
+            jsonObject.put("pipe3Density", jsonArrayForPipe3Density);
+            jsonObject.put("pipe4Density", jsonArrayForPipe4Density);
+
+            jsonObject.put("pipe1Velocity", jsonArrayForPipe1Velocity);
+            jsonObject.put("pipe2Velocity", jsonArrayForPipe2Velocity);
+            jsonObject.put("pipe3Velocity", jsonArrayForPipe3Velocity);
+            jsonObject.put("pipe4Velocity", jsonArrayForPipe4Velocity);
+
+            jsonObject.put("coalMillDatas", jsonArrayForCoalMill);
+
+        }catch (Exception e){
+            e.printStackTrace();
         }
-
-        jsonObject.put("startTime", beginC.getTimeInMillis());
-        jsonObject.put("endTime", endC.getTimeInMillis());
-        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm");
-        jsonObject.put("startTimeStr", simpleDateFormat.format(beginC.getTime()));
-        jsonObject.put("endTimeStr", simpleDateFormat.format(endC.getTime()));
-
-        jsonObject.put("pipe1Density", jsonArrayForPipe1Density);
-        jsonObject.put("pipe2Density", jsonArrayForPipe2Density);
-        jsonObject.put("pipe3Density", jsonArrayForPipe3Density);
-        jsonObject.put("pipe4Density", jsonArrayForPipe4Density);
-
-        jsonObject.put("pipe1Velocity", jsonArrayForPipe1Velocity);
-        jsonObject.put("pipe2Velocity", jsonArrayForPipe2Velocity);
-        jsonObject.put("pipe3Velocity", jsonArrayForPipe3Velocity);
-        jsonObject.put("pipe4Velocity", jsonArrayForPipe4Velocity);
-
-
         return jsonObject.toString();
     }
 
@@ -106,19 +187,19 @@ public class CoalPipingHistoryService<T extends CoalPipingHistory> {
         switch (coalMillId.intValue()) {
             case 1:
                 coalPipingHistory = new AcoalPipingHistoryEntity(coalMillEntity, now);
-                coalPipingHistoryRepositoryA.save((AcoalPipingHistoryEntity) coalPipingHistory);
+//                coalPipingHistoryRepositoryA.save((AcoalPipingHistoryEntity) coalPipingHistory);
                 break;
             case 2:
                 coalPipingHistory = new BcoalPipingHistoryEntity(coalMillEntity, now);
-                coalPipingHistoryRepositoryB.save((BcoalPipingHistoryEntity) coalPipingHistory);
+//                coalPipingHistoryRepositoryB.save((BcoalPipingHistoryEntity) coalPipingHistory);
                 break;
             case 3:
                 coalPipingHistory = new CcoalPipingHistoryEntity(coalMillEntity, now);
-                coalPipingHistoryRepositoryC.save((CcoalPipingHistoryEntity) coalPipingHistory);
+//                coalPipingHistoryRepositoryC.save((CcoalPipingHistoryEntity) coalPipingHistory);
                 break;
             case 4:
                 coalPipingHistory = new DcoalPipingHistoryEntity(coalMillEntity, now);
-                coalPipingHistoryRepositoryD.save((DcoalPipingHistoryEntity) coalPipingHistory);
+//                coalPipingHistoryRepositoryD.save((DcoalPipingHistoryEntity) coalPipingHistory);
                 break;
             default:
                 break;

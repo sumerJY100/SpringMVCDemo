@@ -21,6 +21,7 @@ import org.springframework.web.bind.annotation.*;
 import java.sql.Time;
 import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
+import java.time.Duration;
 import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
@@ -209,23 +210,31 @@ public class CoalPipingController {
         //TODO 历史曲线数据，缺少磨煤机磨煤量的数据返回
         BE be = new BE(beginTime,endTime);
         List<? extends CoalPipingHistory> list = null;
+        List<H000Pojo_Base> h000Pojo_baseList = null;
         if(null != millLocation){
+            Timestamp begin = be.getBeginTimestamp();
+            Timestamp end = be.getEndTimestamp();
             if(millLocation.equals("A")){
-                list = coalPipingHistoryRepositoryA.findByHTimeBetween(be.getBeginTimestamp(),be.getEndTimestamp());
+                list = coalPipingHistoryRepositoryA.findByHTimeBetween(begin,end);
+                h000Pojo_baseList = dcsHistoryService.findByTime(75, begin, end);
             }else if(millLocation.equals("B")){
-                list = coalPipingHistoryRepositoryB.findByHTimeBetween(be.getBeginTimestamp(),be.getEndTimestamp());
+                list = coalPipingHistoryRepositoryB.findByHTimeBetween(begin,end);
+                h000Pojo_baseList = dcsHistoryService.findByTime(76, begin, end);
             }else if(millLocation.equals("C")){
-                list = coalPipingHistoryRepositoryC.findByHTimeBetween(be.getBeginTimestamp(),be.getEndTimestamp());
+                list = coalPipingHistoryRepositoryC.findByHTimeBetween(begin,end);
+                h000Pojo_baseList = dcsHistoryService.findByTime(77, begin, end);
             }else if(millLocation.equals("D")){
-                list = coalPipingHistoryRepositoryD.findByHTimeBetween(be.getBeginTimestamp(),be.getEndTimestamp());
+                list = coalPipingHistoryRepositoryD.findByHTimeBetween(begin,end);
+                h000Pojo_baseList = dcsHistoryService.findByTime(78, begin, end);
             }
         }
         //TODO 处理异常数据
         if(null == list || list.size() == 0){
             list = handleExceptionHistoryList(be);
         }
+
         return coalPipingHistoryService.generateJsonStringByHistroyList(list, be
-                .getBeginTimestamp(), be.getEndTimestamp());
+                .getBeginTimestamp(), be.getEndTimestamp(),h000Pojo_baseList);
     }
     /**
      * 获取A磨的历史数据
@@ -662,7 +671,7 @@ public class CoalPipingController {
     @ResponseBody
     public String getInitTimeDataForDensity(@RequestParam(value = "mill", required = false) String mill) {
         LocalDateTime localDateTime = LocalDateTime.now();
-        LocalDateTime localDateTimeBefore = localDateTime.minusMinutes(30);
+        LocalDateTime localDateTimeBefore = localDateTime.minusMinutes(15);
         Timestamp begin = Timestamp.valueOf(localDateTimeBefore);
         Timestamp end = Timestamp.valueOf(localDateTime);
         JSONArray jsonArray = new JSONArray();
@@ -670,18 +679,54 @@ public class CoalPipingController {
             List<? extends CoalPipingHistory> list = null;
             List<Float> millHistoryList = new ArrayList<>();
             List<H000Pojo_Base> hList = null;
-            if (mill.equals("A")) {
-                list = coalPipingHistoryRepositoryA.findByHTimeAfterOrderByHTimeAsc(begin);
-                hList = dcsHistoryService.findByTime(75,begin,end);
-            } else if (mill.equals("B")) {
-                list = coalPipingHistoryRepositoryB.findByHTimeAfterOrderByHTimeAsc(begin);
-                hList = dcsHistoryService.findByTime(76,begin,end);
-            } else if (mill.equals("C")) {
-                list = coalPipingHistoryRepositoryC.findByHTimeAfterOrderByHTimeAsc(begin);
-                hList = dcsHistoryService.findByTime(77,begin,end);
-            } else if (mill.equals("D")) {
-                list = coalPipingHistoryRepositoryD.findByHTimeAfterOrderByHTimeAsc(begin);
-                hList = dcsHistoryService.findByTime(78,begin,end);
+            switch (mill) {
+                case "A":
+                    Instant instantNow = Instant.now();
+
+                    list = coalPipingHistoryRepositoryA.findByHTimeAfterOrderByHTimeAsc(begin);
+
+                    Instant instantCPNow = Instant.now();
+                    Duration durationForCP = Duration.between(instantNow,instantCPNow);
+                    System.out.println("查询coalPipingHistory的时间：" + durationForCP.getSeconds() + "秒,"+durationForCP
+                            .getNano()/1000000+"毫秒");
+
+                    hList = dcsHistoryService.findByTime(75, begin, end);
+
+                    Instant instantForDcs = Instant.now();
+                    Duration durationForDCS = Duration.between(instantNow,instantForDcs);
+                    System.out.println("查询磨煤机磨煤量的时间：" + durationForDCS.getSeconds() + "秒,"+durationForDCS
+                            .getNano()/1000000+"毫秒");
+                    break;
+                case "B":
+                    Instant instantNowB = Instant.now();
+
+                    list = coalPipingHistoryRepositoryB.findByHTimeAfterOrderByHTimeAsc(begin);
+
+                    Instant instantCPNowB = Instant.now();
+                    Duration durationForCPB = Duration.between(instantNowB,instantCPNowB);
+                    System.out.println("查询coalPipingHistory的时间：" + durationForCPB.getSeconds() + "秒,"+durationForCPB
+                            .getNano()/1000000+"毫秒");
+
+                    hList = dcsHistoryService.findByTime(76, begin, end);
+
+                    Instant instantForDcsB = Instant.now();
+                    Duration durationForDCSB = Duration.between(instantNowB,instantForDcsB);
+                    System.out.println("查询磨煤机磨煤量的时间：" + durationForDCSB.getSeconds() + "秒,"+durationForDCSB
+                            .getNano()/1000000+"毫秒");
+
+                    break;
+                case "C":
+                    list = coalPipingHistoryRepositoryC.findByHTimeAfterOrderByHTimeAsc(begin);
+                    hList = dcsHistoryService.findByTime(77, begin, end);
+                    break;
+                case "D":
+                    list = coalPipingHistoryRepositoryD.findByHTimeAfterOrderByHTimeAsc(begin);
+                    hList = dcsHistoryService.findByTime(78, begin, end);
+                    break;
+                default:
+                    list = null;
+                    hList = null;
+                    break;
             }
             //TODO 查询15分钟内的磨煤机数据
 

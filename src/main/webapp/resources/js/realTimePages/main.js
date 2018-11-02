@@ -24,12 +24,12 @@ $(document).ready(function () {
     var curveOptions = $.extend({},chartOptions);
     curveOptions.legend.y = 10;
     millCurve = getCurveChartWithOptionsAndSerieNames("container_Mill", "磨煤量", "",curveOptions,["磨煤量"]);
-     absoluteBarForDensity = getAbsoluteBarWithOptions("container_absoluteBar", densityChartTitle+"("+ relativeChartSubtitle + ")" ,"",chartOptions,seriesNameArr);
+     absoluteBarForDensity = getAbsoluteBarWithOptions("container_absoluteBar", densityChartTitle+"("+ absoluteChartSubtitle + ")" ,"",chartOptions,seriesNameArr);
      relativeBarForDensity = getRelativeBarWithOptions("container_relativeBar", densityChartTitle+"("+ relativeChartSubtitle + ")" ,"",chartOptions,seriesNameArr);
      curveForDensity = getCurveChartWithOptions("container", densityChartTitle, "",curveOptions,seriesNameArr);
     //风速
      absoluteBarForVelocity = getAbsoluteBarWithOptions("container_V_absoluteBar", velocityChartTitle + "(" + absoluteChartSubtitle+")", "",chartOptions,seriesNameArr);
-     relativeBarForVelocity = getRelativeBarWithOptions("container_V_relativeBar", velocityChartTitle+ "(" + absoluteChartSubtitle+")", "",chartOptions,seriesNameArr);
+     relativeBarForVelocity = getRelativeBarWithOptions("container_V_relativeBar", velocityChartTitle+ "(" + relativeChartSubtitle+")", "",chartOptions,seriesNameArr);
      curveForVelocity = getCurveChartWithOptions("container_V", velocityChartTitle, "",curveOptions,seriesNameArr);
 
      // curveForVelocity.len

@@ -23,6 +23,9 @@
     <context:component-scan base-package="com.gaussic.dataGet.dcsHandle"/>
     <context:component-scan base-package="com.gaussic.dataGet.windPojoHandle"/>
     <context:component-scan base-package="com.gaussic.dataGet.pipeHandle"/>
+
+    <context:component-scan base-package="com.gaussic.quartz3" />
+
     <!-- 静态资源(js、image等)的访问 -->
     <mvc:default-servlet-handler/>
 
@@ -74,10 +77,10 @@
                 <prop key="hibernate.connection.provider_class">
                     org.hibernate.service.jdbc.connections.internal.C3P0ConnectionProvider
                 </prop>
-                <prop key="hibernate.c3p0.min_size">5</prop>
-                <prop key="hibernate.c3p0.max_size">600</prop>
+                <prop key="hibernate.c3p0.min_size">50</prop>
+                <prop key="hibernate.c3p0.max_size">2000</prop>
                 <prop key="hibernate.c3p0.timeout">1800</prop>
-                <prop key="hibernate.c3p0.max_statements">50</prop>
+                <prop key="hibernate.c3p0.max_statements">200</prop>
                 <prop key="hibernate.c3p0.preferredTestQuery">SELECT 1;</prop>
                 <prop key="hibernate.c3p0.testConnectionOnCheckout">true</prop>
                 <prop key="hibernate.c3p0.idle_test_period">3000</prop>
@@ -108,6 +111,7 @@
     <!--引入定时器任务-->
     <import resource="spring-quartz3.xml"/>
     <import resource="spring-quartzForDcsCache.xml"/>
+    <import resource="spring-quartz-pipeData-checkAlarm.xml"/>
 
 
     <!-- ======================== 调度工厂 ======================== -->
@@ -115,6 +119,7 @@
         <property name="triggers">
             <list>
                 <ref bean="simpleTrigger"/>
+                <ref bean="dcsCacheTrigger"/>
                 <ref bean="dcsCacheTrigger"/>
             </list>
         </property>

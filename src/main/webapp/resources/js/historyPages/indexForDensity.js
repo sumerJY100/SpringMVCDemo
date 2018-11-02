@@ -103,8 +103,8 @@ var mastreClickEvent = function(startTime,endTime){
             detailChart.redraw();
 
 
-            //对锅炉负荷曲线进行重绘
-            var seriesForBe = detailSeriesArr[0];
+            //对磨煤量曲线进行重绘
+            var seriesForBe = seriesArr[4];
             var seriesDataForBe = [];
             Highcharts.each(seriesForBe.data, function (d) {
                 if (d.x > min && d.x < max) {
@@ -156,7 +156,7 @@ var mastreClickEvent = function(startTime,endTime){
  */
 function createContrastChart(master, startTime, endTime, seriesData,chartName) {
     var seriesDataForBe = [], max = 0, min = 0;
-    Highcharts.each(master.series[0].data, function (d) {
+    Highcharts.each(master.series[4].data, function (d) {
         if (d.x >= startTime) {
             seriesDataForBe.push(d.y);
             if (d.y > max) {max = d.y;}
@@ -165,11 +165,11 @@ function createContrastChart(master, startTime, endTime, seriesData,chartName) {
 
     });
     var series = {
-        name: '锅炉负荷',
+        name: '磨煤量',
         color: 'red',
         pointStart: startTime,
-        pointInterval: 5 * 1000,
-        lineWidth: 0.5,
+        pointInterval: 1 * 1000,
+        lineWidth: 1,
         data: seriesDataForBe
     };
     // if(min === max){
@@ -192,6 +192,10 @@ function createDetail(masterChart, startTime, endTime, seriesData,chartName) {
     var masterChartSeriesArr = masterChart.series;
     var max = 0, min = 0;
     for (var x in masterChartSeriesArr) {
+        // if(x>=4){
+        //     break;
+        // }
+
         var masterChartSeries = masterChartSeriesArr[x];
         var detailData = [];
         Highcharts.each(masterChartSeries.data, function (d) {
@@ -206,8 +210,8 @@ function createDetail(masterChart, startTime, endTime, seriesData,chartName) {
             name: masterChartSeries.name,
             color: masterChartSeries.color,
             pointStart: detailStart,
-            pointInterval: 5 * 1000,
-            lineWidth: 0.5,
+            pointInterval: 1 * 1000,
+            lineWidth: 1,
             data: detailData,
             // data: [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
             events: detailClickEvent
@@ -245,7 +249,7 @@ function createMaster(startTime, endTime, pipeHistoryDataArr,chartName) {
             type: 'area',
             name: p.name,
             color: p.color,
-            pointInterval: 5 * 1000,
+            pointInterval: 1 * 1000,
             pointStart: startTime,
             data: targetData
         };
@@ -456,6 +460,7 @@ function initTableRow(currentSeriesName, left, leftValue, right, rightValue, xMa
 
 var pipe1ForDensity, pipe2ForDensity, pipe3ForDensity, pipe4ForDensity;
 var pipe1ForVelocity, pipe2ForVelocity,pipe3ForVelocity, pipe4ForVelocity;
+var millDatas;
 var densityDataArr = [pipe1ForDensity,pipe2ForDensity,pipe3ForDensity,pipe4ForDensity];
 var velocityDataArr = [pipe1ForVelocity,pipe2ForVelocity,pipe3ForVelocity,pipe4ForVelocity];
 
@@ -483,10 +488,12 @@ function initHistoryData() {
          pipe3ForVelocity = new PipeHistoryData(velocityType, "pipe3", pipe3Color, result.pipe3Velocity);
          pipe4ForVelocity = new PipeHistoryData(velocityType, "pipe4", pipe4Color, result.pipe4Velocity);
 
+         millDatas = new PipeHistoryData("","mill",pipe1Color,result.coalMillDatas);
+
         densityDataArr = [pipe1ForDensity,pipe2ForDensity,pipe3ForDensity,pipe4ForDensity];
         velocityDataArr = [pipe1ForVelocity,pipe2ForVelocity,pipe3ForVelocity,pipe4ForVelocity];
 
-        masterChart = createMaster(result.startTime, result.endTime, [pipe1ForDensity, pipe2ForDensity, pipe3ForDensity, pipe4ForDensity],chartName);
+        masterChart = createMaster(result.startTime, result.endTime, [pipe1ForDensity, pipe2ForDensity, pipe3ForDensity, pipe4ForDensity,millDatas],chartName);
 
 
         initTable();

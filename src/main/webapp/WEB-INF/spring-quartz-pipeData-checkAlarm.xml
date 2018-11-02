@@ -11,17 +11,18 @@
 
     <!-- 配置调度程序quartz ，其中配置JobDetail有两种方式-->
     <!--方式一：使用JobDetailBean，任务类必须实现Job接口 -->
-    <bean id="jobDetailForDcsCache" class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
-        <property name="targetObject" ref="taskForDcsDataCache" />
-        <property name="targetMethod" value="doJob" />
+    <bean id="jobDetailForPipeDataCheckAlarm"
+          class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
+        <property name="targetObject" ref="checkDeviceAlarmQuartz" />
+        <property name="targetMethod" value="checkDeviceAlarm" />
 
     </bean>
 
     <!-- Run the job every 2 seconds with initial delay of 1 second -->
     <bean id="dcsCacheTrigger"  class="org.springframework.scheduling.quartz.SimpleTriggerFactoryBean">
-        <property name="jobDetail" ref="jobDetailForDcsCache" />
+        <property name="jobDetail" ref="jobDetailForPipeDataCheckAlarm" />
         <property name="startDelay" value="5000" />
-        <property name="repeatInterval" value="30000" />
+        <property name="repeatInterval" value="60000" />
     </bean>
 
 

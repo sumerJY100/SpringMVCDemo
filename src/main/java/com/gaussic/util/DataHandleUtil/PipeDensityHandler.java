@@ -15,28 +15,31 @@ public class PipeDensityHandler {
     private static final int WINDOWS = 1;
     private int[] mTemp = null; // 只声明暂时不初始化,用来记录最后得不到均值处理的点
     private int[] mBufout = null;
+
+    private float[] mTempForFloat = null; // 只声明暂时不初始化,用来记录最后得不到均值处理的点
+    private float[] mBufoutForFloat = null;
     private int mWindowSize = WINDOWS;
 
     public static void main(String[] args) {
-       String str = UtilData.str01;
-        String[] strArr = str.split("\\n");
-        int[] intArr = new int[strArr.length];
+       String str = UtilData6.str;
+        String[] strArr = str.split("\\t");
+        float[] intArr = new float[strArr.length];
         for(int i=0;i<strArr.length;i++){
             intArr[i] = Integer.parseInt(strArr[i]);
         }
-        int[] originalArr = Arrays.copyOfRange(intArr,0,200);
+        float[] originalArr = Arrays.copyOfRange(intArr,0,200);
 
 
         PipeDensityHandler pipeDensityHandler = new PipeDensityHandler(30);
-        int[] result = pipeDensityHandler.movingAverageFilter(originalArr);
-        List<Integer> list = new ArrayList<>();
-        for (int aResult : result) {
+        float[] result = pipeDensityHandler.movingAverageFilter(originalArr);
+        List<Float> list = new ArrayList<>();
+        for (float aResult : result) {
             list.add(aResult);
         }
         for(int m=0;m<29;m++) {
-            int[] arr01 = Arrays.copyOfRange(intArr, 200+30*m, 200+30*(m+1));
+            float[] arr01 = Arrays.copyOfRange(intArr, 200+30*m, 200+30*(m+1));
             changeData(arr01, originalArr);
-            int[] result01 = pipeDensityHandler.movingAverageFilter(originalArr);
+            float[] result01 = pipeDensityHandler.movingAverageFilter(originalArr);
             for (int i = originalArr.length - arr01.length; i < result01.length; i++) {
                 list.add(result01[i]);
             }
@@ -83,6 +86,16 @@ public class PipeDensityHandler {
         changeData(bIntArr,arr);
     }
     public static void changeData(int[] newArr,int[] originalArr){
+        for (int i = newArr.length; i < originalArr.length + newArr.length; i++) {
+            if (i < originalArr.length) {
+                originalArr[i - newArr.length] = originalArr[i ];
+            } else  {
+                originalArr[i - newArr.length] = newArr[i - originalArr.length];
+            }
+
+        }
+    }
+    public static void changeData(float[] newArr,float[] originalArr){
         for (int i = newArr.length; i < originalArr.length + newArr.length; i++) {
             if (i < originalArr.length) {
                 originalArr[i - newArr.length] = originalArr[i ];
@@ -176,12 +189,68 @@ public class PipeDensityHandler {
         }
     }
 
+    public float[] movingAverageFilter(float[] buf) {
+        int bufoutSub = 0;
+        int winArraySub = 0;
+
+        float[] winArray = new float[mWindowSize];
+
+        if (mTempForFloat == null) {
+            mBufoutForFloat = new float[buf.length - mWindowSize + 1];
+            for (int i = 0; i < buf.length; i++) {
+                if ((i + mWindowSize) > buf.length) {
+                    break;
+                } else {
+                    for (int j = i; j < (mWindowSize + i); j++) {
+                        winArray[winArraySub] = buf[j];
+                        winArraySub = winArraySub + 1;
+                    }
+
+                    mBufoutForFloat[bufoutSub] = mean(winArray);
+                    bufoutSub = bufoutSub + 1;
+                    winArraySub = 0;
+                }
+            }
+            mTempForFloat = new float[mWindowSize - 1];
+            System.arraycopy(buf, buf.length - mWindowSize + 1, mTempForFloat, 0,
+                    mWindowSize - 1);
+            return mBufoutForFloat;
+        } else {
+            float[] bufadd = new float[buf.length + mTempForFloat.length];
+            mBufoutForFloat = new float[bufadd.length - mWindowSize + 1];
+            System.arraycopy(mTempForFloat, 0, bufadd, 0, mTempForFloat.length);
+            System.arraycopy(buf, 0, bufadd, mTempForFloat.length, buf.length); // 将temp和buf拼接到一块
+            for (int i = 0; i < bufadd.length; i++) {
+                if ((i + mWindowSize) > bufadd.length)
+                    break;
+                else {
+                    for (int j = i; j < (mWindowSize + i); j++) {
+                        winArray[winArraySub] = bufadd[j];
+                        winArraySub = winArraySub + 1;
+                    }
+                    mBufoutForFloat[bufoutSub] = mean(winArray);
+                    bufoutSub = bufoutSub + 1;
+                    winArraySub = 0;
+                    System.arraycopy(bufadd, bufadd.length - mWindowSize + 1,
+                            mTempForFloat, 0, mWindowSize - 1);
+                }
+            }
+            return mBufoutForFloat;
+        }
+    }
     public int mean(int[] array) {
         long sum = 0;
         for (int i = 0; i < array.length; i++) {
             sum += array[i];
         }
         return (int) (sum / array.length);
+    }
+    public float mean(float[] array) {
+        float sum = 0;
+        for (int i = 0; i < array.length; i++) {
+            sum += array[i];
+        }
+        return sum / array.length;
     }
 }
 

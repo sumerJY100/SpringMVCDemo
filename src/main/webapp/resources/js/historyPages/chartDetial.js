@@ -1,3 +1,80 @@
+
+/**
+ * 历史曲线的toolTip
+ * @type {{valueSuffix: string, split: boolean, distance: number, padding: number, style: {fontSize: string, fontFamily: string, fontWeight: string}, dateTimeLabelFormats: {millisecond: string, second: string, minute: string, hour: string, day: string}}}
+ */
+var curveToolTip = {
+    valueSuffix: '',
+    // split: true,
+    distance: 20,
+    padding: 10,
+    shared: true,
+    style: {
+        fontSize: "14px",
+        fontFamily: "微软雅黑",
+        fontWeight: "light"
+    },
+    dateTimeLabelFormats: {
+        millisecond: '%Y-%m-%d %H:%M:%S',
+        second: '%Y-%m-%d %H:%M:%S',
+        minute: '%Y-%m-%d %H:%M:%S',
+        hour: '%Y-%m-%d %H:%M:%S',
+        day: '%Y-%m-%d %H:%M:%S'
+    }
+};
+/**
+ * 创建详细数据图
+ * @param masterChart
+ */
+function createDetail(masterChart, startTime, endTime, seriesData,chartName) {
+
+    var detailStart = startTime;
+    var seriesDataArr = [];
+    var masterChartSeriesArr = masterChart.series;
+    var max = 0, min = 0;
+    for (var x in masterChartSeriesArr) {
+        if(x>=4){
+            break;
+        }
+
+        var masterChartSeries = masterChartSeriesArr[x];
+        var detailData = [];
+        Highcharts.each(masterChartSeries.data, function (d) {
+            if (d.x >= detailStart) {
+                detailData.push(d.y);
+                if (d.y > max) {max = d.y;}
+                if (d.y < min) {min = d.y;}
+            }
+        });
+        var series = generatorDetailSerial(detailData,detailStart,masterChartSeries.name,masterChartSeries.color);
+
+        seriesDataArr.push(series);
+    }
+    // if (min === max) {
+    //生成一个没有数据的detailChart
+    // detailChart = generatorNoDataDetailChart();
+    // } else {
+    //生成一个有数据的detailChart
+    // detailChart = generatorWithDataDetailChart(seriesDataArr);
+    // }
+    detailChart = generatorWithDataDetailChart(seriesDataArr,chartName);
+}
+
+function generatorDetailSerial(serialData,pointStart,seriesName,seriesColor){
+    var series = {
+        yAxis: 0,
+        name: seriesName,
+        color: seriesColor,
+        pointStart: pointStart,
+        pointInterval: 1 * 1000,
+        lineWidth: 1,
+        data: serialData,
+        // data: [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
+        events: detailClickEvent
+    };
+    return series;
+}
+
 /**
  * detailChart鼠标点击事件
  * @type {{click: detailClickEvent.click}}
@@ -54,7 +131,7 @@ var detailChartOptions = {
     marginTop: 200,
     marginLeft: 50,
     marginRight: 50,
-    height: 500,
+    height: 650,
     style: {
         position: 'absolute'
     }

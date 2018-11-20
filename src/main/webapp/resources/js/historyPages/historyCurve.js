@@ -1,13 +1,23 @@
+/**
+ * 改变chart的数据为风速的数据
+ */
 function changeChartDataToVelocity(){
+    chartName = "风速历史曲线";
     console.log("change to Velocity");
-    // masterChart.setTitle({text:"风速历史曲线"});
-    detailChart.setTitle({text:"风速历史曲线"});
-    contrastChart.setTitle({text:"风速历史曲线"});
+
+    var pipeHistoryDataArrCopy = $.extend(true,{},velocityDataArr);
+    pipeHistoryDataArrCopy[4] = millDatas;
+
+    createMaster(queryStartTime, queryEndTime, pipeHistoryDataArrCopy,chartName);
+    /*// masterChart.setTitle({text:"风速历史曲线"});
+    detailChart.setTitle({text:chartName});
+    contrastChart.setTitle({text:chartName});
     //改变masterChart的数据
     //改变detailChart的数据
     //改变contrastChart的数据
     var chartSeriesArr = masterChart.series;
     var velocityDataArrCopy = jQuery.extend(true,{},velocityDataArr);
+    var millDataCopy = jQuery.extend(true,{},millDatas);
     for(var x in chartSeriesArr){
         var chartSeries = chartSeriesArr[x];
         var chartSeriesName = chartSeries.name;
@@ -15,14 +25,15 @@ function changeChartDataToVelocity(){
             var velocityData = velocityDataArrCopy[m];
             var currentVelocityDataName = velocityData.name;
             if(currentVelocityDataName === chartSeriesName){
-                console.log("赋值 前： " + velocityData.getData());
+                console.log("chartSeriesName:" + chartSeriesName)
+                // console.log("赋值 前： " + velocityData.getData());
                 //将velocityData赋值给当前的series
                 var targetData = [];
                 for(var i=0;i<velocityData.getData().length;i++){
                     targetData.push(velocityData.getData()[i]);
                 }
                 chartSeries.setData(targetData,false);
-                console.log("赋值 后：" +velocityData.getData());
+                // console.log("赋值 后：" +velocityData.getData());
             }
         }
     }
@@ -30,13 +41,24 @@ function changeChartDataToVelocity(){
     var maxAndMinObj = getMaxAndMinFunction();
     var max = maxAndMinObj.max;
     var min = maxAndMinObj.min;
-    changeDetailChartData(max,min);
+    changeDetailChartData(max,min);*/
 }
+
+/**
+ * 改变chart的数据为浓度的数据
+ */
 function changeChartDataToDensity(){
     console.log("change to Density");
     // masterChart.setTitle({text:"密度历史曲线"});
     detailChart.setTitle({text:"密度历史曲线"});
     contrastChart.setTitle({text:"密度历史曲线"});
+    var pipeHistoryDataArrCopy = $.extend(true,{},densityDataArr);
+    pipeHistoryDataArrCopy[4] = millDatas;
+    createMaster(queryStartTime, queryEndTime, pipeHistoryDataArrCopy,chartName);
+
+/*
+
+
     var chartSeriesArr = masterChart.series;
     var densityDataArrCopy = jQuery.extend(true,{},densityDataArr);
     for(var x in chartSeriesArr){
@@ -60,7 +82,7 @@ function changeChartDataToDensity(){
     var maxAndMinObj = getMaxAndMinFunction();
     var max = maxAndMinObj.max;
     var min = maxAndMinObj.min;
-    changeDetailChartData(max,min);
+    changeDetailChartData(max,min);*/
 }
 
 
@@ -69,13 +91,10 @@ function changeChartDataToDensity(){
 
 
 function changeDetailChartData(max,min){
-    var extremesObject = masterChart.xAxis[0],
-        // min = extremesObject.min,
-        // max = extremesObject.max,
-        /*detailData = [],*/
-        xAxis = masterChart.xAxis[0];
+
     var seriesArr = masterChart.series;
     var detailSeriesArr = detailChart.series;
+    var seriesDataArr = [];
     for (var x in seriesArr) {
         var detailData = [];
         var masterSeries = seriesArr[x];
@@ -86,26 +105,36 @@ function changeDetailChartData(max,min){
         });
         var masterSeriesName = masterSeries.name;
         for (var m in detailSeriesArr) {
-            var detailSeries = detailSeriesArr[m];
-            var detailSeriesName = detailSeries.name;
-            if (detailSeriesName === masterSeriesName) {
-                detailSeries.setData(detailData, false);
-            }
+            // var detailSeries = detailSeriesArr[m];
+            // var detailSeriesName = detailSeries.name;
+            // if (detailSeriesName === masterSeriesName) {
+            //     detailSeries.setData(detailData, false);
+            // }
+
+            var series = generatorDetailSerial(detailData, min, masterSeries.name, masterSeries.color);
+            seriesDataArr.push(series);
         }
 
     }
-    detailChart.redraw();
+    detailChart = generatorWithDataDetailChart(seriesDataArr,chartName);
+    // detailChart.redraw();
+    //对磨煤量曲线进行重绘
+    // contrastChart.series[0].setData(millDatas.data);
 
 
-    //对锅炉负荷曲线进行重绘
-    var seriesForBe = detailSeriesArr[0];
-    var seriesDataForBe = [];
-    Highcharts.each(seriesForBe.data, function (d) {
-        if (d.x > min && d.x < max) {
-            seriesDataForBe.push([d.x, d.y]);
-        }
-    });
-    contrastChart.series[0].setData(seriesDataForBe);
+    var constraintSeries = {
+        name: '磨煤量',
+        color: 'red',
+        pointStart: min,
+        pointInterval: 1 * 1000,
+        lineWidth: 1,
+        data: millDatas.data
+    };
+    contrastChart = generatorWithDataContrastChart(constraintSeries,chartName);
+
+
+
+
     /* Highcharts.each(this.series[0].data, function(d) {
          if(d.x > min && d.x < max) {
              detailData.push([d.x, d.y]);

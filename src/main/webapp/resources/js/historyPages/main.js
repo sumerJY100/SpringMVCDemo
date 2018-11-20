@@ -1,4 +1,7 @@
 $(document).ready(function () {
+
+    $("#dataLoad").hide(); //页面加载完毕后即将DIV隐藏
+
     //日期插件
     var currentDate = new Date();
     var beginDate = new Date(currentDate.getTime() - 24 * 60 * 60 * 1000);
@@ -9,10 +12,20 @@ $(document).ready(function () {
 
 
     $queryBtn = $("#queryBtn");
+    var $endTimeInput = $($("[name='endInputTime']")[0]);
+    var endTimeInputLeft = $endTimeInput.position().left;
+    $endTimeInput.css("left",endTimeInputLeft-200);
+    console.log("endTimeInputLeft:" + endTimeInputLeft +"," + $endTimeInput.position().left);
     var queryBtnLeft = $queryBtn.position().left;
-    $("#velocityRadioLabel").css("left", queryBtnLeft - 200);
-    $("#densityRadioLabel").css("left", queryBtnLeft - 100);
+    var queryBtnMarginTop = $queryBtn.css("margin-top");
+    var queryBtnMarginLeft = $queryBtn.css("margin-left");
+    $("#velocityRadioLabel").css("left", queryBtnLeft - 200).css("margin-top",queryBtnMarginTop).css("margin-left",queryBtnMarginLeft);
+    $("#densityRadioLabel").css("left", queryBtnLeft - 100).css("margin-top",queryBtnMarginTop).css("margin-left",queryBtnMarginLeft);
 
+
+
+    var $queryBtnDiv = $("#queryBtnDiv");
+    $queryBtnDiv.css("left",100);
 
     //给所有的单选按钮点击添加处理
     // language=JQuery-CSS
@@ -34,6 +47,35 @@ $(document).ready(function () {
             changeChartDataToVelocity();
         }
     })
+
+
+
+    //左右移动按钮
+    $("#queryLeftBtn1Hours").bind("click",function(){
+        queryDataByTimeWithHours(-1);
+    })
+    $("#queryLeftBtn2Hours").bind("click",function(){
+        queryDataByTimeWithHours(-2);
+    })
+    $("#queryLeftBtn4Hours").bind("click",function(){
+        queryDataByTimeWithHours(-4);
+    })
+    $("#queryLeftBtn6Hours").bind("click",function(){
+        queryDataByTimeWithHours(-6);
+    })
+
+    $("#queryRightBtn1Hours").bind("click",function(){
+        queryDataByTimeWithHours(1);
+    })
+    $("#queryRightBtn2Hours").bind("click",function(){
+        queryDataByTimeWithHours(2);
+    })
+    $("#queryRightBtn4Hours").bind("click",function(){
+        queryDataByTimeWithHours(4);
+    })
+    $("#queryRightBtn6Hours").bind("click",function(){
+        queryDataByTimeWithHours(6);
+    })
 });
 
 /**
@@ -51,6 +93,39 @@ function initQueryTime() {
 
     // initTable();
 }
+
+function queryDataByTimeWithHours(hours){
+    var h = parseInt(hours);
+    var queryBeginTxt,queryEndTxt;
+    var startTime = new Date($("#startInputTime").val());
+    var endTime = new Date($("#endInputTime").val());
+    // if(h > 0){
+
+        var afterTime = new Date(endTime.getTime() + hours * 3600 * 1000);
+        var beforeTime = new Date(startTime.getTime() + hours*3600 * 1000);
+        queryBeginTxt = dateFtt("yyyy-MM-dd hh:mm", beforeTime);
+        queryEndTxt = dateFtt("yyyy-MM-dd hh:mm", afterTime);
+
+    // }else if (h< 0){
+    //
+    //     var beforeTime = new Date(startTime.getTime() + hours*3600 * 1000);
+    //     queryBeginTxt = dateFtt("yyyy-MM-dd hh:mm", beforeTime);
+    //     queryEndTxt = dateFtt("yyyy-MM-dd hh:mm", endTime);
+    // }
+    queryDataByTime(queryBeginTxt,queryEndTxt);
+}
+/**
+ * 根据指定时间查询曲线数据
+ * @param beginTimeText
+ * @param endTimeText
+ */
+function queryDataByTime(beginTimeText,endTimeText){
+    $("#startInputTime").val(beginTimeText);
+    $("#endInputTime").val(endTimeText);
+    $("#queryBtn").click();
+}
+
+
 
 /**************************************时间格式化处理************************************/
 function dateFtt(fmt, date) { //author: meizz

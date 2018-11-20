@@ -7,20 +7,21 @@ import java.util.Objects;
 @Entity
 @Table(name = "h_055", schema = "wind", catalog = "")
 public class H055Pojo {
-    private int id;
+    private Long id;
     private Timestamp vTime;
     private Float v;
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
-    public int getId() {
+    public Long getId() {
         return id;
     }
 
-    public void setId(int id) {
+    public void setId(Long id) {
         this.id = id;
     }
+
 
     @Basic
     @Column(name = "v_time")

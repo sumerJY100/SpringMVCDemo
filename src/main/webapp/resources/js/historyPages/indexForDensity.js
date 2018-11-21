@@ -1,11 +1,4 @@
-var data = [],
-    detailChart, //四条曲线数据
-    contrastChart,//对比曲线数据
-    container = document.getElementById('containerDensity'),
-    detailContainer = null,
-    contrastContainer = null,
-    masterContainer = null,
-    masterChart = null;
+
 
 
 // JS 代码
@@ -21,30 +14,6 @@ Highcharts.setOptions({
 
 
 
-
-/*
- * 创建 detailContainer 并 append 到 container 中
- */
-detailContainer = document.createElement('div');
-container.appendChild(detailContainer);
-/*
- * 创建 masterContainer 并 append 到 container 中
- */
-masterContainer = document.createElement('div');
-masterContainer.style.position = 'absolute';
-masterContainer.style.top = '550px';
-masterContainer.style.height = '100px';
-masterContainer.style.width = '100%';
-container.appendChild(masterContainer);
-
-contrastContainer = document.createElement("div");
-contrastContainer.style.position = "absolute";
-contrastContainer.style.top = '0px';
-contrastContainer.style.height = '200px';
-contrastContainer.style.width = '100%';
-container.appendChild(contrastContainer);
-
-
 /*
  * 开始创建导航图，详细的图是在导航图的回调函数中创建的
  * 代码入口
@@ -52,21 +21,6 @@ container.appendChild(contrastContainer);
 //var masterChart = createMaster();
 
 
-$("#queryBtn").bind("click", initHistoryData);
-
-function PipeHistoryData(type, name, color, data) {
-    this.type = type;
-    this.name = name;
-    this.color = color;
-    this.data = data;
-    this.getData = function(){
-        // for(var i=0;i<this.data.length;i++){
-        //     this.data[i] = this.data[i].substr(0,5);
-        //     console.log("data:"+this.data[i]);
-        // }
-      return this.data.concat();
-    };
-}
 
 function initTable() {
     var detailXAxis = detailChart.xAxis[0];

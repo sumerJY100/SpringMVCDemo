@@ -1,0 +1,15 @@
+th {
+    border: 1px solid black;
+}
+
+td {
+    border: 1px solid black;
+    text-align: center;
+}
+
+.titleDivClass {
+    font-size: 20;
+    margin-top: 15px;
+    height: 40px;
+"
+}

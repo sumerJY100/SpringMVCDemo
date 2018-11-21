@@ -25,7 +25,7 @@ public class Modbus4jSlaveDemo1 {
     private static Long register22 = new Long(2369850368L); ////Register 22
 
     public static void main(String[] args) {
-        String commPortId = "COM2";
+        String commPortId = "COM1";
         int baudRate = 9600;
         int flowControlIn = 0;
         int flowControlOut = 0;

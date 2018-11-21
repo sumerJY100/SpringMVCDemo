@@ -104,47 +104,53 @@ public class Dcs020_039Service {
         return list;
     }
     public void saveValue(int offset,int value, Timestamp timestamp){
-        Object obj = DcsHistoryService.getHistroyObj(offset,value,timestamp);
-        if (offset == 20) {
-            h020Rep.saveAndFlush((H020Pojo) obj);
-        }else if(offset == 21){
-            h021Rep.saveAndFlush((H021Pojo) obj);
-        }else if(offset == 22){
-            h022Rep.saveAndFlush((H022Pojo) obj);
-        }else if(offset == 23){
-            h023Rep.saveAndFlush((H023Pojo) obj);
-        }else if(offset == 24){
-            h024Rep.saveAndFlush((H024Pojo) obj);
-        }else if(offset == 25){
-            h025Rep.saveAndFlush((H025Pojo) obj);
-        }else if(offset == 26){
-            h026Rep.saveAndFlush((H026Pojo) obj);
-        }else if(offset == 27){
-            h027Rep.saveAndFlush((H027Pojo) obj);
-        }else if(offset == 28){
-            h028Rep.saveAndFlush((H028Pojo) obj);
-        }else if(offset == 29){
-            h029Rep.saveAndFlush((H029Pojo) obj);
-        }else if(offset == 30){
-            h030Rep.saveAndFlush((H030Pojo) obj);
-        }else if(offset == 31){
-            h031Rep.saveAndFlush((H031Pojo) obj);
-        }else if(offset == 32){
-            h032Rep.saveAndFlush((H032Pojo) obj);
-        }else if(offset == 33){
-            h033Rep.saveAndFlush((H033Pojo) obj);
-        }else if(offset == 34){
-            h034Rep.saveAndFlush((H034Pojo) obj);
-        }else if(offset == 35){
-            h035Rep.saveAndFlush((H035Pojo) obj);
-        }else if(offset == 36){
-            h036Rep.saveAndFlush((H036Pojo) obj);
-        }else if(offset == 37){
-            h037Rep.saveAndFlush((H037Pojo) obj);
-        }else if(offset == 38){
-            h038Rep.saveAndFlush((H038Pojo) obj);
-        }else if(offset == 39){
-            h039Rep.saveAndFlush((H039Pojo) obj);
+        try {
+            Object obj = DcsHistoryService.getHistroyObj(offset, value, timestamp);
+            if (offset == 20) {
+                h020Rep.saveAndFlush((H020Pojo) obj);
+            } else if (offset == 21) {
+                h021Rep.saveAndFlush((H021Pojo) obj);
+            } else if (offset == 22) {
+                h022Rep.saveAndFlush((H022Pojo) obj);
+            } else if (offset == 23) {
+                h023Rep.saveAndFlush((H023Pojo) obj);
+            } else if (offset == 24) {
+                h024Rep.saveAndFlush((H024Pojo) obj);
+            } else if (offset == 25) {
+                h025Rep.saveAndFlush((H025Pojo) obj);
+            } else if (offset == 26) {
+                h026Rep.saveAndFlush((H026Pojo) obj);
+            } else if (offset == 27) {
+                h027Rep.saveAndFlush((H027Pojo) obj);
+            } else if (offset == 28) {
+                h028Rep.saveAndFlush((H028Pojo) obj);
+            } else if (offset == 29) {
+                h029Rep.saveAndFlush((H029Pojo) obj);
+            } else if (offset == 30) {
+                h030Rep.saveAndFlush((H030Pojo) obj);
+            } else if (offset == 31) {
+                h031Rep.saveAndFlush((H031Pojo) obj);
+            } else if (offset == 32) {
+                h032Rep.saveAndFlush((H032Pojo) obj);
+            } else if (offset == 33) {
+                h033Rep.saveAndFlush((H033Pojo) obj);
+            } else if (offset == 34) {
+                h034Rep.saveAndFlush((H034Pojo) obj);
+            } else if (offset == 35) {
+                h035Rep.saveAndFlush((H035Pojo) obj);
+            } else if (offset == 36) {
+                h036Rep.saveAndFlush((H036Pojo) obj);
+            } else if (offset == 37) {
+                h037Rep.saveAndFlush((H037Pojo) obj);
+            } else if (offset == 38) {
+                h038Rep.saveAndFlush((H038Pojo) obj);
+            } else if (offset == 39) {
+                h039Rep.saveAndFlush((H039Pojo) obj);
+            }
+        }catch (Exception e){
+            //TODO 保存数据异常
+            System.out.println("offset, value, timestamp:" + offset + "," +value + "," + timestamp);
+//            e.printStackTrace();
         }
     }
 }

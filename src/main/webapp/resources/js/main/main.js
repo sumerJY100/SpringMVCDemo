@@ -237,9 +237,10 @@ function freshMainPageTable(group, tableDivId) {
         var $tableA = $(tableArr[0]);
         // alert($tableA.html())
         //磨煤机电流
-        $tableA.find("tr:eq(1) th:eq(0)").html(group.millCurrent );
+       // $tableA.find("tr:eq(1) th:eq(0)").html(group.millCurrent );
+       $tableA.find("tr:eq(1) th:eq(0)").html("给煤量" );
         //磨煤机煤量
-        $tableA.find("tr:eq(3) td:eq(0)").html(group.coalCount);
+        $tableA.find("tr:eq(3) td:eq(0)").html(group.coalCount/100);
         //pipe1绝对浓度
         $tableA.find("tr:eq(1) td:eq(1)").html(velocityData.pipe1Data);
         $tableA.find("tr:eq(1) td:eq(2)").html(velocityData.pipe2Data);

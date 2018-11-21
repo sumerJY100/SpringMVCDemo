@@ -31,7 +31,8 @@ var curveToolTipForContrast = {
  */
 function createContrastChart(master, startTime, endTime, seriesData,chartName) {
     var seriesDataForBe = [], max = 0, min = 0;
-    Highcharts.each(master.series[4].data, function (d) {
+    var length = master.series.length;
+    Highcharts.each(master.series[length-1].data, function (d) {
         if (d.x >= startTime) {
             seriesDataForBe.push(d.y);
             if (d.y > max) {max = d.y;}
@@ -47,6 +48,41 @@ function createContrastChart(master, startTime, endTime, seriesData,chartName) {
         lineWidth: 1,
         data: seriesDataForBe
     };
+    // if(min === max){
+    //创建一个没有数据的contrastChart
+    // contrastChart = generatorNoDataContrastChart();
+    // }else {
+    //创建一个有数据的contraschart
+    contrastChart = generatorWithDataContrastChart(constraintSeries,chartName);
+    // }
+}
+
+/**
+ * 磨煤机煤量曲线
+ * @param master
+ * @param startTime
+ * @param endTime
+ * @param seriesDataArr    对象数组，[{type:,name:,data:,color:}]
+ */
+function createContrastChartWithSerialData(master, startTime, endTime, seriesDataArr,chartName) {
+   /* var seriesDataForBe = [], max = 0, min = 0;
+    Highcharts.each(master.series[4].data, function (d) {
+        if (d.x >= startTime) {
+            seriesDataForBe.push(d.y);
+            if (d.y > max) {max = d.y;}
+            if (d.y < min) {min = d.y;}
+        }
+
+    });*/
+    var constraintSeries = {
+        name: '磨煤量',
+        color: 'red',
+        pointStart: startTime,
+        pointInterval: 1 * 1000,
+        lineWidth: 1,
+        data: seriesDataArr[0].data
+    };
+    console.log("millData.length:" + seriesDataArr[0].data.length);
     // if(min === max){
     //创建一个没有数据的contrastChart
     // contrastChart = generatorNoDataContrastChart();

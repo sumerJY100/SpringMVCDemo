@@ -22,6 +22,30 @@ var curveToolTip = {
         day: '%Y-%m-%d %H:%M:%S'
     }
 };
+
+/**
+ *
+ * @param masterChart
+ * @param startTime
+ * @param endTime
+ * @param seriesDataArr    对象数组，[{type:,name:,data:,color:}]
+ * @param chartName
+ */
+function createDetailWithSerialData(masterChart, startTime, endTime, seriesDataArr,chartName){
+    console.log("创建detailchart");
+    var detailStart = startTime;
+    var chartSeriesDataArr = [];
+    for(var x in seriesDataArr){
+        var serialObj = seriesDataArr[x];
+        var serialData = serialObj.data;
+        var serialName = serialObj.name;
+        var serialColor = serialObj.color;
+        var series = generatorDetailSerial(serialData,detailStart,serialName,serialColor);
+        chartSeriesDataArr.push(series);
+    }
+    console.log("detailchart" + "," + chartSeriesDataArr.length);
+    detailChart = generatorWithDataDetailChart(chartSeriesDataArr,chartName);
+}
 /**
  * 创建详细数据图
  * @param masterChart
@@ -33,7 +57,7 @@ function createDetail(masterChart, startTime, endTime, seriesData,chartName) {
     var masterChartSeriesArr = masterChart.series;
     var max = 0, min = 0;
     for (var x in masterChartSeriesArr) {
-        if(x>=4){
+        if(x>=(masterChartSeriesArr.length-1)){
             break;
         }
 

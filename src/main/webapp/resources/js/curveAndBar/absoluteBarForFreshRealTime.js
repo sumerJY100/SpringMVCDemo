@@ -44,7 +44,7 @@ function getAbsoluteBarWithOptions(divId, titleName, subtitleName,chartOption,se
                 borderWidth: 0
             }
         },
-        series: [{name: seriesNameArr[0], data: []}, {name: seriesNameArr[1], data: []}, {name: seriesNameArr[2], data: []}, {name: seriesNameArr[3], data: []}]
+        series: [{name: seriesNameArr[0], data: [],dataLabels:{enabled:true}}, {name: seriesNameArr[1], data: [],dataLabels:{enabled:true}}, {name: seriesNameArr[2], data: [],dataLabels:{enabled:true}}, {name: seriesNameArr[3], data: [],dataLabels:{enabled:true}}]
     };
     $.extend(chartOptions,chartOption);
     return Highcharts.chart(divId,chartOptions);

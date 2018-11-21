@@ -21,6 +21,17 @@ import java.util.stream.Stream;
 @Transactional
 public class CheckDeviceAlarmQuartz {
 
+
+
+
+    //TODO 进行告警信息生产的开关
+    public static final boolean CHECK_ALARM_FUN = false;
+
+
+
+
+
+
     @Autowired
     private DcsHistoryService dcsHistoryService;
     @Autowired
@@ -64,30 +75,31 @@ public class CheckDeviceAlarmQuartz {
      * 5、当4个环的数据进行比较的时候，最大环的均值与最小环的均值偏差超过30%为三级告警，超过40%进行二级告警，超过50%，一级告警，
      */
     public void checkDeviceAlarm() {
+        //TODO 是否进行告警信息查询与录入数据库，11月13日进行此操作，有问题，暂时搁置
+        if(CHECK_ALARM_FUN ) {
+//        System.out.println("检查告警信息");
 
-        System.out.println("检查告警信息");
+            LocalDateTime end = LocalDateTime.now();
+            LocalDateTime begin = end.minusSeconds(60);
+            Timestamp queryEndTime = Timestamp.valueOf(end);
+            Timestamp queryBeginTime = Timestamp.valueOf(begin);
 
-        LocalDateTime end = LocalDateTime.now();
-        LocalDateTime begin = end.minusSeconds(60);
-        Timestamp queryEndTime = Timestamp.valueOf(end);
-        Timestamp queryBeginTime = Timestamp.valueOf(begin);
-
-        List<AcoalPipingHistoryEntity> acoalPipingHistoryEntityList = coalPipingHistoryRepositoryA.findByHTimeBetween(queryBeginTime, queryEndTime);
-        List<BcoalPipingHistoryEntity> bcoalPipingHistoryEntityList = coalPipingHistoryRepositoryB.findByHTimeBetween
-                (queryBeginTime, queryEndTime);
-        List<CcoalPipingHistoryEntity> ccoalPipingHistoryEntityList = coalPipingHistoryRepositoryC.findByHTimeBetween
-                (queryBeginTime, queryEndTime);
-        List<DcoalPipingHistoryEntity> dcoalPipingHistoryEntityList = coalPipingHistoryRepositoryD.findByHTimeBetween
-                (queryBeginTime, queryEndTime);
-        long coalMillIdForA = 1;
-        generatorMillAllPipeAlarm(acoalPipingHistoryEntityList, queryBeginTime, coalMillIdForA);
-        long coalMillIdForB = 2;
-        generatorMillAllPipeAlarm(bcoalPipingHistoryEntityList, queryBeginTime, coalMillIdForB);
-        long coalMillIdForC = 3;
-        generatorMillAllPipeAlarm(ccoalPipingHistoryEntityList, queryBeginTime, coalMillIdForC);
-        long coalMillIdForD = 4;
-        generatorMillAllPipeAlarm(dcoalPipingHistoryEntityList, queryBeginTime, coalMillIdForD);
-
+            List<AcoalPipingHistoryEntity> acoalPipingHistoryEntityList = coalPipingHistoryRepositoryA.findByHTimeBetween(queryBeginTime, queryEndTime);
+            List<BcoalPipingHistoryEntity> bcoalPipingHistoryEntityList = coalPipingHistoryRepositoryB.findByHTimeBetween
+                    (queryBeginTime, queryEndTime);
+            List<CcoalPipingHistoryEntity> ccoalPipingHistoryEntityList = coalPipingHistoryRepositoryC.findByHTimeBetween
+                    (queryBeginTime, queryEndTime);
+            List<DcoalPipingHistoryEntity> dcoalPipingHistoryEntityList = coalPipingHistoryRepositoryD.findByHTimeBetween
+                    (queryBeginTime, queryEndTime);
+            long coalMillIdForA = 1;
+            generatorMillAllPipeAlarm(acoalPipingHistoryEntityList, queryBeginTime, coalMillIdForA);
+            long coalMillIdForB = 2;
+            generatorMillAllPipeAlarm(bcoalPipingHistoryEntityList, queryBeginTime, coalMillIdForB);
+            long coalMillIdForC = 3;
+            generatorMillAllPipeAlarm(ccoalPipingHistoryEntityList, queryBeginTime, coalMillIdForC);
+            long coalMillIdForD = 4;
+            generatorMillAllPipeAlarm(dcoalPipingHistoryEntityList, queryBeginTime, coalMillIdForD);
+        }
     }
 
     /**
@@ -98,7 +110,7 @@ public class CheckDeviceAlarmQuartz {
      * @param coalMillId
      */
     private void generatorMillAllPipeAlarm(List<? extends CoalPipingHistory> list, Timestamp queryBeginTime, long coalMillId) {
-        System.out.println("磨煤机：" + coalMillId + ":数量" + list.size());
+//        System.out.println("磨煤机：" + coalMillId + ":数量" + list.size());
         try {
             if (null != list && list.size() > calculateMinCount) {
                 Stream<? extends CoalPipingHistory> stream = list.stream();
@@ -140,22 +152,24 @@ public class CheckDeviceAlarmQuartz {
      */
     private void generatorPipeAlarm(DoubleStream xStream, DoubleStream yStream, Timestamp queryBeginTime, long
             coalMillId, long pipeId) {
+        if(null != xStream && null != yStream) {
 //        List<Double> xList = xStream.collect(Collectors.toList());
-        double avgForAX = xStream.average().orElse(0d);
-        double avgForAY = yStream.average().orElse(0d);
+            double avgForAX = xStream.average().orElse(0d);
+            double avgForAY = yStream.average().orElse(0d);
 //        double maxForAX = xStream.max().orElse(0);
 //        double maxForAY = yStream.max().orElse(0);
 //        double minForAX = xStream.min().orElse(0);
 //        double minForAy = yStream.min().orElse(0);
-        //XY之间的偏差告警
-        generatorOffSetAlarmHistoryEntity(avgForAX, avgForAY, queryBeginTime, coalMillId, pipeId);
-        if (avgForAX > XYMaxValue) {
-            //X环数据超标，环坏掉
-        }
+            //XY之间的偏差告警
+            generatorOffSetAlarmHistoryEntity(avgForAX, avgForAY, queryBeginTime, coalMillId, pipeId);
+            if (avgForAX > XYMaxValue) {
+                //X环数据超标，环坏掉
+            }
 
-        if (avgForAY > XYMaxValue) {
-            //y环数据超标，环坏掉
+            if (avgForAY > XYMaxValue) {
+                //y环数据超标，环坏掉
 
+            }
         }
     }
 
@@ -171,7 +185,7 @@ public class CheckDeviceAlarmQuartz {
             queryBeginTime, long coalMillId, long pipeId) {
         double avgForA = (avgForAX + avgForAY) / 2;
         double offset = Math.abs((avgForAX - avgForAY) / avgForA);
-        System.out.println("粉管：" + pipeId + ",偏差" + offset);
+//        System.out.println("粉管：" + pipeId + ",偏差" + offset);
         AlarmHistoryEntity alarmHistoryEntity = null;
         String alarmNote = null;
         if (offset >= XYOffsetAlarmLevel1Value && offset < XYOffsetAlarmLevel0Value) {

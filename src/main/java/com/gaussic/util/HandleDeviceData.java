@@ -20,10 +20,19 @@ public class HandleDeviceData {
      * @return
      */
     public static JSONArray httpRequest(String requestUrl, String requestMethod) {
-        JSONArray jsonArray;
-        String jsonPStr = getUrlData(requestUrl, requestMethod);
-        String jsonStr = handleJsonP(jsonPStr);
-        jsonArray = new JSONArray(jsonStr);
+        //TODO url返回数据处理
+        JSONArray jsonArray = null;
+        try {
+            String jsonPStr = getUrlData(requestUrl, requestMethod);
+            if (null != jsonPStr) {
+                String jsonStr = handleJsonP(jsonPStr);
+                if (null != jsonStr) {
+                    jsonArray = new JSONArray(jsonStr);
+                }
+            }
+        }catch (Exception e){
+            e.printStackTrace();
+        }
         return jsonArray;
     }
 

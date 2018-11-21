@@ -19,7 +19,7 @@ import java.util.Objects;
 public class DcsRemotePointPojo {
     private Integer dcsRemotePointId;
 
-//    private Integer dcsDeviceId;
+//    private Float dcsDeviceId;
     private DeviceDcsPojo deviceDcsPojo;
     //可编辑
     private String address;
@@ -31,7 +31,7 @@ public class DcsRemotePointPojo {
 
     private Timestamp currTime;
     private Float currentValue;
-//    private Integer coalPipingId;
+//    private Float coalPipingId;
     private CoalPipingEntity coalPipingEntity;
 
 

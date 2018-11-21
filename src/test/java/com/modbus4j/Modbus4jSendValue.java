@@ -37,7 +37,7 @@ public class Modbus4jSendValue {
     }
 
     public void testSendValue(){
-        String comPortId = "COM" + 3;
+        String comPortId = "COM" + 1;
 //        comPortId = "COM9";
 //        int baudRate = deviceDcsPojo.getDeviceBoundRate();
 //        int flowControlIn = deviceDcsPojo.getDeviceFlowControlIn();
@@ -50,8 +50,8 @@ public class Modbus4jSendValue {
         int flowControlIn = 0;
         int flowControlOut = 0;
         int dataBits = 8;
-        int stopBits = 0;
-        int parity = 0;
+        int stopBits = 1;
+        int parity = 1;
 
         RtuSerialPortWrapper wrapper = new RtuSerialPortWrapper(comPortId, baundRate, flowControlIn, flowControlOut,
                 dataBits, stopBits, parity);

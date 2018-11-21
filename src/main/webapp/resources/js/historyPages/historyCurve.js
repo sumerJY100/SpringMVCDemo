@@ -9,6 +9,7 @@ function changeChartDataToVelocity(){
     pipeHistoryDataArrCopy[4] = millDatas;
 
     createMaster(queryStartTime, queryEndTime, pipeHistoryDataArrCopy,chartName);
+    initTable();
     /*// masterChart.setTitle({text:"风速历史曲线"});
     detailChart.setTitle({text:chartName});
     contrastChart.setTitle({text:chartName});
@@ -55,6 +56,7 @@ function changeChartDataToDensity(){
     var pipeHistoryDataArrCopy = $.extend(true,{},densityDataArr);
     pipeHistoryDataArrCopy[4] = millDatas;
     createMaster(queryStartTime, queryEndTime, pipeHistoryDataArrCopy,chartName);
+    initTable();
 
 /*
 

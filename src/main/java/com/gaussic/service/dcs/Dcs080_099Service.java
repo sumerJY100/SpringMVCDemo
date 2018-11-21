@@ -53,7 +53,7 @@ public class Dcs080_099Service {
     @Autowired
     private H099Rep h099Rep;
 
-    public List<Object> findByTime(Integer offset, Timestamp begin, Timestamp end){
+    public List<Object> findByTime(Integer offset, Timestamp begin, Timestamp end) {
         List<Object> list = null;
 
         try {
@@ -98,53 +98,60 @@ public class Dcs080_099Service {
             } else if (offset == 99) {
                 list = Arrays.asList(h099Rep.findByVTimeBetween(begin, end).toArray());
             }
-        }catch (Exception e){
+        } catch (Exception e) {
             e.printStackTrace();
         }
         return list;
     }
-    public void saveValue(int offset,int value, Timestamp timestamp){
-        Object obj = DcsHistoryService.getHistroyObj(offset,value,timestamp);
-        if (offset == 80) {
-            h080Rep.saveAndFlush((H080Pojo) obj);
-        }else if(offset == 81){
-            h081Rep.saveAndFlush((H081Pojo) obj);
-        }else if(offset == 82){
-            h082Rep.saveAndFlush((H082Pojo) obj);
-        }else if(offset == 83){
-            h083Rep.saveAndFlush((H083Pojo) obj);
-        }else if(offset == 84){
-            h084Rep.saveAndFlush((H084Pojo) obj);
-        }else if(offset == 85){
-            h085Rep.saveAndFlush((H085Pojo) obj);
-        }else if(offset == 86){
-            h086Rep.saveAndFlush((H086Pojo) obj);
-        }else if(offset == 87){
-            h087Rep.saveAndFlush((H087Pojo) obj);
-        }else if(offset == 88){
-            h088Rep.saveAndFlush((H088Pojo) obj);
-        }else if(offset == 89){
-            h089Rep.saveAndFlush((H089Pojo) obj);
-        }else if(offset == 90){
-            h090Rep.saveAndFlush((H090Pojo) obj);
-        }else if(offset == 91){
-            h091Rep.saveAndFlush((H091Pojo) obj);
-        }else if(offset == 92){
-            h092Rep.saveAndFlush((H092Pojo) obj);
-        }else if(offset == 93){
-            h093Rep.saveAndFlush((H093Pojo) obj);
-        }else if(offset == 94){
-            h094Rep.saveAndFlush((H094Pojo) obj);
-        }else if(offset == 95){
-            h095Rep.saveAndFlush((H095Pojo) obj);
-        }else if(offset == 96){
-            h096Rep.saveAndFlush((H096Pojo) obj);
-        }else if(offset == 97){
-            h097Rep.saveAndFlush((H097Pojo) obj);
-        }else if(offset == 98){
-            h098Rep.saveAndFlush((H098Pojo) obj);
-        }else if(offset == 99){
-            h099Rep.saveAndFlush((H099Pojo) obj);
+
+    public void saveValue(int offset, int value, Timestamp timestamp) {
+        try {
+            Object obj = DcsHistoryService.getHistroyObj(offset, value, timestamp);
+            if (offset == 80) {
+                h080Rep.saveAndFlush((H080Pojo) obj);
+            } else if (offset == 81) {
+                h081Rep.saveAndFlush((H081Pojo) obj);
+            } else if (offset == 82) {
+                h082Rep.saveAndFlush((H082Pojo) obj);
+            } else if (offset == 83) {
+                h083Rep.saveAndFlush((H083Pojo) obj);
+            } else if (offset == 84) {
+                h084Rep.saveAndFlush((H084Pojo) obj);
+            } else if (offset == 85) {
+                h085Rep.saveAndFlush((H085Pojo) obj);
+            } else if (offset == 86) {
+                h086Rep.saveAndFlush((H086Pojo) obj);
+            } else if (offset == 87) {
+                h087Rep.saveAndFlush((H087Pojo) obj);
+            } else if (offset == 88) {
+                h088Rep.saveAndFlush((H088Pojo) obj);
+            } else if (offset == 89) {
+                h089Rep.saveAndFlush((H089Pojo) obj);
+            } else if (offset == 90) {
+                h090Rep.saveAndFlush((H090Pojo) obj);
+            } else if (offset == 91) {
+                h091Rep.saveAndFlush((H091Pojo) obj);
+            } else if (offset == 92) {
+                h092Rep.saveAndFlush((H092Pojo) obj);
+            } else if (offset == 93) {
+                h093Rep.saveAndFlush((H093Pojo) obj);
+            } else if (offset == 94) {
+                h094Rep.saveAndFlush((H094Pojo) obj);
+            } else if (offset == 95) {
+                h095Rep.saveAndFlush((H095Pojo) obj);
+            } else if (offset == 96) {
+                h096Rep.saveAndFlush((H096Pojo) obj);
+            } else if (offset == 97) {
+                h097Rep.saveAndFlush((H097Pojo) obj);
+            } else if (offset == 98) {
+                h098Rep.saveAndFlush((H098Pojo) obj);
+            } else if (offset == 99) {
+                h099Rep.saveAndFlush((H099Pojo) obj);
+            }
+        } catch (Exception e) {
+            //TODO 保存数据异常
+            System.out.println("offset, value, timestamp:" + offset + "," + value + "," + timestamp);
+//            e.printStackTrace();
         }
     }
 }

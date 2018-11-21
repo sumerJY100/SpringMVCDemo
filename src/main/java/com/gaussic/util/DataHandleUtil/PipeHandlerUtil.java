@@ -19,37 +19,149 @@ public class PipeHandlerUtil {
 
     }
 
-    public float[] getHandleData(float[] floats) {
-        System.out.println(floats.length);
-        float[] resultArr = null;
-        try {
-            float[] originalArr = Arrays.copyOfRange(floats, 0, 200);
 
-
-            //PipeHandlerUtil pipeHandlerUtil = new PipeHandlerUtil(30);
-            mWindowSize = 30;
-            float[] result = this.movingAverageFilter(originalArr);
-            List<Float> list = new ArrayList<>();
-            for (float aResult : result) {
-                list.add(aResult);
+    public static void main(String[] args) {
+        float[] arr = new float[231];
+        for(int i=0;i<231;i++){
+            arr[i] = (float) (Math.random()*100f);
+        }
+        PipeHandlerUtil pipeHandlerUtil = new PipeHandlerUtil();
+        float[] resultArr = pipeHandlerUtil.getHandleData(arr);
+        System.out.println(resultArr.length);
+    }
+    public void filterData(float[] floats,float top,float low){
+        //浓度数据
+        float totalForDensity = 0f;
+        long countForDensity = 0L;
+        float avgForDensity = 0f;
+        for(int i=0;i<floats.length;i++){
+            if(floats[i]<low || floats[i] > top){
+                //异常数据点
+            }else{
+                countForDensity ++;
+                totalForDensity += floats[i];
             }
-            int length = floats.length;
-            int count = (length - 200)/30 -2    ;
-//            count = 260;
+        }
 
-            for (int m = 0; m < count; m++) {
-                float[] arr01 = Arrays.copyOfRange(floats, 200 + 30 * m, 200 + 30 * (m + 1));
-                changeData(arr01, originalArr);
-                float[] result01 = this.movingAverageFilter(originalArr);
-                for (int i = originalArr.length - arr01.length; i < result01.length; i++) {
-                    list.add(result01[i]);
+        if(countForDensity > 0){
+            System.out.println("百分比："+(float)countForDensity/(float)floats.length);
+            if((float)countForDensity/(float)floats.length > 0.9) {
+                //正常点数量超过80%
+                avgForDensity = totalForDensity / countForDensity;
+                for(int i=0;i<floats.length;i++){
+                    if(floats[i]<low || floats[i] > top){
+                        floats[i] = avgForDensity;
+                    }else{
+
+                    }
                 }
             }
-            resultArr = new float[list.size()];
-            for (int i = 0; i < list.size(); i++) {
-                resultArr[i] = list.get(i);
-            }
+        }
+    }
+    /**
+     * 处理一个浮点数组
+     * @param floats
+     * @return
+     */
+    public float[] getHandleData(float[] floats) {
 
+
+
+
+
+
+
+
+
+
+        float[] resultArr = floats;
+        try {
+            if(floats.length > 230) {
+
+
+
+
+
+
+
+
+                /*************************过滤数据，如果超出平均值50%，则为平均值*****************************************/
+                float avg = 0f;
+                float total = 0f;
+                for(int i=0;i<floats.length;i++){
+                    total += floats[i];
+                }
+                avg = total/floats.length;
+                if(avg > 1000){
+                    //浓度数据过滤
+//                    filterData(floats,50000000,5000);
+                }else{
+                    //风速数据过滤
+//                    filterData(floats,30,5);
+                }
+//        List<Float> floatList = new ArrayList<>();
+//        for(int i=0;i<floats.length;i++){
+//            float temp = floats[i] - avg;
+//            float persent = Math.abs(temp/avg);
+//            if(persent > 0.5){
+//
+//            }else{
+//                floatList.add(floats[i]);
+//            }
+//        }
+//        floats = new float[floatList.size()];
+//        for(int i=0;i<floatList.size();i++){
+//            floats[i] = floatList.get(i);
+//        }
+                /************************过滤数据，如果超出平均值50%，则为平均值*****************************************/
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+                float[] originalArr = Arrays.copyOfRange(floats, 0, 200);
+
+
+                //PipeHandlerUtil pipeHandlerUtil = new PipeHandlerUtil(30);
+                mWindowSize = 30;
+                float[] result = this.movingAverageFilter(originalArr);
+                List<Float> list = new ArrayList<>();
+                for (float aResult : result) {
+                    list.add(aResult);
+                }
+                int length = floats.length;
+                int count = (length - 200) / 30;
+//            count = 260;
+
+                for (int m = 0; m < count; m++) {
+                    float[] arr01 = Arrays.copyOfRange(floats, 200 + 30 * m, 200 + 30 * (m + 1));
+                    changeData(arr01, originalArr);
+                    float[] result01 = this.movingAverageFilter(originalArr);
+                    for (int i = originalArr.length - arr01.length; i < result01.length; i++) {
+                        list.add(result01[i]);
+                    }
+                }
+                resultArr = new float[list.size()];
+                for (int i = 0; i < list.size(); i++) {
+                    resultArr[i] = list.get(i);
+                }
+            }
         }catch(Exception e){
             e.printStackTrace();
         }
@@ -73,7 +185,7 @@ public class PipeHandlerUtil {
         for (int i = 0; i < array.length; i++) {
             sum += array[i];
         }
-        return sum / array.length;
+        return ((float)sum) / array.length;
     }
 
 

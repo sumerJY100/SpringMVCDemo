@@ -56,6 +56,9 @@ public class PipeHandler {
             //生成四条历史记录，每台磨煤机一条历史记录
             if(null == coalMillEntityList) {
                 coalMillEntityList = coalMillService.findAll();
+                for(CoalMillEntity coalMillEntity:coalMillEntityList){
+                    List<CoalPipingEntity> list = coalMillEntity.getCoalPipingEntityList();
+                }
             }
             //遍历告警信息，将  ”粉管通讯中断”  的告警信息查询出来,并设置到coalPipingEntity中
             //查询当前粉管是否存在通讯中断告警，并且是正在告警中的状态。

@@ -11,17 +11,17 @@
 
     <!-- 配置调度程序quartz ，其中配置JobDetail有两种方式-->
     <!--方式一：使用JobDetailBean，任务类必须实现Job接口 -->
-    <bean id="jobDetailForDcsCache" class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
-        <property name="targetObject" ref="taskForDcsDataCache" />
-        <property name="targetMethod" value="doJob" />
+    <bean id="jobDetailForDcsSendData" class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
+        <property name="targetObject" ref="taskForDcsSendData" />
+        <property name="targetMethod" value="updateSendDcsData" />
 
     </bean>
 
     <!-- Run the job every 2 seconds with initial delay of 1 second -->
-    <bean id="dcsCacheTrigger"  class="org.springframework.scheduling.quartz.SimpleTriggerFactoryBean">
-        <property name="jobDetail" ref="jobDetailForDcsCache" />
+    <bean id="dcsSendDataTrigger"  class="org.springframework.scheduling.quartz.SimpleTriggerFactoryBean">
+        <property name="jobDetail" ref="jobDetailForDcsSendData" />
         <property name="startDelay" value="5000" />
-        <property name="repeatInterval" value="10000" />
+        <property name="repeatInterval" value="5000" />
     </bean>
 
 

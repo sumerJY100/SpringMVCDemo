@@ -59,4 +59,16 @@ public class DCSDataHandle {
         return result;
     }
 
+    public static short handleValue(float value) {
+        short result = 0;
+        float value1 = (value + 5) * 100;
+        if(value1 > Short.MAX_VALUE){
+            result = Short.MAX_VALUE -1;
+        }else if(value1 < 0){
+            result = 0;
+        }else{
+            result = (short) value1;
+        }
+        return result;
+    }
 }

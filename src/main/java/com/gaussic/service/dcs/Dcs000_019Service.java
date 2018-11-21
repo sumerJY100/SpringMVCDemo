@@ -114,8 +114,9 @@ public class Dcs000_019Service {
 
 
     public void saveValue(int offset, int value, Timestamp timestamp)  {
-        Object obj = DcsHistoryService.getHistroyObj(offset,value,timestamp);
+
         try {
+            Object obj = DcsHistoryService.getHistroyObj(offset,value,timestamp);
             if (offset == 0) {
                 h000Rep.saveAndFlush((H000Pojo) obj);
             } else if (offset == 1) {
@@ -158,7 +159,9 @@ public class Dcs000_019Service {
                 h019Rep.saveAndFlush((H019Pojo) obj);
             }
         }catch (Exception e){
-            e.printStackTrace();
+            //TODO 保存数据异常
+            System.out.println("offset, value, timestamp:" + offset + "," +value + "," + timestamp);
+//            e.printStackTrace();
         }
     }
 }

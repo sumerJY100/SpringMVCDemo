@@ -96,432 +96,19 @@ public class CoalPipingController {
         return localDateTime;
     }
 
-    private static class BE {
-        private Timestamp beginTimestamp;
-        private Timestamp endTimestamp;
-
-        public BE(Date beginTime,Date endTime){
-//            System.out.println(beginTime + ", " + endTime);
-//        if(null!=beginTime && )
-            Calendar beginC = new GregorianCalendar();
-            beginC.setTimeZone(TimeZone.getDefault());
-            Calendar endC = new GregorianCalendar();
-            endC.setTimeZone(TimeZone.getDefault());
-            beginC.set(Calendar.MINUTE, beginC.get(Calendar.MINUTE) - (int) (Math.random() * 30));
-
-            LocalDateTime localDateTimeForBegin = LocalDateTime.now();
-            LocalDateTime localDateTimeForEnd = LocalDateTime.now();
-
-            Optional<Date> beginDateOpt = Optional.ofNullable(beginTime);
-            Optional<Date> endDateOpt = Optional.ofNullable(endTime);
-//        beginDateOpt.ifPresent(endDateOpt.ifPresent());
-//        beginDateOpt.ifPresent(()->endDateOpt.ifPresent(System.out::println));
-            beginDateOpt.ifPresent((b) ->
-                    endDateOpt.ifPresent((e) ->
-                    {
-//                        be.setBE(b, e)
-                    }
-                    ));
-            beginDateOpt.map(new Function<Date, Object>() {
-                @Override
-                public Object apply(Date date) {
-                    return null;
-                }
-            });
-            beginDateOpt.ifPresent(new Consumer<Date>() {
-                @Override
-                public void accept(Date date) {
-//                localDateTimeForBegin.
-                }
-            });
-            Date newDate = beginDateOpt.orElseGet(new Supplier<Date>() {
-                @Override
-                public Date get() {
-                    return null;
-                }
-            });
-
-            Optional<Object> oDate = beginDateOpt.map(new Function<Date, Object>() {
-                @Override
-                public Object apply(Date date) {
-                    return null;
-                }
-            });
-
-            Optional<LocalDateTime> t = beginDateOpt.flatMap(new Function<Date, Optional<LocalDateTime>>() {
-                @Override
-                public Optional<LocalDateTime> apply(Date date) {
-                    return Optional.empty();
-                }
-            });
-
-
-            if (null != beginTime && null != endTime) {
-                beginC.setTime(beginTime);
-                endC.setTime(endTime);
-            } else if (null != beginTime && endTime == null) {
-                beginC.setTime(beginTime);
-                endC.setTime(beginTime);
-                endC.set(Calendar.HOUR, beginC.get(Calendar.HOUR) + 1);
-            } else if (null == beginTime && null != endTime) {
-                endC.setTime(endTime);
-                beginC.setTime(endTime);
-                beginC.set(Calendar.HOUR, endC.get(Calendar.HOUR) - 1);
-            } else if (null == beginTime && null == endTime) {
-                endC.setTime(new Date());
-                beginC.setTime(new Date());
-                beginC.set(Calendar.HOUR, beginC.get(Calendar.HOUR) - 1);
-            }
-
-            beginTimestamp = new Timestamp(beginC.getTimeInMillis());
-            endTimestamp = new Timestamp(endC.getTimeInMillis());
-        }
-
-        public Timestamp getBeginTimestamp() {
-            return beginTimestamp;
-        }
-
-        public void setBeginTimestamp(Timestamp beginTimestamp) {
-            this.beginTimestamp = beginTimestamp;
-        }
-
-        public Timestamp getEndTimestamp() {
-            return endTimestamp;
-        }
-
-        public void setEndTimestamp(Timestamp endTimestamp) {
-            this.endTimestamp = endTimestamp;
-        }
 
 
 
-    }
-
-    /**
-     * 查询历史曲线数据
-     * @param beginTime
-     * @param endTime
-     * @param millLocation
-     * @return
-     */
-    @RequestMapping(value = "/getMillHistoryDataWithMill", method = RequestMethod.GET, produces = "text/html;charset=UTF-8")
-    @ResponseBody
-    public String getMillHistoryDataWithMill(@RequestParam(value = "startInputTime", required = false) Date beginTime, @RequestParam(value = "endInputTime", required = false) Date endTime,@RequestParam(value="mill" ,required = false)String millLocation){
-        //TODO 历史曲线数据，缺少磨煤机磨煤量的数据返回
-        BE be = new BE(beginTime,endTime);
-        List<? extends CoalPipingHistory> list = null;
-        List<H000Pojo_Base> h000Pojo_baseList = null;
-        if(null != millLocation){
-            Timestamp begin = be.getBeginTimestamp();
-            Timestamp end = be.getEndTimestamp();
-            if(millLocation.equals("A")){
-                list = coalPipingHistoryRepositoryA.findByHTimeBetween(begin,end);
-                h000Pojo_baseList = dcsHistoryService.findByTime(75, begin, end);
-            }else if(millLocation.equals("B")){
-                list = coalPipingHistoryRepositoryB.findByHTimeBetween(begin,end);
-                h000Pojo_baseList = dcsHistoryService.findByTime(76, begin, end);
-            }else if(millLocation.equals("C")){
-                list = coalPipingHistoryRepositoryC.findByHTimeBetween(begin,end);
-                h000Pojo_baseList = dcsHistoryService.findByTime(77, begin, end);
-            }else if(millLocation.equals("D")){
-                list = coalPipingHistoryRepositoryD.findByHTimeBetween(begin,end);
-                h000Pojo_baseList = dcsHistoryService.findByTime(78, begin, end);
-            }
-        }
-        //TODO 处理异常数据
-        if(null == list || list.size() == 0){
-            list = handleExceptionHistoryList(be);
-        }
-
-        return coalPipingHistoryService.generateJsonStringByHistroyList(list, be
-                .getBeginTimestamp(), be.getEndTimestamp(),h000Pojo_baseList);
-    }
-    /**
-     * 获取A磨的历史数据
-     *
-     * @return
-     */
-    @RequestMapping(value = "/getAMillHistoryData", method = RequestMethod.GET, produces = "text/html;charset=UTF-8")
-    @ResponseBody
-    public String getAMillHistoryData(@RequestParam(value = "startInputTime", required = false) Date beginTime, @RequestParam(value = "endInputTime", required = false) Date endTime) {
-
-        BE be = new BE(beginTime,endTime);
-
-
-        List<? extends  CoalPipingHistory> coalPipeHistoryEntityList = coalPipingHistoryRepositoryA.findByHTimeBetween(be
-                        .getBeginTimestamp(),
-                be.getEndTimestamp());
-        //TODO 根据数据库查询的数据，进行数据校验
-        //TODO 如果一个数据都没有，则根据开始时间进行数据填充，每个5秒填充一个，数据为null
-        //TODO 如果数据量大于0，则根据当前时间进行数据填充，最小点时间的数据向前填充，间隔5秒，直至填充的时间小于开始时间，最大点的时间向后填充，直至填充的时间大于结束时间
-        //TODO 遍历所有数据，如果两个数据之间的时间间隔大于10秒，则根据间隔开始时间进行添加，每个5秒填充一个，直至填充时间大于间隔的结束时间
-        if(coalPipeHistoryEntityList.size() == 0){
-            coalPipeHistoryEntityList = handleExceptionHistoryList(be);
-        }
-
-
-        return coalPipingHistoryService.generateJsonStringByHistroyList(coalPipeHistoryEntityList, be
-                .getBeginTimestamp(), be.getEndTimestamp());
-    }
-
-    /**
-     *
-     * @param be
-     * @return
-     */
-    private List<? extends CoalPipingHistory> handleExceptionHistoryList(BE be){
-        //TODO 根据数据库查询的数据，进行数据校验
-        //TODO 如果一个数据都没有，则根据开始时间进行数据填充，每个5秒填充一个，数据为null
-        //TODO 如果数据量大于0，则根据当前时间进行数据填充，最小点时间的数据向前填充，间隔5秒，直至填充的时间小于开始时间，最大点的时间向后填充，直至填充的时间大于结束时间
-        //TODO 遍历所有数据，如果两个数据之间的时间间隔大于10秒，则根据间隔开始时间进行添加，每个5秒填充一个，直至填充时间大于间隔的结束时间
-
-        List<CoalPipingHistory> list = new ArrayList<>();
-            long endTimeForTemp = be.getBeginTimestamp().getTime();
-            long endTimeMillis = be.getEndTimestamp().getTime() - 1000 * 10;
-            while (endTimeForTemp < endTimeMillis) {
-                CoalPipingHistory e1 = new AcoalPipingHistoryEntity();
-                e1.sethTime(new Timestamp(endTimeForTemp));
-//                e1.sethPipeADencity((float) (Math.random()*10) *0  +  -1);
-//                e1.sethPipeBDencity((float) (Math.random()*10) *0 +  -1);
-//                e1.sethPipeCDencity((float) (Math.random()*10) *0 +  -1);
-//                e1.sethPipeDDencity((float) (Math.random()*10) *0 +  -1);
-//                e1.sethPipeAVelocity((float) (Math.random()*10) *0 +  -1);
-//                e1.sethPipeBVelocity((float) (Math.random()*10) *0 +  -1);
-//                e1.sethPipeCVelocity((float) (Math.random()*10) *0 +  -1);
-//                e1.sethPipeDVelocity((float) (Math.random()*10) *0 +  -1);
-                list.add(e1);
-                endTimeForTemp += 5 * 1000;
-            }
-
-        return list;
-    }
-    /**
-     * 获取四台磨的密度与风速的实时数据
-     *
-     * @return
-     */
-    @RequestMapping(value = "/getAllMillRealTimeData", method = RequestMethod.GET, produces = "text/html;charset=UTF-8")
-    @ResponseBody
-    public String getAllMillRealTimeData() {
-        //TODO 使用视图进行查询，避免一次性查询16个表的实时数据
-        //todo 根据前台反馈的最新时间，返回最新的数据，如果没有，需要重新制定返回规则！！！！！！
-        CoalPipingEntity coalMillAPiping1Entity = coalPipingRepository.findOne(11L);
-        CoalPipingEntity coalMillAPiping2Entity = coalPipingRepository.findOne(12L);
-        CoalPipingEntity coalMillAPiping3Entity = coalPipingRepository.findOne(13L);
-        CoalPipingEntity coalMillAPiping4Entity = coalPipingRepository.findOne(14L);
-
-        CoalPipingEntity coalMillBPiping1Entity = coalPipingRepository.findOne(21L);
-        CoalPipingEntity coalMillBPiping2Entity = coalPipingRepository.findOne(22L);
-        CoalPipingEntity coalMillBPiping3Entity = coalPipingRepository.findOne(23L);
-        CoalPipingEntity coalMillBPiping4Entity = coalPipingRepository.findOne(24L);
-
-        CoalPipingEntity coalMillCPiping1Entity = coalPipingRepository.findOne(31L);
-        CoalPipingEntity coalMillCPiping2Entity = coalPipingRepository.findOne(32L);
-        CoalPipingEntity coalMillCPiping3Entity = coalPipingRepository.findOne(33L);
-        CoalPipingEntity coalMillCPiping4Entity = coalPipingRepository.findOne(34L);
-
-        CoalPipingEntity coalMillDPiping1Entity = coalPipingRepository.findOne(41L);
-        CoalPipingEntity coalMillDPiping2Entity = coalPipingRepository.findOne(42L);
-        CoalPipingEntity coalMillDPiping3Entity = coalPipingRepository.findOne(43L);
-        CoalPipingEntity coalMillDPiping4Entity = coalPipingRepository.findOne(44L);
-
-
-        JSONObject jsonObject = new JSONObject();
-        JSONObject millAPipe1JsonObj = getMillPipingJsonObj(coalMillAPiping1Entity);
-        JSONObject millAPipe2JsonObj = getMillPipingJsonObj(coalMillAPiping2Entity);
-        JSONObject millAPipe3JsonObj = getMillPipingJsonObj(coalMillAPiping3Entity);
-        JSONObject millAPipe4JsonObj = getMillPipingJsonObj(coalMillAPiping4Entity);
-
-        JSONObject millBPipe1JsonObj = getMillPipingJsonObj(coalMillBPiping1Entity);
-        JSONObject millBPipe2JsonObj = getMillPipingJsonObj(coalMillBPiping2Entity);
-        JSONObject millBPipe3JsonObj = getMillPipingJsonObj(coalMillBPiping3Entity);
-        JSONObject millBPipe4JsonObj = getMillPipingJsonObj(coalMillBPiping4Entity);
-
-        JSONObject millCPipe1JsonObj = getMillPipingJsonObj(coalMillCPiping1Entity);
-        JSONObject millCPipe2JsonObj = getMillPipingJsonObj(coalMillCPiping2Entity);
-        JSONObject millCPipe3JsonObj = getMillPipingJsonObj(coalMillCPiping3Entity);
-        JSONObject millCPipe4JsonObj = getMillPipingJsonObj(coalMillCPiping4Entity);
-
-        JSONObject millDPipe1JsonObj = getMillPipingJsonObj(coalMillDPiping1Entity);
-        JSONObject millDPipe2JsonObj = getMillPipingJsonObj(coalMillDPiping2Entity);
-        JSONObject millDPipe3JsonObj = getMillPipingJsonObj(coalMillDPiping3Entity);
-        JSONObject millDPipe4JsonObj = getMillPipingJsonObj(coalMillDPiping4Entity);
-
-
-        CoalMillEntity coalMillEntityA = coalMillRepository.findOne(1L);
-        CoalMillEntity coalMillEntityB = coalMillRepository.findOne(2L);
-        CoalMillEntity coalMillEntityC = coalMillRepository.findOne(3L);
-        CoalMillEntity coalMillEntityD = coalMillRepository.findOne(4L);
 
 
 
-        JSONObject millAJsonObj = new JSONObject();
-        JSONObject millBJsonObj = new JSONObject();
-        JSONObject millCJsonObj = new JSONObject();
-        JSONObject millDJsonObj = new JSONObject();
 
 
-        millAJsonObj.put("coalCount",coalMillEntityA.getDeviceDcsPojoForCoalCount().getDevicePointRealtimePojo().getPointValue());
-        millBJsonObj.put("coalCount",coalMillEntityB.getDeviceDcsPojoForCoalCount().getDevicePointRealtimePojo().getPointValue());
-        millCJsonObj.put("coalCount",coalMillEntityC.getDeviceDcsPojoForCoalCount().getDevicePointRealtimePojo().getPointValue());
-        millDJsonObj.put("coalCount",coalMillEntityD.getDeviceDcsPojoForCoalCount().getDevicePointRealtimePojo().getPointValue());
-
-        millAJsonObj.put("coalCurrent",coalMillEntityA.getDeviceDcsPojoForCoalCount().getDevicePointRealtimePojo().getPointValue());
-        millBJsonObj.put("coalCurrent",coalMillEntityB.getDeviceDcsPojoForCoalCount().getDevicePointRealtimePojo().getPointValue());
-        millCJsonObj.put("coalCurrent",coalMillEntityC.getDeviceDcsPojoForCoalCount().getDevicePointRealtimePojo().getPointValue());
-        millDJsonObj.put("coalCurrent",coalMillEntityD.getDeviceDcsPojoForCoalCount().getDevicePointRealtimePojo()
-                .getPointValue());
-
-        millAJsonObj.put("pipe1", millAPipe1JsonObj);
-        millAJsonObj.put("pipe2", millAPipe2JsonObj);
-        millAJsonObj.put("pipe3", millAPipe3JsonObj);
-        millAJsonObj.put("pipe4", millAPipe4JsonObj);
-
-        millBJsonObj.put("pipe1", millBPipe1JsonObj);
-        millBJsonObj.put("pipe2", millBPipe2JsonObj);
-        millBJsonObj.put("pipe3", millBPipe3JsonObj);
-        millBJsonObj.put("pipe4", millBPipe4JsonObj);
-
-        millCJsonObj.put("pipe1", millCPipe1JsonObj);
-        millCJsonObj.put("pipe2", millCPipe2JsonObj);
-        millCJsonObj.put("pipe3", millCPipe3JsonObj);
-        millCJsonObj.put("pipe4", millCPipe4JsonObj);
-
-        millDJsonObj.put("pipe1", millDPipe1JsonObj);
-        millDJsonObj.put("pipe2", millDPipe2JsonObj);
-        millDJsonObj.put("pipe3", millDPipe3JsonObj);
-        millDJsonObj.put("pipe4", millDPipe4JsonObj);
-
-        jsonObject.put("time", coalMillAPiping1Entity.getpTime().getTime());
-        jsonObject.put("millA", millAJsonObj);
-        jsonObject.put("millB", millBJsonObj);
-        jsonObject.put("millC", millCJsonObj);
-        jsonObject.put("millD", millDJsonObj);
-        return jsonObject.toString();
-    }
-
-    @RequestMapping(value = "/getMillARealTimeData", method = RequestMethod.GET, produces = "text/html;charset=UTF-8")
-    @ResponseBody
-    public String getMillARealTimeData() {
-        CoalPipingEntity coalMillAPiping1Entity = coalPipingRepository.findOne(11L);
-        CoalPipingEntity coalMillAPiping2Entity = coalPipingRepository.findOne(12L);
-        CoalPipingEntity coalMillAPiping3Entity = coalPipingRepository.findOne(13L);
-        CoalPipingEntity coalMillAPiping4Entity = coalPipingRepository.findOne(14L);
-        //TODO 查询当前的锅炉负荷
 
 
-        JSONObject jsonObject = new JSONObject();
-        JSONObject millAPipe1JsonObj = getMillPipingJsonObj(coalMillAPiping1Entity);
-        JSONObject millAPipe2JsonObj = getMillPipingJsonObj(coalMillAPiping2Entity);
-        JSONObject millAPipe3JsonObj = getMillPipingJsonObj(coalMillAPiping3Entity);
-        JSONObject millAPipe4JsonObj = getMillPipingJsonObj(coalMillAPiping4Entity);
 
 
-        JSONObject millAJsonObj = new JSONObject();
-        millAJsonObj.put("pipe1", millAPipe1JsonObj);
-        millAJsonObj.put("pipe2", millAPipe2JsonObj);
-        millAJsonObj.put("pipe3", millAPipe3JsonObj);
-        millAJsonObj.put("pipe4", millAPipe4JsonObj);
-        jsonObject.put("time", coalMillAPiping1Entity.getpTime().getTime());
-        //TODO 当前负荷生成一个json对象
-        jsonObject.put("millData", (int) (Math.random() * 100) + 30);
-        jsonObject.put("millA", millAJsonObj);
-        return jsonObject.toString();
-    }
 
-    @RequestMapping(value = "/getMillRealTimeData", method = RequestMethod.GET, produces = "text/html;charset=UTF-8")
-    @ResponseBody
-    public String getMillRealTimeData(@RequestParam(value = "mill", required = false) String mill) {
-        CoalPipingEntity coalMillPiping1Entity, coalMillPiping2Entity, coalMillPiping3Entity, coalMillPiping4Entity;
-        JSONObject jsonObject = new JSONObject();
-        if (null != mill) {
-            Float millData = 0f,millCurrent = 0f;
-            long pipe1Id = 11L, pipe2Id = 12L, pipe3Id = 13L, pipe4Id = 14L;
-            CoalMillEntity coalMillEntity = null;
-            if (mill.equals("A")) {
-                coalMillEntity= coalMillRepository.findOne(1L);
-            } else if (mill.equals("B")) {
-                pipe1Id = 21L;
-                pipe2Id = 22L;
-                pipe3Id = 23L;
-                pipe4Id = 24L;
-                coalMillEntity= coalMillRepository.findOne(2L);
-            } else if (mill.equals("C")) {
-                pipe1Id = 31L;
-                pipe2Id = 32L;
-                pipe3Id = 33L;
-                pipe4Id = 34L;
-                coalMillEntity= coalMillRepository.findOne(3L);
-            } else if (mill.equals("D")) {
-                pipe1Id = 41L;
-                pipe2Id = 42L;
-                pipe3Id = 43L;
-                pipe4Id = 44L;
-                coalMillEntity= coalMillRepository.findOne(4L);
-            }
-            millData = getMillCount(coalMillEntity);
-            millCurrent = getMillCurrent(coalMillEntity);
-            coalMillPiping1Entity = coalPipingRepository.findOne(pipe1Id);
-            coalMillPiping2Entity = coalPipingRepository.findOne(pipe2Id);
-            coalMillPiping3Entity = coalPipingRepository.findOne(pipe3Id);
-            coalMillPiping4Entity = coalPipingRepository.findOne(pipe4Id);
-
-
-            //TODO 查询当前的锅炉负荷
-            JSONObject millAPipe1JsonObj = getMillPipingJsonObj(coalMillPiping1Entity);
-            JSONObject millAPipe2JsonObj = getMillPipingJsonObj(coalMillPiping2Entity);
-            JSONObject millAPipe3JsonObj = getMillPipingJsonObj(coalMillPiping3Entity);
-            JSONObject millAPipe4JsonObj = getMillPipingJsonObj(coalMillPiping4Entity);
-
-            JSONObject millAJsonObj = new JSONObject();
-            millAJsonObj.put("pipe1", millAPipe1JsonObj);
-            millAJsonObj.put("pipe2", millAPipe2JsonObj);
-            millAJsonObj.put("pipe3", millAPipe3JsonObj);
-            millAJsonObj.put("pipe4", millAPipe4JsonObj);
-            jsonObject.put("time", coalMillPiping1Entity.getpTime().getTime());
-            //TODO 当前负荷生成一个json对象
-            //TODO 磨煤机的磨煤量数据
-            jsonObject.put("millData", millData);
-            jsonObject.put("millCurrent", millCurrent);
-
-            jsonObject.put("millA", millAJsonObj);
-        }
-        return jsonObject.toString();
-    }
-
-    private Float getMillCount(CoalMillEntity coalMillEntity) {
-        Float millValue = 0f;
-        DevicePointPojo devicePointPojoForCoalCount = coalMillEntity.getDeviceDcsPojoForCoalCount();
-
-        if(null != devicePointPojoForCoalCount){
-            DevicePointRealtimePojo devicePointRealtimePojoForCoalCount = devicePointPojoForCoalCount.getDevicePointRealtimePojo();
-            if(null != devicePointRealtimePojoForCoalCount){
-                millValue = devicePointRealtimePojoForCoalCount.getPointValue();
-            }
-        }
-        return millValue;
-    }
-    private Float getMillCurrent(CoalMillEntity coalMillEntity) {
-        DevicePointPojo devicePointPojoForMillCurrent = coalMillEntity.getDeviceDcsPojoForCurrent();
-        Float millCurrent = 0f;
-        if(null != devicePointPojoForMillCurrent){
-            DevicePointRealtimePojo devicePointRealtimePojoForCoalCurrent = devicePointPojoForMillCurrent
-                    .getDevicePointRealtimePojo();
-            if(null != devicePointRealtimePojoForCoalCurrent){
-                millCurrent = devicePointRealtimePojoForCoalCurrent.getPointValue();
-            }
-        }
-        return millCurrent;
-    }
-
-    private JSONObject getMillPipingJsonObj(CoalPipingEntity coalMillAPiping1Entity) {
-        JSONObject millAPipe1JsonObj = new JSONObject();
-        millAPipe1JsonObj.put("pipeId", coalMillAPiping1Entity.getId());
-        millAPipe1JsonObj.put("pipeName", coalMillAPiping1Entity.getpName());
-        millAPipe1JsonObj.put("density", coalMillAPiping1Entity.getpDencity());
-        millAPipe1JsonObj.put("Velocity", coalMillAPiping1Entity.getpVelocity());
-        return millAPipe1JsonObj;
-    }
 
     /**
      * 获取A磨风速的实时的相对数据
@@ -603,6 +190,10 @@ public class CoalPipingController {
         return jsonArray.toString();
     }
 
+
+
+
+
     /**
      * 返回当前时间15分钟前的时间点
      * @return
@@ -614,21 +205,6 @@ public class CoalPipingController {
         return new Timestamp(c.getTimeInMillis());
     }
 
-    /**
-     * 根据millLocation，查询15分钟内的4根粉管的浓度数据
-     * @param millLocation
-     * @return
-     */
-    @RequestMapping(value="/getDensityRealTime15MinutesDataByMill",method=RequestMethod.GET,produces="text/html;" +
-            "charset=UTF-8")
-    @ResponseBody
-    public String getDensityRealTime15MinutesDataByMill(@RequestParam(value="mill",required = false)String
-                                                                millLocation){
-        Timestamp latestTimeStamp = getLatestTimeStamp();
-        List<? extends  CoalPipingHistory> list = findCoalPipingHistoryByMillTypeAndLastesTime(latestTimeStamp,
-                millLocation);
-        return generateDensityInitDataJsonArray(list).toString();
-    }
     private List<? extends CoalPipingHistory> findCoalPipingHistoryByMillTypeAndLastesTime(Timestamp laestTimestamp,
                                                                                            String millLocation){
         List<? extends CoalPipingHistory> list = null;
@@ -645,127 +221,6 @@ public class CoalPipingController {
         }
         return list;
     }
-    /**
-     * 根据millLocation，查询15分钟内的4根粉管的风速数据
-     * @param millLocation
-     * @return
-     */
-    @RequestMapping(value="/getVelocityRealTime15MinutesDataByMill",method=RequestMethod.GET,produces="text/html;" +
-            "charset=UTF-8")
-    @ResponseBody
-    public String getVelocityRealTime15MinutesDataByMill(@RequestParam(value="mill",required = false)String
-                                                                millLocation){
-        Timestamp latestTimeStamp = getLatestTimeStamp();
-        List<? extends  CoalPipingHistory> list = findCoalPipingHistoryByMillTypeAndLastesTime(latestTimeStamp,
-                millLocation);
-        return generateDensityInitDataJsonArray(list).toString();
-    }
-
-    /**
-     * 查询15分钟内4根粉管的浓度与风速数据，磨煤机的数据
-     * 实时画面使用到此方法
-     * @param mill
-     * @return
-     */
-    @RequestMapping(value = "/getInitTimeDataForDensity", method = RequestMethod.GET, produces = "text/html;charset=UTF-8")
-    @ResponseBody
-    public String getInitTimeDataForDensity(@RequestParam(value = "mill", required = false) String mill) {
-        LocalDateTime localDateTime = LocalDateTime.now();
-        LocalDateTime localDateTimeBefore = localDateTime.minusMinutes(15);
-        Timestamp begin = Timestamp.valueOf(localDateTimeBefore);
-        Timestamp end = Timestamp.valueOf(localDateTime);
-        JSONArray jsonArray = new JSONArray();
-        if (null != mill) {
-            List<? extends CoalPipingHistory> list = null;
-            List<Float> millHistoryList = new ArrayList<>();
-            List<H000Pojo_Base> hList = null;
-            switch (mill) {
-                case "A":
-                    Instant instantNow = Instant.now();
-
-                    list = coalPipingHistoryRepositoryA.findByHTimeAfterOrderByHTimeAsc(begin);
-
-                    Instant instantCPNow = Instant.now();
-                    Duration durationForCP = Duration.between(instantNow,instantCPNow);
-                    System.out.println("查询coalPipingHistory的时间：" + durationForCP.getSeconds() + "秒,"+durationForCP
-                            .getNano()/1000000+"毫秒");
-
-                    hList = dcsHistoryService.findByTime(75, begin, end);
-
-                    Instant instantForDcs = Instant.now();
-                    Duration durationForDCS = Duration.between(instantNow,instantForDcs);
-                    System.out.println("查询磨煤机磨煤量的时间：" + durationForDCS.getSeconds() + "秒,"+durationForDCS
-                            .getNano()/1000000+"毫秒");
-                    break;
-                case "B":
-                    Instant instantNowB = Instant.now();
-
-                    list = coalPipingHistoryRepositoryB.findByHTimeAfterOrderByHTimeAsc(begin);
-
-                    Instant instantCPNowB = Instant.now();
-                    Duration durationForCPB = Duration.between(instantNowB,instantCPNowB);
-                    System.out.println("查询coalPipingHistory的时间：" + durationForCPB.getSeconds() + "秒,"+durationForCPB
-                            .getNano()/1000000+"毫秒");
-
-                    hList = dcsHistoryService.findByTime(76, begin, end);
-
-                    Instant instantForDcsB = Instant.now();
-                    Duration durationForDCSB = Duration.between(instantNowB,instantForDcsB);
-                    System.out.println("查询磨煤机磨煤量的时间：" + durationForDCSB.getSeconds() + "秒,"+durationForDCSB
-                            .getNano()/1000000+"毫秒");
-
-                    break;
-                case "C":
-                    list = coalPipingHistoryRepositoryC.findByHTimeAfterOrderByHTimeAsc(begin);
-                    hList = dcsHistoryService.findByTime(77, begin, end);
-                    break;
-                case "D":
-                    list = coalPipingHistoryRepositoryD.findByHTimeAfterOrderByHTimeAsc(begin);
-                    hList = dcsHistoryService.findByTime(78, begin, end);
-                    break;
-                default:
-                    list = null;
-                    hList = null;
-                    break;
-            }
-            //TODO 查询15分钟内的磨煤机数据
-
-            millHistoryList = HandlDcsHistoryListUtil.getMilHistoryList(list,hList);
-
-            jsonArray = generateInitDataJsonArray(list, millHistoryList);
-        }
-        return jsonArray.toString();
-    }
-
-    private JSONArray generateInitDataJsonArray(List<? extends CoalPipingHistory> list, List<Float> millHistoryList) {
-//        JSONArray jsonArray = generateInitDataJsonArray(list);
-        JSONArray jsonArray = new JSONArray();
-
-        if (null != list) {
-            for (CoalPipingHistory coalPipingHistory : list) {
-                JSONObject jsonObject = new JSONObject();
-                jsonObject.put("time", coalPipingHistory.gethTime().getTime());
-                jsonObject.put("AD", coalPipingHistory.getPipeADensityNotNull());
-                jsonObject.put("BD", coalPipingHistory.getPipeBDensityNotNull());
-                jsonObject.put("CD", coalPipingHistory.getPipeCDensityNotNull());
-                jsonObject.put("DD", coalPipingHistory.getPipeDDensityNotNull());
-
-                jsonObject.put("AV", coalPipingHistory.getPipeAVelocityNotNull());
-                jsonObject.put("BV", coalPipingHistory.getPipeBVelocityNotNull());
-                jsonObject.put("CV", coalPipingHistory.getPipeCVelocityNotNull());
-                jsonObject.put("DV", coalPipingHistory.getPipeDVelocityNotNull());
-                //TODO 磨煤机 模拟数据
-                jsonObject.put("m", (Math.random() * 100) + 20);
-
-                if(null != coalPipingHistory.getCoalMillValue()){
-                    jsonObject.put("m", coalPipingHistory.getCoalMillValue());
-                }
-                jsonArray.put(jsonObject);
-            }
-            //TODO 添加锅炉负荷的15分钟数据
-        }
-        return jsonArray;
-    }
     private JSONArray generateVelocityInitDataJsonArray(List<? extends  CoalPipingHistory> list){
         return generateDensityOrVelocityInitDataJsonArray(list,"velocity");
     }
@@ -774,6 +229,10 @@ public class CoalPipingController {
         return generateDensityOrVelocityInitDataJsonArray(list,"density");
     }
 
+
+//    private JSONArray generateDensityInitDataJsonArray(List<? extends  CoalPipingHistory> list){
+//        return generateDensityOrVelocityInitDataJsonArray(list,"density");
+//    }
     private JSONArray generateDensityOrVelocityInitDataJsonArray(List<? extends CoalPipingHistory> list,String
             densityOrVelocity) {
         JSONArray jsonArray = new JSONArray();
@@ -798,8 +257,6 @@ public class CoalPipingController {
 
         return jsonArray;
     }
-
-
     private JSONArray generateInitDataJsonArray(List<? extends CoalPipingHistory> list) {
         JSONArray jsonArray = new JSONArray();
         if (null != list) {

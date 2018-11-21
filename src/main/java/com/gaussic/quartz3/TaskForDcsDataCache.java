@@ -32,19 +32,21 @@ public class TaskForDcsDataCache {
      * 主要功能：读取dcsHisotryoCache中的数据，将数据分析后保存早H000至H199中，并清除缓存的数据
      */
     public void doJob() {
-        count ++;
+//        count ++;
         try {
 //            System.out.println("执行DCS缓存操作" +count);
             LocalDateTime endLocalDateTime = LocalDateTime.now();
-            LocalDateTime beginLocalDateTime = endLocalDateTime.minusSeconds(30L);
+            LocalDateTime beginLocalDateTime = endLocalDateTime.minusSeconds(10L);
             Timestamp begin = Timestamp.valueOf(beginLocalDateTime);
             Timestamp end = Timestamp.valueOf(endLocalDateTime);
 //            List<DcsHistoryCashePojo> dcsHistoryCashePojoList = dcsHistoryCasheRep.findAll();
             List<DcsHistoryCashePojo> dcsHistoryCashePojoList = null;
             if(count >= 4){
-                beginLocalDateTime = endLocalDateTime.minusSeconds(120L);
-                begin = Timestamp.valueOf(beginLocalDateTime);
-                dcsHistoryCashePojoList = dcsHistoryCasheRep.findByVTimeBetween(begin,end);
+                //TODO 处理历史数据缓存功能，暂时停用
+//                beginLocalDateTime = endLocalDateTime.minusSeconds(120L);
+//                begin = Timestamp.valueOf(beginLocalDateTime);
+//                dcsHistoryCashePojoList = dcsHistoryCasheRep.findByVTimeBetween(begin,end);
+                count = 0;
             }else{
                 dcsHistoryCashePojoList = dcsHistoryCasheRep.findByVTimeBetween(begin,end);
             }
@@ -79,7 +81,7 @@ public class TaskForDcsDataCache {
                 }
                 dcsHistoryCasheRep.delete(pojo);
                 dcsHistoryCacheIdSets.remove(pojo.getId());
-                Thread.sleep(500);
+                Thread.sleep(100);
             }
         } catch (Exception e) {
             e.printStackTrace();

@@ -1,5 +1,6 @@
 package com.gaussic.dataGet.dcsHandle;
 
+import com.gaussic.model.CoalMillEntity;
 import com.gaussic.model.CoalPipingEntity;
 import com.gaussic.model.dcs.DeviceDcsPojo;
 import com.gaussic.model.dcs.DevicePointPojo;
@@ -8,13 +9,13 @@ import com.gaussic.model.dcsRemote.DcsRemotePointPojo;
 import com.gaussic.model.dcs_history.H001Pojo;
 import com.gaussic.model.dcs_history.H002Pojo;
 import com.gaussic.model.dcs_history.H003Pojo;
+import com.gaussic.model.history.CoalPipingHistory;
 import com.gaussic.repository.*;
 import com.gaussic.repository.dcs_history.H000Rep;
 import com.gaussic.repository.dcs_history.H001Rep;
 import com.gaussic.repository.dcs_history.H002Rep;
 import com.gaussic.repository.dcs_history.H003Rep;
-import com.gaussic.service.DevicePointRealtimeService;
-import com.gaussic.service.TDcsService;
+import com.gaussic.service.*;
 import com.gaussic.service.dcs.DcsHistoryService;
 import com.gaussic.util.modbus4j.Modbus4jSendValues;
 import com.gaussic.util.modbus4j.RtuSerialPortWrapper;
@@ -44,13 +45,15 @@ import java.util.stream.Collectors;
  */
 @Component
 public class DCSGetDataByModbusRtuSlave implements InitializingBean {
-//public class DCSGetDataByModbusRtuSlave  {
+    //public class DCSGetDataByModbusRtuSlave  {
     private static ModbusSlaveSet modbusSlaveSet;
     private static BasicProcessImage processImage;
 
     @Autowired
-        private DcsHistoryService dcsHistoryService;
-    /**是否启动 从站读取*/
+    private DcsHistoryService dcsHistoryService;
+    /**
+     * 是否启动 从站读取
+     */
     private static final boolean runSlave = true;
 
     @Autowired
@@ -69,13 +72,12 @@ public class DCSGetDataByModbusRtuSlave implements InitializingBean {
     private DevicePointRealtimeService devicePointRealtimeService;
 
 
-
-
-    private static Map<Integer ,Integer> registersDataTypeMap = new HashMap<>();
+    private static Map<Integer, Integer> registersDataTypeMap = new HashMap<>();
 
 
     private static List<DevicePointPojo> devicePointPojoList = null;
-    private static Map<Integer,DevicePointPojo> devicePointPojoMap = new HashMap<>();
+    private static Map<Integer, DevicePointPojo> devicePointPojoMap = new HashMap<>();
+
     @Override
     public void afterPropertiesSet() {
 //        List<DevicePointPojo> devicePointPojoListAll = devicePointRepository.findAll();
@@ -88,12 +90,11 @@ public class DCSGetDataByModbusRtuSlave implements InitializingBean {
 //        });
 
 
-
-        if(runSlave) {
+        if (runSlave) {
             devicePointPojoList = devicePointRepository.findByPointNameNotLike("");
-            devicePointPojoList.forEach((p)->{
+            devicePointPojoList.forEach((p) -> {
                 Integer address = Integer.parseInt(p.getPointAddress());
-                devicePointPojoMap.put(address,p);
+                devicePointPojoMap.put(address, p);
             });
 
             System.out.println("初始化执行一次————————————————————————————————");
@@ -131,7 +132,12 @@ public class DCSGetDataByModbusRtuSlave implements InitializingBean {
         }
     }
 
-
+    /**
+     * 封装一个SerialPortWrapper对象，用于生成一个modbusRtuSlave对象
+     *
+     * @param deviceDcsPojo
+     * @return
+     */
     private SerialPortWrapper generatorSerialPortWrapper(DeviceDcsPojo deviceDcsPojo) {
         String commPortId = "COM" + deviceDcsPojo.getDevicePort();
 //        commPortId = "COM2";
@@ -144,26 +150,39 @@ public class DCSGetDataByModbusRtuSlave implements InitializingBean {
 
         //TODO 需要处理 处理结束，2018-10-16，前台页面设置参数，parity的类型为byte，添加后可以正常修改
 //        parity = 1;
+//        commPortId = "COM1";
+//        baudRate = 9600;
+//        flowControlIn = 0;
+//        flowControlOut = 0;
+//        dataBits = 8;
+//        stopBits = 1;
+//        parity = 1;
 
         SerialPortWrapper wrapper = new RtuSerialPortWrapper(commPortId, baudRate, flowControlIn, flowControlOut,
                 dataBits, stopBits, parity);
         return wrapper;
     }
 
+    /**
+     * 初始化ProcessImage
+     *
+     * @param slaveId
+     * @return
+     */
     private BasicProcessImage initProcessImage(int slaveId) {
         BasicProcessImage processImage = new BasicProcessImage(slaveId);
 
         List<DevicePointPojo> devicePointPojoList = devicePointRepository.findAll();
-        devicePointPojoList.forEach((p)->{
-            registersDataTypeMap.put(Integer.valueOf(p.getPointAddress()),p.getDataTyper());
+        devicePointPojoList.forEach((p) -> {
+            registersDataTypeMap.put(Integer.valueOf(p.getPointAddress()), p.getDataTyper());
         });
 
         short[] data = new short[1000];
-        for(int i=0;i<data.length;i++){
-            data[i ] = 0;
+        for (int i = 0; i < data.length; i++) {
+            data[i] = 5;
         }
         processImage.setHoldingRegister(0, data);
-        processImage.setInputRegister(0,data);
+        processImage.setInputRegister(0, data);
         ProcessImageListener processImageListener = generatorProcessImageLisener();
 //        initProcessImageData(processImage);
         processImage.addListener(processImageListener);
@@ -172,11 +191,16 @@ public class DCSGetDataByModbusRtuSlave implements InitializingBean {
     }
 
     private void initProcessImageData(BasicProcessImage processImage) {
-        for(int i=100;i<200;i++){
-            processImage.setHoldingRegister(i,(short)(Math.random()* 100));
+        for (int i = 100; i < 200; i++) {
+            processImage.setHoldingRegister(i, (short) (Math.random() * 100));
         }
     }
 
+    /**
+     * 生成一个ProcessImageListener对象，处理DCS发送过来的数据
+     *
+     * @return
+     */
     private ProcessImageListener generatorProcessImageLisener() {
         ProcessImageListener processImageListener = new ProcessImageListener() {
             @Override
@@ -190,51 +214,52 @@ public class DCSGetDataByModbusRtuSlave implements InitializingBean {
 //                        newValue);
                 try {
                     Integer dataType = registersDataTypeMap.get(offset + 1);
-                    int v = getValue(offset,newValue);
+                    int v = getValue(offset, newValue);
 
                     int value = v;
-
-
                     //TODO 临时保存数据到临时数据库
 //                tDcsService.saveDcsPoint(offset,v);
-                //更新DCS点的实时数据
-                updateDcsRealTimeValues(offset + 1,v);
-                //更新历史数据库
-            //    dcsHistoryService.save(offset,v,Timestamp.valueOf(LocalDateTime.now()));
-
-
+                    //更新DCS点的实时数据
+                    updateDcsRealTimeValues(offset + 1, v);
+                    //更新历史数据库
+                    //    dcsHistoryService.save(offset,v,Timestamp.valueOf(LocalDateTime.now()));
                     //TODO 处理DCS发送过来的数据
 //                handleAIData( offset, newValue);
 
-
-                }catch (Exception e){
+                    // 保存DCS发送过来的数据到临时数据表
+                    dcsHistoryService.save(offset, new int[]{newValue}, Timestamp.valueOf(LocalDateTime.now()));
+                } catch (Exception e) {
                     e.printStackTrace();
                 }
             }
 
             @Override
             public void holdingRegisterWrite(int offset, short[] value) {
-                int[] arr = new int[value.length];
-                for(int i=0;i<value.length;i++){
-                    int v = getValue(offset +i,value[i]);
-                    arr[i] = v;
-                }
-                //更新DCS点的实时数据
-                updateDcsRealTimeValues(offset,arr);
-                //更新历史数据库
+                try {
+                    int[] arr = new int[value.length];
+                    for (int i = 0; i < value.length; i++) {
+                        int v = getValue(offset + i, value[i]);
+                        arr[i] = v;
+                    }
+                    //更新DCS点的实时数据
+                    updateDcsRealTimeValues(offset, arr);
+                    //更新历史数据库
                 /*for(int i=0;i<value.length;i++) {
                     dcsHistoryService.save(offset +i, value[i], Timestamp.valueOf(LocalDateTime.now()));
                 }*/
-
-                dcsHistoryService.save(offset ,arr,Timestamp.valueOf(LocalDateTime.now()));
+                    // 保存DCS发送过来的数据到临时数据表
+                    dcsHistoryService.save(offset, arr, Timestamp.valueOf(LocalDateTime.now()));
 //                dcsHistoryService.save(offset ,arr,Timestamp.valueOf(LocalDateTime.now()));
+                }catch (Exception e){
+                    e.printStackTrace();
+                }
             }
         };
         return processImageListener;
     }
 
 
-    public int getValue(int offset,short newValue){
+    public int getValue(int offset, short newValue) {
         Integer dataType = registersDataTypeMap.get(offset + 1);
         int v = newValue;
         if (null != dataType) {
@@ -249,12 +274,13 @@ public class DCSGetDataByModbusRtuSlave implements InitializingBean {
         }
         return v;
     }
-    private void updateDcsRealTimeValues(int offset,int[] newValue) {
-        offset = offset +1;
+
+    private void updateDcsRealTimeValues(int offset, int[] newValue) {
+        offset = offset + 1;
         List<DevicePointRealtimePojo> devicePointRealtimePojoList = new ArrayList<>();
-        for(int i=0;i<newValue.length;i++){
-            DevicePointPojo devicePointPojo = devicePointPojoMap.get(offset +i);
-            if(null != devicePointPojo){
+        for (int i = 0; i < newValue.length; i++) {
+            DevicePointPojo devicePointPojo = devicePointPojoMap.get(offset + i);
+            if (null != devicePointPojo) {
                 DevicePointRealtimePojo devicePointRealtimePojo = devicePointPojo.getDevicePointRealtimePojo();
                 devicePointRealtimePojo.setPointValue((float) newValue[i]);
                 devicePointRealtimePojo.setrTime(Timestamp.valueOf(LocalDateTime.now()));
@@ -267,15 +293,22 @@ public class DCSGetDataByModbusRtuSlave implements InitializingBean {
         try {
             devicePointRealtimeRepository.save(devicePointRealtimePojoList);
 //            devicePointRealtimeService.batchUpdate(devicePointRealtimePojoList);
-        }catch (Exception e){
+        } catch (Exception e) {
             e.printStackTrace();
         }
         devicePointRealtimePojoList.clear();
 
     }
-    private void updateDcsRealTimeValues(int offset,int newValue) {
+
+    /**
+     * 更新实时数据
+     *
+     * @param offset
+     * @param newValue
+     */
+    private void updateDcsRealTimeValues(int offset, int newValue) {
         List<DevicePointPojo> devicePointPojoList = devicePointRepository.findByPointAddress(String.valueOf(offset));
-        if(null != devicePointPojoList && devicePointPojoList.size() > 0) {
+        if (null != devicePointPojoList && devicePointPojoList.size() > 0) {
             DevicePointPojo devicePointPojo = devicePointPojoList.get(0);
             //2、生成一个或者查询到一个devicePointReal，并更更新数据
             DevicePointRealtimePojo devicePointRealtimePojo = null;
@@ -297,6 +330,7 @@ public class DCSGetDataByModbusRtuSlave implements InitializingBean {
 
     /**
      * 处理DCS发送过来的数据
+     *
      * @param offset
      * @param newValue
      */
@@ -306,9 +340,9 @@ public class DCSGetDataByModbusRtuSlave implements InitializingBean {
          * 3、根据devicePointPojo这个对象，产生一个DevciePointHistory_Pojo对象【根据当前时间生成】
          * 4、对这个DevciePointHistory_Pojo对象进行赋值。，并保存
          * */
-        updateDcsRealTimeValues(offset,newValue);
-            //TODO 3、产生一个DevciePointHistory_Pojo对象【根据当前时间生成】
-            //TODO 4、对这个DevciePointHistory_Pojo对象进行赋值。，并保存
+        updateDcsRealTimeValues(offset, newValue);
+        //TODO 3、产生一个DevciePointHistory_Pojo对象【根据当前时间生成】
+        //TODO 4、对这个DevciePointHistory_Pojo对象进行赋值。，并保存
 
 
     }
@@ -354,16 +388,17 @@ public class DCSGetDataByModbusRtuSlave implements InitializingBean {
         }));
         return dcsRemotePointPojoList;
     }
-     void updateProcessImage(BasicProcessImage processImage) throws IllegalDataAddressException {
+
+    void updateProcessImage(BasicProcessImage processImage) throws IllegalDataAddressException {
 
 //        int hr16Value = processImage.getNumeric(RegisterRange.HOLDING_REGISTER, 16, DataType.TWO_BYTE_INT_UNSIGNED_SWAPPED).intValue();
 //        if(hr16Value != twoByteIntUnsignedSwapped){
 //            throw new RuntimeException("Test failed on TWO_BYTE_INT_UNSIGNED_SWAPPED. Expected " + twoByteIntUnsignedSwapped + " but was: " + hr16Value);
 //        }
-        processImage.setHoldingRegister(0,(short)(Math.random() * 100));
-        for(int i=0;i<1000;i++){
-            processImage.setHoldingRegister(1+i,(short)(Math.random() * 100));
-            processImage.setInputRegister(1 + i,(short)(Math.random() * 100));
+        processImage.setHoldingRegister(0, (short) (Math.random() * 100));
+        for (int i = 0; i < 1000; i++) {
+            processImage.setHoldingRegister(1 + i, (short) (Math.random() * 100));
+            processImage.setInputRegister(1 + i, (short) (Math.random() * 100));
 //            processImage.setHoldingRegister(startOffsetForImage1+i, (short) 0);
 //            processImage.setInputRegister(startOffsetForImage1 + i, (short) 0);
         }
@@ -374,33 +409,45 @@ public class DCSGetDataByModbusRtuSlave implements InitializingBean {
 
     /**
      * 更新数据，从数据库中读取的数据
+     *
      * @param processImage
      */
     private void updateProcessImageFromDb(BasicProcessImage processImage) throws IllegalDataAddressException {
-        List<DcsRemotePointPojo> dcsRemotePointPojoList = dcsRemotePointRepository.findAll();
-        for(DcsRemotePointPojo dcsRemotePointPojo:dcsRemotePointPojoList){
-            int densityOrVelocity = dcsRemotePointPojo.getDensityOrVelocity();
-            CoalPipingEntity coalPipingEntity = dcsRemotePointPojo.getCoalPipingEntity();
-            Float value = 0f;
-            if(0 == densityOrVelocity){
-                 value = coalPipingEntity.getpVelocity();
-            }else if(1 == densityOrVelocity){
-                 value = coalPipingEntity.getpDencity();
+        try {
+            List<DcsRemotePointPojo> dcsRemotePointPojoList = dcsRemotePointRepository.findAll();
+            for (DcsRemotePointPojo dcsRemotePointPojo : dcsRemotePointPojoList) {
+//            float densityOrVelocity = dcsRemotePointPojo.getDensityOrVelocity();
+//            CoalPipingEntity coalPipingEntity = dcsRemotePointPojo.getCoalPipingEntity();
+
+//            Float value = 0f;
+//            if(0 == densityOrVelocity){
+//                 value = coalPipingEntity.getpVelocity();
+//            }else if(1 == densityOrVelocity){
+//                 value = coalPipingEntity.getpDencity();
+//            }
+//            dcsRemotePointPojo.setCurrentValue(value);
+//            dcsRemotePointPojo.setCurrTime(coalPipingEntity.getpTime());
+//            dcsRemotePointRepository.saveAndFlush(dcsRemotePointPojo);
+                float value = dcsRemotePointPojo.getCurrentValue();
+                //经过处理发送到DCS
+                short[] currentValue = DCSDataHandle.sendData(value);
+
+//            System.out.println("value:"+ currentValue[0]+","+currentValue[1]);
+//                System.out.println("currentValue:" + currentValue[0] + "," + currentValue[1]);
+                int currentAddress = Integer.parseInt(dcsRemotePointPojo.getAddress());
+//                System.out.println("currentAddress:" + currentAddress + ",currentValue.length:" + currentValue.length);
+                currentValue[1] = 0;
+                currentValue[0] = 5500;
+
+                short v = DCSDataHandle.handleValue(value);
+                processImage.setHoldingRegister(currentAddress, v);
+
+
             }
-            dcsRemotePointPojo.setCurrentValue(value);
-            dcsRemotePointPojo.setCurrTime(coalPipingEntity.getpTime());
-            dcsRemotePointRepository.saveAndFlush(dcsRemotePointPojo);
-
-            short[] currentValue = DCSDataHandle.sendData(value);
-//            System.out.println("value:"+ currentValue);
-//            System.out.println("currentValue:" + currentValue);
-            int currentAddress = Integer.parseInt(dcsRemotePointPojo.getAddress());
-            processImage.setHoldingRegister(currentAddress,currentValue);
-
-
-
-
+        }catch (Exception e){
+            e.printStackTrace();
         }
     }
+
 
 }

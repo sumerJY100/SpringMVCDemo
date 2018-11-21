@@ -18,6 +18,11 @@
                 <li><a href="${ctx}/historyPages/historyB.jsp">历史曲线【#20磨】</a></li>
                 <li><a href="${ctx}/historyPages/historyC.jsp">历史曲线【#30磨】</a></li>
                 <li><a href="${ctx}/historyPages/historyD.jsp">历史曲线【#40磨】</a></li>
+
+                <li><a href="${ctx}/historyPages/historyOriginalA.jsp">历史曲线原始【#10磨】</a></li>
+                <li><a href="${ctx}/historyPages/historyOriginalB.jsp">历史曲线原始【#20磨】</a></li>
+                <li><a href="${ctx}/historyPages/historyOriginalC.jsp">历史曲线原始【#30磨】</a></li>
+                <li><a href="${ctx}/historyPages/historyOriginalD.jsp">历史曲线原始【#40磨】</a></li>
             </ul>
         </li>
         <li><a href="${ctx}/reportPages/index.jsp">历史报表</a></li>

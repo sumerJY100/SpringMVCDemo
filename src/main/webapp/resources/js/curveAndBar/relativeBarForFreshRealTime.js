@@ -26,7 +26,7 @@ function getRelativeBarWithOptions(divId, titleName, subTile, chartOption,series
         subtitle: {text: subTile},
         xAxis: {categories: [""]},
         yAxis: {title: {text:""}},
-        series: [{name: seriesNameArr[0], data: []}, {name: seriesNameArr[1], data: []}, {name: seriesNameArr[2], data: []}, {name: seriesNameArr[3], data: []}]
+        series: [{name: seriesNameArr[0], data: [],dataLabels:{enabled:true}}, {name: seriesNameArr[1], data: [],dataLabels:{enabled:true}}, {name: seriesNameArr[2], data: [],dataLabels:{enabled:true}}, {name: seriesNameArr[3], data: [],dataLabels:{enabled:true}}]
     };
     $.extend(chartOptions, chartOption);
     return Highcharts.chart(divId, chartOptions);

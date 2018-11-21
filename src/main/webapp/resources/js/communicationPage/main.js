@@ -122,7 +122,7 @@ function drawMillPiping(svg, initX, initY) {
  * @param initY
  * @param location  A  B  C   D
  */
-function drawPipeRect(svg,initX,initY,location,pipeName){
+function drawPipeRect(svg,initX,initY,location,pipeName,pipeNoteName){
     var left=initX,top=initY;
     if(location === "A"){
 
@@ -133,7 +133,8 @@ function drawPipeRect(svg,initX,initY,location,pipeName){
     }else if(location === "D"){
         left = initX + (rectInterval + rectWidth) * 3;
     }
-    generatorText(svg,pipeName,left,top);
+    // generatorText(svg,pipeName,left,top);
+    generatorText(svg,pipeNoteName,left,top);
     return drawRect(svg, left, top, rectWidth, rectHeight);
 
 }
@@ -202,7 +203,7 @@ function PipeOrDcs(id,name,rect){
         }
     }
 }
-function generatorMillPipes(svg, pipe, millLocation,millLeft,millTop){
+function generatorMillPipes(svg, pipe, millLocation,millLeft,millTop,pipeNoteName){
     var pipeId = pipe.id;
     var pipeName = pipe.name;
     var state = pipe.state;
@@ -221,11 +222,15 @@ function generatorMillPipes(svg, pipe, millLocation,millLeft,millTop){
 
 
 
-    var pipeRect = drawPipeRect(svg,left,top,millLocation,pipeName);
+    var pipeRect = drawPipeRect(svg,left,top,millLocation,pipeName,pipeNoteName);
     return new PipeOrDcs(pipeId,pipeName,pipeRect);
 }
 function generatorText(svg,textValue,baseLeft,baseTop){
     var x = baseLeft + rectWidth /3;
+    if(textValue.length > 4){
+        x = baseLeft;
+    }
+
     var y = baseTop + rectHeight + 20;
     return drawText(svg,textValue,x,y);
 }
@@ -239,21 +244,26 @@ function generatorMill(svg,mill,millLocation){
     var millId = mill.id;
     var millName = mill.name;
     var millLeft,millTop;
+    var millName;
     if(millLocation === "A"){
         millLeft = millABLeft;millTop = millACTop;
+        millName = "10磨-管道1";
     }else if(millLocation === "B"){
         millLeft = millABLeft;millTop = millBDTOP;
+        millName = "20磨-管道2";
     }else if(millLocation === "C"){
         millLeft = millCDLeft;millTop = millACTop;
+        millName = "30磨-管道3";
     }else if(millLocation === "D"){
         millLeft = millCDLeft;millTop = millBDTOP;
+        millName = "40磨-管道4";
     }
 
 
-    var pipeA = generatorMillPipes(svg,mill.pipeA,"A",millLeft,millTop);
-    var pipeB = generatorMillPipes(svg,mill.pipeB,"B",millLeft,millTop);
-    var pipeC = generatorMillPipes(svg,mill.pipeC,"C",millLeft,millTop);
-    var pipeD = generatorMillPipes(svg,mill.pipeD,"D",millLeft,millTop);
+    var pipeA = generatorMillPipes(svg,mill.pipeA,"A",millLeft,millTop,millName+"1");
+    var pipeB = generatorMillPipes(svg,mill.pipeB,"B",millLeft,millTop,millName+"2");
+    var pipeC = generatorMillPipes(svg,mill.pipeC,"C",millLeft,millTop,millName+"3");
+    var pipeD = generatorMillPipes(svg,mill.pipeD,"D",millLeft,millTop,millName+"4");
 
 
 

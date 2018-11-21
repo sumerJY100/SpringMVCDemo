@@ -19,7 +19,7 @@
     </bean>
 
     <!-- Run the job every 2 seconds with initial delay of 1 second -->
-    <bean id="dcsCacheTrigger"  class="org.springframework.scheduling.quartz.SimpleTriggerFactoryBean">
+    <bean id="dcsCheckAlarmTrigger"  class="org.springframework.scheduling.quartz.SimpleTriggerFactoryBean">
         <property name="jobDetail" ref="jobDetailForPipeDataCheckAlarm" />
         <property name="startDelay" value="5000" />
         <property name="repeatInterval" value="60000" />

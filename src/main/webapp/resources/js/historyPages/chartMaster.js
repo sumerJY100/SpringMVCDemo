@@ -97,7 +97,7 @@ var mastreClickEvent = function(startTime,endTime){
 
             //对磨煤量曲线进行重绘
             var endT03 = new Date().getTime();
-            var seriesForBe = seriesArr[4];
+            var seriesForBe = seriesArr[seriesArr.length-1];
             var seriesDataForBe = [];
             Highcharts.each(seriesForBe.data, function (d) {
                 if (d.x > min && d.x < max) {
@@ -269,7 +269,8 @@ function createMaster(startTime, endTime, pipeHistoryDataArr,chartName) {
         }
         var color = p.color;
         var series = generatorMasterSeries(startTime,targetData,p.name,color);
-        if(x>=4) {
+        console.log("pipeHistoryDataArrCopy.length-1:" +(pipeHistoryDataArr.length));
+        if(x>=(pipeHistoryDataArr.length-1)) {
             series.visible = false;
         }
         seriesObjArr.push(series);

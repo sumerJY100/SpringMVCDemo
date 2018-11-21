@@ -210,15 +210,15 @@ public class DcsHistoryService {
 
             Method methodForV = c.getMethod(methodSetV, Float.class);
             Method methodForTime = c.getMethod(methodSetTime,Timestamp.class);
-            Method methodForId = c.getMethod(methodId,int.class);
+            Method methodForId = c.getMethod(methodId,Long.class);
 
             methodForV.invoke(object,Float.valueOf(value));
             methodForTime.invoke(object,timestamp);
             String str = String.valueOf(new Date().getTime());
             int len = str.length();
             String resultStr = str.substring(len-10);
-            Integer id = Integer.valueOf(resultStr);
-            methodForId.invoke(object, id.intValue());
+            Long id = Long.valueOf(resultStr);
+            methodForId.invoke(object, id.longValue());
         } catch (ClassNotFoundException | InstantiationException|NoSuchMethodException|InvocationTargetException
                 |IllegalAccessException e) {
             e.printStackTrace();

@@ -16,7 +16,7 @@ public class HandlDcsHistoryListUtil {
             hList) {
         List<Float> resultList = new ArrayList<>();
 
-        System.out.println("hList:" +hList);
+//        System.out.println("hList:" +hList);
         if(null != hList && hList.size() > 0){
             if(null != list) {
                 //排序
@@ -106,7 +106,7 @@ public class HandlDcsHistoryListUtil {
     public static List<Float> getMilHistoryList(List<? extends CoalPipingHistory> list, List<H000Pojo_Base> hList) {
         List<Float> resultList = new ArrayList<>();
 
-        System.out.println("hList:" +hList);
+//        System.out.println("hList:" +hList);
         if(null != hList && hList.size() > 0){
             if(null != list) {
                 //排序

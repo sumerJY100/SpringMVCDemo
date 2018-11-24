@@ -20,6 +20,7 @@ import java.sql.Timestamp;
 import java.time.*;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
+import java.util.concurrent.CountDownLatch;
 import java.util.function.BiConsumer;
 import java.util.function.BiFunction;
 import java.util.function.BinaryOperator;
@@ -46,62 +47,129 @@ public class HistoryReportController {
     @Autowired
     private CoalPipingHistoryRepositoryD coalPipingHistoryRepositoryD;
 
-
-
+    @Autowired
+    private CoalPipingHistoryService coalPipingHistoryService;
 
 
     @RequestMapping(value = "/queryHistoryDataForReport", method = RequestMethod.GET, produces = "text/html;charset=UTF-8")
     @ResponseBody
     public String queryHistoryDataForReport(@RequestParam(value = "queryDate", required = false) @DateTimeFormat(pattern =
             "yyyy-MM-dd") Date queryDate) {
-        Optional<Date> optionalDate = Optional.ofNullable(queryDate);
-        Date date = optionalDate.orElseGet(Date::new);
+        JSONObject jsonObject = new JSONObject();
+        try {
+            Optional<Date> optionalDate = Optional.ofNullable(queryDate);
+            Date date = optionalDate.orElseGet(Date::new);
 //        Optional<LocalDate> queryDateOptional = Optional.ofNullable(queryDate);
 //        LocalDate queryTargetDate = queryDateOptional.orElseGet(LocalDate::now);
-        Instant instant = date.toInstant();
-        ZoneId zoneId = ZoneId.systemDefault();
+            Instant instant = date.toInstant();
+            ZoneId zoneId = ZoneId.systemDefault();
 
-        LocalDate queryTargetDate = instant.atZone(zoneId).toLocalDate();
+            LocalDate queryTargetDate = instant.atZone(zoneId).toLocalDate();
 
-        Timestamp beginTimestamp = Timestamp.valueOf(LocalDateTime.of(queryTargetDate, LocalTime.MIN));
-        Timestamp endTimestamp = Timestamp.valueOf(LocalDateTime.of(queryTargetDate, LocalTime.MAX));
-        List<AcoalPipingHistoryEntity> acoalPipingHistoryEntityList = coalPipingHistoryRepositoryA
-                .findByHTimeBetween(beginTimestamp, endTimestamp);
-        List<BcoalPipingHistoryEntity> bcoalPipingHistoryEntityList = coalPipingHistoryRepositoryB.findByHTimeBetween
-                (beginTimestamp, endTimestamp);
-        List<CcoalPipingHistoryEntity> ccoalPipingHistoryEntityList = coalPipingHistoryRepositoryC.findByHTimeBetween
-                (beginTimestamp, endTimestamp);
-        List<DcoalPipingHistoryEntity> dcoalPipingHistoryEntityList = coalPipingHistoryRepositoryD.findByHTimeBetween
-                (beginTimestamp, endTimestamp);
+            Timestamp beginTimestamp = Timestamp.valueOf(LocalDateTime.of(queryTargetDate, LocalTime.MIN));
+            Timestamp endTimestamp = Timestamp.valueOf(LocalDateTime.of(queryTargetDate, LocalTime.MAX));
+//        List<AcoalPipingHistoryEntity> acoalPipingHistoryEntityList = coalPipingHistoryRepositoryA.findByHTimeBetween(beginTimestamp, endTimestamp);
+//        List<BcoalPipingHistoryEntity> bcoalPipingHistoryEntityList = coalPipingHistoryRepositoryB.findByHTimeBetween(beginTimestamp, endTimestamp);
+//        List<CcoalPipingHistoryEntity> ccoalPipingHistoryEntityList = coalPipingHistoryRepositoryC.findByHTimeBetween(beginTimestamp, endTimestamp);
+//        List<DcoalPipingHistoryEntity> dcoalPipingHistoryEntityList = coalPipingHistoryRepositoryD.findByHTimeBetween(beginTimestamp, endTimestamp);
 
+
+            Instant instant1 = Instant.now();
+
+            /*List<CoalPipingHistory> acoalPipingHistoryEntityList = coalPipingHistoryService.findMillPipeDataHistoryByMillLocationWithThreads("A", beginTimestamp, endTimestamp);
+            List<CoalPipingHistory> bcoalPipingHistoryEntityList = coalPipingHistoryService
+                    .findMillPipeDataHistoryByMillLocationWithThreads("B", beginTimestamp, endTimestamp);
+            List<CoalPipingHistory> ccoalPipingHistoryEntityList = coalPipingHistoryService
+                    .findMillPipeDataHistoryByMillLocationWithThreads("C", beginTimestamp, endTimestamp);
+            List<CoalPipingHistory> dcoalPipingHistoryEntityList = coalPipingHistoryService
+                    .findMillPipeDataHistoryByMillLocationWithThreads("D", beginTimestamp, endTimestamp);*/
 //        acoalPipingHistoryEntityList.stream().collect(Collectors.groupingBy)
 //        <U> U reduce(U identity,
 //                BiFunction<U, ? super T, U> accumulator,
 //                BinaryOperator<U> combiner);
 
-        List<AcoalPipingHistoryEntity> coalPipingHistoryForAList = coalPipingHistoryServiceA.handleDataToReport
-                (acoalPipingHistoryEntityList);
-        List<BcoalPipingHistoryEntity> coalPipingHistoryForBList = coalPipingHistoryServiceB.handleDataToReport
-                (bcoalPipingHistoryEntityList);
-        List<CcoalPipingHistoryEntity> coalPipingHistoryForCList = coalPipingHistoryServiceC.handleDataToReport
-                (ccoalPipingHistoryEntityList);
-        List<DcoalPipingHistoryEntity> coalPipingHistoryForDList = coalPipingHistoryServiceD.handleDataToReport
-                (dcoalPipingHistoryEntityList);
 
 
-        JSONObject jsonObject = new JSONObject();
 
-        JSONArray jsonArrayForMillA = getJsonArray(coalPipingHistoryForAList);
-        JSONArray jsonArrayForMillB = getJsonArray(coalPipingHistoryForBList);
-        JSONArray jsonArrayForMillC = getJsonArray(coalPipingHistoryForCList);
-        JSONArray jsonArrayForMillD = getJsonArray(coalPipingHistoryForDList);
+            CountDownLatch countDownLatch = new CountDownLatch(4);
+//            List<AcoalPipingHistoryEntity> coalPipingHistoryForAList = new ArrayList<>();
+//            List<BcoalPipingHistoryEntity> coalPipingHistoryForBList = new ArrayList<>();
+//            List<CcoalPipingHistoryEntity> coalPipingHistoryForCList = new ArrayList<>();
+//            List<DcoalPipingHistoryEntity> coalPipingHistoryForDList = new ArrayList<>();
+            List<CoalPipingHistory> acoalPipingHistoryEntityList = new ArrayList<>();
+            List<CoalPipingHistory> bcoalPipingHistoryEntityList = new ArrayList<>();
+            List<CoalPipingHistory> ccoalPipingHistoryEntityList = new ArrayList<>();
+            List<CoalPipingHistory> dcoalPipingHistoryEntityList = new ArrayList<>();
+            Map<String,List<CoalPipingHistory>> map = new HashMap<>();
+            map.put("A",acoalPipingHistoryEntityList);
+            map.put("B",bcoalPipingHistoryEntityList);
+            map.put("C",ccoalPipingHistoryEntityList);
+            map.put("D",dcoalPipingHistoryEntityList);
+            Set<Map.Entry<String,List<CoalPipingHistory>>> set = map.entrySet();
+            for(Map.Entry<String,List<CoalPipingHistory>> entry:set){
+                new Thread(()->{
+                    Instant instant01 = Instant.now();
+                    List<CoalPipingHistory> listForTemp = coalPipingHistoryService.findMillPipeDataHistoryByMillLocationWithThreads(entry.getKey(),beginTimestamp, endTimestamp);
+                    entry.getValue().addAll(listForTemp);
+                    Instant instant02 = Instant.now();
+                    Duration duration = Duration.between(instant01,instant02);
+                    System.out.println(entry.getKey() + "时间：" +duration.getSeconds());
+                    countDownLatch.countDown();
+                }).start();
+            }
+            /*new Thread(() -> {
+                List<AcoalPipingHistoryEntity> coalPipingHistoryForAListTemp = coalPipingHistoryService
+                        .findMillPipeDataHistoryByMillLocationWithThreads("A", beginTimestamp, endTimestamp);
+                acoalPipingHistoryEntityList.addAll(coalPipingHistoryForAListTemp);
+                countDownLatch.countDown();
+            }).start();
+            new Thread(() -> {
+                List<BcoalPipingHistoryEntity> coalPipingHistoryForBListTemp = coalPipingHistoryService
+                        .findMillPipeDataHistoryByMillLocationWithThreads("B", beginTimestamp, endTimestamp);
+                bcoalPipingHistoryEntityList.addAll(coalPipingHistoryForBListTemp);
+                countDownLatch.countDown();
+            }).start();
+            new Thread(() -> {
+                List<CcoalPipingHistoryEntity> coalPipingHistoryForCListTemp = coalPipingHistoryService
+                        .findMillPipeDataHistoryByMillLocationWithThreads("C", beginTimestamp, endTimestamp);
+                ccoalPipingHistoryEntityList.addAll(coalPipingHistoryForCListTemp);
+                countDownLatch.countDown();
+            }).start();
+            new Thread(() -> {
+                List<DcoalPipingHistoryEntity> coalPipingHistoryForDListTemp = coalPipingHistoryService
+                        .findMillPipeDataHistoryByMillLocationWithThreads("D", beginTimestamp, endTimestamp);
+                dcoalPipingHistoryEntityList.addAll(coalPipingHistoryForDListTemp);
+                countDownLatch.countDown();
+            }).start();*/
+            countDownLatch.await();
 
 
-        jsonObject.put("millA",jsonArrayForMillA);
-        jsonObject.put("millB",jsonArrayForMillB);
-        jsonObject.put("millC",jsonArrayForMillC);
-        jsonObject.put("millD",jsonArrayForMillD);
 
+            List<AcoalPipingHistoryEntity> coalPipingHistoryForAList = coalPipingHistoryService.handleDataToReport
+                    (acoalPipingHistoryEntityList);
+            List<BcoalPipingHistoryEntity> coalPipingHistoryForBList = coalPipingHistoryService.handleDataToReport
+                    (bcoalPipingHistoryEntityList);
+            List<CcoalPipingHistoryEntity> coalPipingHistoryForCList = coalPipingHistoryService.handleDataToReport
+                    (ccoalPipingHistoryEntityList);
+            List<DcoalPipingHistoryEntity> coalPipingHistoryForDList = coalPipingHistoryService.handleDataToReport
+                    (dcoalPipingHistoryEntityList);
+
+
+
+            JSONArray jsonArrayForMillA = getJsonArray(coalPipingHistoryForAList);
+            JSONArray jsonArrayForMillB = getJsonArray(coalPipingHistoryForBList);
+            JSONArray jsonArrayForMillC = getJsonArray(coalPipingHistoryForCList);
+            JSONArray jsonArrayForMillD = getJsonArray(coalPipingHistoryForDList);
+
+
+            jsonObject.put("millA", jsonArrayForMillA);
+            jsonObject.put("millB", jsonArrayForMillB);
+            jsonObject.put("millC", jsonArrayForMillC);
+            jsonObject.put("millD", jsonArrayForMillD);
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
 
         return jsonObject.toString();
     }
@@ -109,31 +177,32 @@ public class HistoryReportController {
     private JSONArray getJsonArray(List<? extends CoalPipingHistory> list) {
         JSONArray jsonArray = new JSONArray();
 //        CoalPipingHistory coalPipingHistory = new AcoalPipingHistoryEntity();
-        Comparator<CoalPipingHistory> comparator = Comparator.comparing((l)->l.gethTime());
+        Comparator<CoalPipingHistory> comparator = Comparator.comparing((l) -> l.gethTime());
         list.sort(comparator);
-        for(int i=0;i<list.size();i++){
+        for (int i = 0; i < list.size(); i++) {
             JSONObject jsonObjData = new JSONObject();
             CoalPipingHistory coalPipingHistory = list.get(i);
             String timeStr = coalPipingHistory.gethTime().toLocalDateTime().toLocalTime().format(DateTimeFormatter
                     .ofPattern("HH:mm"));
 //            System.out.println(timeStr);
-            jsonObjData.put("t",timeStr);
-            jsonObjData.put("AD",coalPipingHistory.gethPipeADencityWithFormat(0));
-            jsonObjData.put("BD",coalPipingHistory.gethPipeBDencityWithFormat(0));
-            jsonObjData.put("CD",coalPipingHistory.gethPipeCDencityWithFormat(0));
-            jsonObjData.put("DD",coalPipingHistory.gethPipeDDencityWithFormat(0));
+            jsonObjData.put("t", timeStr);
+            jsonObjData.put("AD", coalPipingHistory.gethPipeADencityWithFormat(0));
+            jsonObjData.put("BD", coalPipingHistory.gethPipeBDencityWithFormat(0));
+            jsonObjData.put("CD", coalPipingHistory.gethPipeCDencityWithFormat(0));
+            jsonObjData.put("DD", coalPipingHistory.gethPipeDDencityWithFormat(0));
 
-            jsonObjData.put("AV",coalPipingHistory.gethPipeAVelocityWithFormat(0));
-            jsonObjData.put("BV",coalPipingHistory.gethPipeBVelocityWithFormat(0));
-            jsonObjData.put("CV",coalPipingHistory.gethPipeCVelocityWithFormat(0));
-            jsonObjData.put("DV",coalPipingHistory.gethPipeDVelocityWithFormat(0));
+            jsonObjData.put("AV", coalPipingHistory.gethPipeAVelocityWithFormat(0));
+            jsonObjData.put("BV", coalPipingHistory.gethPipeBVelocityWithFormat(0));
+            jsonObjData.put("CV", coalPipingHistory.gethPipeCVelocityWithFormat(0));
+            jsonObjData.put("DV", coalPipingHistory.gethPipeDVelocityWithFormat(0));
             jsonArray.put(jsonObjData);
         }
+
         return jsonArray;
     }
 
 
-    public void  test(){
+    public void test() {
         /*AcoalPipingHistoryEntity acoalPipingHistoryEntity = new AcoalPipingHistoryEntity();
         List<AcoalPipingHistoryEntity> list1 = new ArrayList<>();
         final List<AcoalPipingHistoryEntity> reduce = acoalPipingHistoryEntityList.stream().reduce(list1, (acoalPipingHistoryEntities, acoalPipingHistoryEntity1) -> {
@@ -184,7 +253,7 @@ public class HistoryReportController {
            return listTarget;
         },(listParam,aParm)->listParam);
 *//*
-        *//*public static <T, K>Collector<T, ?, Map<K, List<T>>>
+         *//*public static <T, K>Collector<T, ?, Map<K, List<T>>>
         groupingBy(Function<? super T, ? extends K> classifier) {
             return groupingBy(classifier, toList());
         }*//*
@@ -251,5 +320,7 @@ public class HistoryReportController {
                 return null;
             }
         });*/
+
     }
+
 }

@@ -69,14 +69,14 @@
         </tr>
         <tr>
             <th colspan="30" style="text-align: right">日期</th>
-            <th colspan="3">2018-08-01</th>
+            <th colspan="3" id="dateTh">2018-08-01</th>
         </tr>
         <tr>
             <th rowspan="3" style="vertical-align: middle">时间<br/>(HH:mm)</th>
-            <th colspan="8">磨煤机A</th>
-            <th colspan="8">磨煤机B</th>
-            <th colspan="8">磨煤机C</th>
-            <th colspan="8">磨煤机D</th>
+            <th colspan="8">磨煤机-10</th>
+            <th colspan="8">磨煤机-20</th>
+            <th colspan="8">磨煤机-30</th>
+            <th colspan="8">磨煤机-40</th>
         </tr>
         <tr>
             <c:forEach var="a" begin="1" end="4">
@@ -85,11 +85,13 @@
             </c:forEach>
         </tr>
         <tr>
-            <c:forEach var="a" begin="1" end="8">
-                <th>1</th>
-                <th>2</th>
-                <th>3</th>
-                <th>4</th>
+            <c:forEach var="a" begin="1" end="4" varStatus="status">
+                <c:forEach var="b" begin="1" end="9" varStatus="status2">
+                    <c:if test="${status2.index!=5}">
+                        <th>${status.index}${status2.index%5}</th>
+                    </c:if>
+                </c:forEach>
+
             </c:forEach>
         </tr>
         </thead>
@@ -113,7 +115,7 @@
         var currentDate = new Date();
 
         initDateTimePicker("startInputTime", currentDate);
-
+        $("#dateTh").html($("#startInputTime").val());
         $("#dataLoad").hide(); //页面加载完毕后即将DIV隐藏
         $("#queryBtn").bind("click",queryBtnFunction);
     })
@@ -124,6 +126,7 @@
         $("#dataLoad").show();
         var url = "../queryHistoryDataForReport";
         $.get(url, {"queryDate":$("#startInputTime").val()},function (result) {
+            $("#dateTh").html($("#startInputTime").val());
             var $table = $("#reportTable");
             initMillData($table, result.millA, 1);
             initMillData($table, result.millB, 2);

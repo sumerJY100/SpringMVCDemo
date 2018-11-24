@@ -2,12 +2,10 @@ package com.gaussic.service;
 
 import com.gaussic.model.CoalMillEntity;
 import com.gaussic.model.CoalPipingEntity;
+import com.gaussic.model.CoalPipingSetEntity;
 import com.gaussic.model.dcs_history.H000Pojo_Base;
 import com.gaussic.model.history.*;
-import com.gaussic.repository.CoalPipingHistoryRepositoryA;
-import com.gaussic.repository.CoalPipingHistoryRepositoryB;
-import com.gaussic.repository.CoalPipingHistoryRepositoryC;
-import com.gaussic.repository.CoalPipingHistoryRepositoryD;
+import com.gaussic.repository.*;
 import com.gaussic.service.dcs.DcsHistoryService;
 import com.gaussic.util.DataHandleUtil.PipeHandlerUtil;
 import com.gaussic.util.HandlDcsHistoryListUtil;
@@ -38,6 +36,10 @@ public class CoalPipingHistoryService<T extends CoalPipingHistory> {
     private CoalPipingHistoryRepositoryD coalPipingHistoryRepositoryD;
     @Autowired
     private DcsHistoryService dcsHistoryService;
+    @Autowired
+    private CoalMillPipingSetRepository coalMillPipingSetRepository;
+    @Autowired
+    private CoalPipingRepository coalPipingRepository;
 
 
     //    public String generateJsonStringByHistroyList(List<AcoalPipingHistoryEntity> coalPipeHistoryEntityList, Calendar beginC,
@@ -741,9 +743,9 @@ public class CoalPipingHistoryService<T extends CoalPipingHistory> {
     /**
      * 查询一段时间范围内的一台磨煤机的四根粉管的原始数据，多线程查询
      *
-     * @param millLocation
-     * @param begin
-     * @param end
+     * @param millLocation  A   B   C   D
+     * @param begin     开始时间
+     * @param end       结束时间
      */
     public List<CoalPipingHistory> findMillPipeDataHistoryByMillLocationWithThreads(String millLocation,
                                                                                     Timestamp begin, Timestamp end) {
@@ -768,26 +770,16 @@ public class CoalPipingHistoryService<T extends CoalPipingHistory> {
                 }
                 CountDownLatch countDownLatch = new CountDownLatch(threadCounts);
                 for (int i = 0; i < counts; i++) {
-                    final LocalDateTime localDateTimeForBeginWithStep = beginLocalDateTime.plusSeconds(i *
-                            (interval));
-                    final LocalDateTime localDateTimeForEndWithStep = beginLocalDateTime.plusSeconds((i + 1) *
-                            (interval) - 1);
+                    final LocalDateTime localDateTimeForBeginWithStep = beginLocalDateTime.plusSeconds(i * (interval));
+                    final LocalDateTime localDateTimeForEndWithStep = beginLocalDateTime.plusSeconds((i + 1) * (interval) - 1);
                     final Timestamp beginForStep = Timestamp.valueOf(localDateTimeForBeginWithStep);
                     final Timestamp endForStep = Timestamp.valueOf(localDateTimeForEndWithStep);
-                    System.out.println("counts:Thread前：" + i);
+
                     new Thread(() -> {
-//                        System.out.println("counts:" + i);
-                        List<? extends CoalPipingHistory> listForStep = findMillPipeDataHistoryByMillLocation(millLocation, beginForStep,
-                                endForStep);
+                        List<? extends CoalPipingHistory> listForStep = findMillPipeDataHistoryByMillLocation(millLocation, beginForStep, endForStep);
                         synchronized (list) {
                             list.addAll(listForStep);
-                            System.out.println("添加结束后，list.size:" + list.size() + ",listForStep.size:" + listForStep
-                                    .size());
                         }
-//                        System.out.println("listForStep.size:" +listForStep.size() + "," +beginForStep + "," +
-//                                endForStep + ",----counts:" + counts + "," + listForStep);
-                        System.out.println("listForStep.size:" + listForStep.size() + "," + beginForStep + "," +
-                                endForStep + ",----counts:" + counts + ",");
                         countDownLatch.countDown();
                     }).start();
                 }
@@ -801,8 +793,6 @@ public class CoalPipingHistoryService<T extends CoalPipingHistory> {
                                 endForStep);
                         synchronized (list) {
                             list.addAll(listForStep);
-                            System.out.println("添加结束后，list.size:" + list.size() + ",listForStep.size:" + listForStep
-                                    .size());
                         }
                         countDownLatch.countDown();
                     }).start();
@@ -810,12 +800,9 @@ public class CoalPipingHistoryService<T extends CoalPipingHistory> {
                 countDownLatch.await();
                 Comparator<CoalPipingHistory> coalPipingHistoryComparator = Comparator.comparing
                         (CoalPipingHistory::gethTime);
-                System.out.println("查询结束后：list.size:" + list.size());
                 resultList = list.stream().sorted(coalPipingHistoryComparator).collect(Collectors.toList());
             } else {
-                resultList = findMillPipeDataHistoryByMillLocation(millLocation, begin,
-                        end);
-
+                resultList = findMillPipeDataHistoryByMillLocation(millLocation, begin, end);
             }
 
 
@@ -824,8 +811,48 @@ public class CoalPipingHistoryService<T extends CoalPipingHistory> {
         }
 
 
+        //四根粉管的XY数据标定数据，进行计算，生成一个数组
+        List<CoalPipingSetEntity> coalPipingSetEntityList = coalMillPipingSetRepository.findAll();
+        Map<Long,CoalPipingSetEntity> map = new HashMap<>();
+        for(CoalPipingSetEntity coalPipingSetEntity:coalPipingSetEntityList){
+            map.put(coalPipingSetEntity.getCoalPipeId(),coalPipingSetEntity);
+        }
+
+        Float p1X=0f,p1Y=0f,p2X=0f,p2Y=0f,p3X=0f,p3Y=0f,p4X=0f,p4Y=0f;
+        Long millBaseLocation = 1L;
+        if(millLocation.equals("A")){
+             millBaseLocation = 1L;
+        }else if(millLocation.equals("B")){
+            millBaseLocation = 2L;
+        }else if(millBaseLocation.equals("C")){
+            millBaseLocation = 3L;
+        }else if(millBaseLocation.equals("D")){
+            millBaseLocation = 4L;
+        }
+        millBaseLocation = millBaseLocation * 10L;
+        p1X = map.get(millBaseLocation + 1L).getsParam3();
+        p1Y = map.get(millBaseLocation + 1L).getsParam4();
+        p2X = map.get(millBaseLocation + 2L).getsParam4();
+        p2Y = map.get(millBaseLocation + 2L).getsParam4();
+        p3X = map.get(millBaseLocation + 3L).getsParam3();
+        p3Y = map.get(millBaseLocation + 3L).getsParam4();
+        p4X = map.get(millBaseLocation + 4L).getsParam4();
+        p4Y = map.get(millBaseLocation + 4L).getsParam4();
+
 //        for(int i=0;i<resultList.size();i++){
-//            System.out.println(i+"," + resultList.get(i).gethTime() + "," + resultList.get(i).getPipeADensityNotNull());
+//            CoalPipingHistory coalPipingHistory = resultList.get(i);
+//            coalPipingHistory.sethPipeAX(Optional.ofNullable(coalPipingHistory.gethPipeAX()).orElse(0F) * p1X);
+//            coalPipingHistory.sethPipeAY(Optional.ofNullable(coalPipingHistory.gethPipeAY()).orElse(0F) * p1Y);
+//
+//            coalPipingHistory.sethPipeBX(Optional.ofNullable(coalPipingHistory.gethPipeBX()).orElse(0F) * p2X);
+//            coalPipingHistory.sethPipeBY(Optional.ofNullable(coalPipingHistory.gethPipeBY()).orElse(0F) * p2Y);
+//
+//            coalPipingHistory.sethPipeCX(Optional.ofNullable(coalPipingHistory.gethPipeCX()).orElse(0F) * p3X);
+//            coalPipingHistory.sethPipeCY(Optional.ofNullable(coalPipingHistory.gethPipeCY()).orElse(0F) * p3Y);
+//
+//            coalPipingHistory.sethPipeDX(Optional.ofNullable(coalPipingHistory.gethPipeDX()).orElse(0F) * p4X);
+//            coalPipingHistory.sethPipeDY(Optional.ofNullable(coalPipingHistory.gethPipeDY()).orElse(0F) * p4Y);
+////            System.out.println(i+"," + resultList.get(i).gethTime() + "," + resultList.get(i).getPipeADensityNotNull());
 //        }
         return resultList;
     }

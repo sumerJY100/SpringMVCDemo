@@ -34,7 +34,7 @@ function initHistoryData() {
         var pipe1Color = "#ff0000",
             pipe2Color = "#00ff00",
             pipe3Color = "#1200ff",
-            pipe4Color = "#1200ff";
+            pipe4Color = "#fff91a";
 
         xDatas = new PipeHistoryData(densityType, "x", pipe1Color, result.xDatas);
         yDatas = new PipeHistoryData(densityType, "y", pipe2Color, result.yDatas);
@@ -130,35 +130,38 @@ function initTable() {
 
         var data, left, right, totalCount, avg, totalValues, max, maxValue, min, minValue = 0, leftValue, rightValue;
         data = series.data;
-        maxValue = data[0].y;
-        minValue = data[0].y;
-        max = data[0].x;
-        min = data[0].x;
+        if(data.length > 0 ) {
 
-        left = xMin;
-        right = xMax;
-        totalCount = 0;
-        avg = 0;
-        totalValues = 0;
-        leftValue = data[0].y;
-        rightValue = data[data.length - 1].y;
+            maxValue = data[0].y;
+            minValue = data[0].y;
+            max = data[0].x;
+            min = data[0].x;
+
+            left = xMin;
+            right = xMax;
+            totalCount = 0;
+            avg = 0;
+            totalValues = 0;
+            leftValue = data[0].y;
+            rightValue = data[data.length - 1].y;
 
 
-        Highcharts.each(data, function (d) {
+            Highcharts.each(data, function (d) {
 
-            totalCount += 1;
-            totalValues += d.y;
-            if (d.y > maxValue) {
-                max = d.x;
-                maxValue = d.y;
-            }
-            if (d.y < minValue) {
-                min = d.x;
-                minValue = d.y;
-            }
-        });
-        avg = totalValues / totalCount;
-        initTableRow(currentSeriesName, left, leftValue, right, rightValue, max, maxValue, min, minValue, avg)
+                totalCount += 1;
+                totalValues += d.y;
+                if (d.y > maxValue) {
+                    max = d.x;
+                    maxValue = d.y;
+                }
+                if (d.y < minValue) {
+                    min = d.x;
+                    minValue = d.y;
+                }
+            });
+            avg = totalValues / totalCount;
+            initTableRow(currentSeriesName, left, leftValue, right, rightValue, max, maxValue, min, minValue, avg);
+        }
     }
     //进行偏差数据分析
     var densityRadioValue = $("#densityRadioLabel").hasClass("checked")
@@ -186,8 +189,8 @@ function initTable() {
         $table.find("tr:eq(2)").find("td:eq(14)").html(xDif.toFixed(2));
         $table.find("tr:eq(3)").find("td:eq(14)").html(yDif.toFixed(2));
 
-        $table.find("tr:eq(2)").find("td:eq(15)").html((xDif / xyAvg * 100).toFixed(0) + "%");
-        $table.find("tr:eq(3)").find("td:eq(15)").html((yDif / xyAvg * 100).toFixed(0) + "%");
+        $table.find("tr:eq(2)").find("td:eq(15)").html((xDif / xyAvg * 100).toFixed(2) + "%");
+        $table.find("tr:eq(3)").find("td:eq(15)").html((yDif / xyAvg * 100).toFixed(2) + "%");
     }
 }
 

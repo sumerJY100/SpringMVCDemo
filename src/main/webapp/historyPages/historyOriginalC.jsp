@@ -44,6 +44,7 @@
         磨煤机【30】原始数据
     </DIV>
     <jsp:include page="/historyPages/historyQueryBody.jsp"></jsp:include>
+    <jsp:include page="/historyPages/historyOriginalBtnBody.jsp"></jsp:include>
     <%--<div style="height:50px;">&nbsp;</div>--%>
     <%--<div id="containerVelocity" style="min-width:400px;height:400px;position: relative;width:90%;"></div>--%>
 </div>

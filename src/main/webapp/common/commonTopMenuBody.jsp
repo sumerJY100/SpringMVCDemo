@@ -1,7 +1,7 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <c:set var="ctx" value="${pageContext.request.contextPath}"/>
-<div id="smoothmenu1" class="ddsmoothmenu" style="z-index:9999999;width:100%">
+<div id="smoothmenu1" class="ddsmoothmenu" style="z-index:9999999;width:100%;margin-top:-20px;">
     <ul>
         <li><a href="${ctx}/main.jsp">首页</a></li>
         <li><a href="${ctx}/readlTimePages/indexMillA.jsp">实时数据</a>
@@ -40,6 +40,15 @@
     <br style="clear: left">
 </div>
 <img src="${ctx}/resources/image/logo.jpg" style="height:80px;right:0;top:0;position:absolute;"/>
-<div style="position:absolute;top:18px;right:320px;">
-    <span style="color: red; font-size:24px;font-family: '楷体',serif;font-weight: bold;">华能杨柳青电厂5#机组一次风粉在线监测</span>
+<div style="position:absolute;top:8px;right:320px;">
+    <span style="color: red; font-size:30px;font-family: '楷体',serif;font-weight: bold;">华能杨柳青电厂5#机组一次风粉在线监测</span>
 </div>
+
+
+<style type="text/css">
+    .titleDivClass {
+        font-size: 20;
+        margin-top: 15px;
+        height: 40px;
+    }
+</style>

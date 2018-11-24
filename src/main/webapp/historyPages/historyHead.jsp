@@ -8,7 +8,7 @@
 <script src="<c:url value='/resources/js/Highcharts/highcharts.src.js'/>"></script>
 <script src="<c:url value='/resources/js/Highcharts/modules/exporting.js'/>"></script>
 
-<script src="https://img.hcharts.cn/highcharts-plugins/highcharts-zh_CN.js"></script>
+<%--<script src="https://img.hcharts.cn/highcharts-plugins/highcharts-zh_CN.js"></script>--%>
 <script src="<c:url value='/resources/js/Highcharts/themes/dark-unica.js'/>"></script>
 
 

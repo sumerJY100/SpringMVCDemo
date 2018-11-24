@@ -94,10 +94,10 @@ function initTable() {
     $table.find("tr:eq(4)").find("td:eq(14)").html(pipe3Dif.toFixed(2));
     $table.find("tr:eq(5)").find("td:eq(14)").html(pipe4Dif.toFixed(2));
 
-    $table.find("tr:eq(2)").find("td:eq(15)").html((pipe1Dif/pipeAvg * 100).toFixed(0) + "%");
-    $table.find("tr:eq(3)").find("td:eq(15)").html((pipe2Dif/pipeAvg * 100).toFixed(0) + "%");
-    $table.find("tr:eq(4)").find("td:eq(15)").html((pipe3Dif/pipeAvg * 100).toFixed(0) + "%");
-    $table.find("tr:eq(5)").find("td:eq(15)").html((pipe4Dif/pipeAvg * 100).toFixed(0) + "%");
+    $table.find("tr:eq(2)").find("td:eq(15)").html((pipe1Dif/pipeAvg * 100).toFixed(2) + "%");
+    $table.find("tr:eq(3)").find("td:eq(15)").html((pipe2Dif/pipeAvg * 100).toFixed(2) + "%");
+    $table.find("tr:eq(4)").find("td:eq(15)").html((pipe3Dif/pipeAvg * 100).toFixed(2) + "%");
+    $table.find("tr:eq(5)").find("td:eq(15)").html((pipe4Dif/pipeAvg * 100).toFixed(2) + "%");
 
 }
 
@@ -168,7 +168,7 @@ function initHistoryData() {
         var pipe1Color = "#ff0000",
             pipe2Color = "#00ff00",
             pipe3Color = "#1200ff",
-            pipe4Color = "#00eaff";
+            pipe4Color = "#fff91a";
 
          pipe1ForDensity = new PipeHistoryData(densityType, "pipe1", pipe1Color, result.pipe1Density);
          pipe2ForDensity = new PipeHistoryData(densityType, "pipe2", pipe2Color, result.pipe2Density);

@@ -85,8 +85,8 @@ $(document).ready(function () {
  * @param millLocation
  * @param pipeId
  */
-function openPipeXYPage(millLocation,pipeId){
-    var url =  "../jumpOriginalXYVPage?mill="+millLocation+"&millId=10&pipeId="+pipeId;
+function openPipeXYPage(millLocation,pipeId,millId){
+    var url =  "../jumpOriginalXYVPage?mill="+millLocation+"&pipeId="+pipeId+"&millId="+millId;
     window.open(url);
 }
 var data = [],

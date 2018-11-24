@@ -53,7 +53,7 @@
                 <td></td>
             </c:forEach>
         </tr>
-        <tr style="background-color: #00eaff">
+        <tr style="background-color: #fff91a">
             <td>pipe4</td>
             <c:forEach begin="1" end="15">
                 <td></td>
@@ -63,10 +63,4 @@
 
 </div>
 
-<div style="position: absolute;top:75px;">
 
-    <input type="button" value="管道1" id="pipe1">
-    <input type="button" value="管道2" id="pipe2">
-    <input type="button" value="管道3" id="pipe3">
-    <input type="button" value="管道4" id="pipe4">
-</div>

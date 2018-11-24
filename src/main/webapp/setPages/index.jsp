@@ -38,7 +38,9 @@
 
 <jsp:include page="/common/commonTopMenuBody.jsp"></jsp:include>
 <div align="center">
-    参数设置
+    <DIV class="titleDivClass">
+        参数设置
+    </DIV>
 
     <table cellspacing="0px" cellpadding="0px">
         <thead>
@@ -52,8 +54,8 @@
             <th>粉管位置</th>
             <th>浓度</th>
             <th>风速</th>
-            <th>粉管参数一</th>
-            <th>粉管参数二</th>
+            <th>X环偏差</th>
+            <th>Y环偏差</th>
 
             <th>设备地址</th>
             <th>测试</th>
@@ -78,8 +80,8 @@
                 <td>${coalPiping.pLocationUserDefined}</td>
                 <td>${coalPiping.pDencity}</td>
                 <td>${coalPiping.pVelocity}</td>
-                <td>${pipingSet.sParam1}</td>
-                <td>${pipingSet.sParam2}</td>
+                <td>${pipingSet.sParam3}</td>
+                <td>${pipingSet.sParam4}</td>
                 <td>${pipingSet.sUrl}</td>
                 <td><input type="button" id="testBtn" value="测试"></td>
                 <td><a href="editPipingSet?piping.id=${coalPiping.id}">修改</a></td>

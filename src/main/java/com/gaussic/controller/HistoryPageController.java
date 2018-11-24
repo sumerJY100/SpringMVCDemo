@@ -71,24 +71,12 @@ public class HistoryPageController {
             Timestamp begin = be.getBeginTimestamp();
             Timestamp end = be.getEndTimestamp();
             //查询一台磨的4根粉管的历史数据
-            Instant instant001 = Instant.now();
-
 //            list = coalPipingHistoryService.findMillPipeDataHistoryByMillLocation(millLocation,begin,end);
             list = coalPipingHistoryService.findMillPipeDataHistoryByMillLocationWithThreads(millLocation,begin,end);
-            System.out.println("list.size:"+list.size());
-            Instant instant002 = Instant.now();
-            Duration duration001002 = Duration.between(instant001,instant002);
-            System.out.println("查询磨煤机4根粉管的时间：" + duration001002.getSeconds() + "秒，" + duration001002.getNano()/1000/1000
-                    + "毫秒");
             //查询当前磨的磨煤机量
-            Instant instant01 = Instant.now();
-
             h000Pojo_baseList = coalPipingHistoryService.findMillDataHistoryByMillLocation(millLocation,begin,end);
 
-            Instant instant02 = Instant.now();
-            Duration duration0102 = Duration.between(instant01,instant02);
-            System.out.println("查询磨煤机的磨煤量的时间：" + duration0102.getSeconds() + "秒，" + duration0102.getNano()/1000/1000
-                    + "毫秒");
+
         }
         //TODO 处理异常数据
         if(null == list || list.size() == 0){
@@ -120,24 +108,10 @@ public class HistoryPageController {
             Timestamp begin = be.getBeginTimestamp();
             Timestamp end = be.getEndTimestamp();
             //查询一台磨的4根粉管的历史数据
-            Instant instant001 = Instant.now();
-
 //            list = coalPipingHistoryService.findMillPipeDataHistoryByMillLocation(millLocation,begin,end);
             list = coalPipingHistoryService.findMillPipeDataHistoryByMillLocationWithThreads(millLocation,begin,end);
-            System.out.println("list.size:"+list.size());
-            Instant instant002 = Instant.now();
-            Duration duration001002 = Duration.between(instant001,instant002);
-            System.out.println("查询磨煤机4根粉管的时间：" + duration001002.getSeconds() + "秒，" + duration001002.getNano()/1000/1000
-                    + "毫秒");
             //查询当前磨的磨煤机量
-            Instant instant01 = Instant.now();
-
             h000Pojo_baseList = coalPipingHistoryService.findMillDataHistoryByMillLocation(millLocation,begin,end);
-
-            Instant instant02 = Instant.now();
-            Duration duration0102 = Duration.between(instant01,instant02);
-            System.out.println("查询磨煤机的磨煤量的时间：" + duration0102.getSeconds() + "秒，" + duration0102.getNano()/1000/1000
-                    + "毫秒");
         }
         //TODO 处理异常数据
         if(null == list || list.size() == 0){
@@ -157,7 +131,8 @@ public class HistoryPageController {
      */
     @RequestMapping(value = "/getMillHistoryDataWithMill", method = RequestMethod.GET, produces = "text/html;charset=UTF-8")
     @ResponseBody
-    public String getMillHistoryDataWithMill(@RequestParam(value = "startInputTime", required = false) Date beginTime, @RequestParam(value = "endInputTime", required = false) Date endTime, @RequestParam(value="mill" ,required = false)String millLocation){
+    public String getMillHistoryDataWithMill(@RequestParam(value = "startInputTime", required = false) Date beginTime, @RequestParam(value = "endInputTime", required = false) Date endTime, @RequestParam(value="mill" ,required = false)String millLocation,
+                                             @RequestParam(value="millValue",required = false)Float millValue){
         //TODO 历史曲线数据，缺少磨煤机磨煤量的数据返回
         BE be = new BE(beginTime,endTime);
         List<? extends CoalPipingHistory> list = null;
@@ -167,7 +142,15 @@ public class HistoryPageController {
             Timestamp end = be.getEndTimestamp();
             list = coalPipingHistoryService.findMillPipeDataHistoryByMillLocation
                     (millLocation,begin,end);
-            h000Pojo_baseList = coalPipingHistoryService.findMillDataHistoryByMillLocation(millLocation,begin,end);
+            if(null == millValue) {
+                h000Pojo_baseList = coalPipingHistoryService.findMillDataHistoryByMillLocation(millLocation, begin, end);
+            }else{
+                h000Pojo_baseList = new ArrayList<>();
+                H000Pojo_Base h000Pojo_base = new H000Pojo_Base();
+                h000Pojo_base.setV(millValue*100);
+                h000Pojo_base.setvTime(begin);
+                h000Pojo_baseList.add(h000Pojo_base);
+            }
         }
         //TODO 处理异常数据
         if(null == list || list.size() == 0){

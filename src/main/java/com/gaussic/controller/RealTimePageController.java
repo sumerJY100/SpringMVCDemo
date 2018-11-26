@@ -48,7 +48,7 @@ public class RealTimePageController {
     /**
      * 查询15分钟内4根粉管的浓度与风速数据，磨煤机的数据
      * 实时画面使用到此方法
-     * @param mill
+     * @param mill mill:A B C D
      * @return
      */
     @RequestMapping(value = "/getInitTimeDataForDensity", method = RequestMethod.GET, produces = "text/html;charset=UTF-8")
@@ -65,39 +65,12 @@ public class RealTimePageController {
             List<H000Pojo_Base> hList = null;
             switch (mill) {
                 case "A":
-                    Instant instantNow = Instant.now();
-
                     list = coalPipingHistoryRepositoryA.findByHTimeAfterOrderByHTimeAsc(begin);
-
-                    Instant instantCPNow = Instant.now();
-                    Duration durationForCP = Duration.between(instantNow,instantCPNow);
-                    System.out.println("查询coalPipingHistory的时间：" + durationForCP.getSeconds() + "秒,"+durationForCP
-                            .getNano()/1000000+"毫秒");
-
                     hList = dcsHistoryService.findByTime(75, begin, end);
-
-                    Instant instantForDcs = Instant.now();
-                    Duration durationForDCS = Duration.between(instantNow,instantForDcs);
-                    System.out.println("查询磨煤机磨煤量的时间：" + durationForDCS.getSeconds() + "秒,"+durationForDCS
-                            .getNano()/1000000+"毫秒");
                     break;
                 case "B":
-                    Instant instantNowB = Instant.now();
-
                     list = coalPipingHistoryRepositoryB.findByHTimeAfterOrderByHTimeAsc(begin);
-
-                    Instant instantCPNowB = Instant.now();
-                    Duration durationForCPB = Duration.between(instantNowB,instantCPNowB);
-                    System.out.println("查询coalPipingHistory的时间：" + durationForCPB.getSeconds() + "秒,"+durationForCPB
-                            .getNano()/1000000+"毫秒");
-
                     hList = dcsHistoryService.findByTime(76, begin, end);
-
-                    Instant instantForDcsB = Instant.now();
-                    Duration durationForDCSB = Duration.between(instantNowB,instantForDcsB);
-                    System.out.println("查询磨煤机磨煤量的时间：" + durationForDCSB.getSeconds() + "秒,"+durationForDCSB
-                            .getNano()/1000000+"毫秒");
-
                     break;
                 case "C":
                     list = coalPipingHistoryRepositoryC.findByHTimeAfterOrderByHTimeAsc(begin);
@@ -157,10 +130,13 @@ public class RealTimePageController {
                 jsonObject.put("CV", coalPipingHistory.getPipeCVelocityNotNull());
                 jsonObject.put("DV", coalPipingHistory.getPipeDVelocityNotNull());
                 //TODO 磨煤机 模拟数据
-                jsonObject.put("m", (Math.random() * 100) + 20);
+//                jsonObject.put("m", (Math.random() * 100) + 20);
 
                 if(null != coalPipingHistory.getCoalMillValue()){
                     jsonObject.put("m", coalPipingHistory.getCoalMillValue()/100);
+//                    jsonObject.put("m",-1);
+                }else{
+                    jsonObject.put("m",-1);
                 }
                 jsonArray.put(jsonObject);
             }

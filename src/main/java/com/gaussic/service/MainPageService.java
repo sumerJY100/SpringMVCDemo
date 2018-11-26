@@ -13,6 +13,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.sql.Timestamp;
+import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.Date;
@@ -244,40 +245,51 @@ public class MainPageService {
     /**
      * 查询磨煤机的磨煤量数据
      *
-     * @param coalMillEntity
-     * @return
+     * @param coalMillEntity 磨煤机entity
+     * @return  浮点数据
      */
     public static  Float getMillCount(CoalMillEntity coalMillEntity) {
-        Float millValue = 0f;
         DevicePointPojo devicePointPojoForCoalCount = coalMillEntity.getDeviceDcsPojoForCoalCount();
-
-        if (null != devicePointPojoForCoalCount) {
-            DevicePointRealtimePojo devicePointRealtimePojoForCoalCount = devicePointPojoForCoalCount.getDevicePointRealtimePojo();
-            if (null != devicePointRealtimePojoForCoalCount) {
-                millValue = devicePointRealtimePojoForCoalCount.getPointValue();
-            }
-        }
-        return millValue;
+        return getDcsRealTimeValue(devicePointPojoForCoalCount);
     }
 
     /**
      * 查询磨煤机的磨煤机电流数据
      *
-     * @param coalMillEntity
-     * @return
+     * @param coalMillEntity 磨煤机entity
+     * @return float
      */
     public static  Float getMillCurrent(CoalMillEntity coalMillEntity) {
         DevicePointPojo devicePointPojoForMillCurrent = coalMillEntity.getDeviceDcsPojoForCurrent();
+        return getDcsRealTimeValue(devicePointPojoForMillCurrent);
+    }
+
+    /**
+     * 获取DCS某个点的最新数据，
+     * 如果当前时间与DCS更新的时间间隔大于15分钟，则返回-1，表示通讯中断了，无数据
+     * @param devicePointPojo   DevicePointPojo
+     * @return float
+     */
+    public static Float getDcsRealTimeValue(DevicePointPojo devicePointPojo){
         Float millCurrent = 0f;
-        if (null != devicePointPojoForMillCurrent) {
-            DevicePointRealtimePojo devicePointRealtimePojoForCoalCurrent = devicePointPojoForMillCurrent
+        if (null != devicePointPojo) {
+            DevicePointRealtimePojo devicePointRealtimePojoForCoalCurrent = devicePointPojo
                     .getDevicePointRealtimePojo();
             if (null != devicePointRealtimePojoForCoalCurrent) {
-                millCurrent = devicePointRealtimePojoForCoalCurrent.getPointValue();
+                LocalDateTime localDateTimeNow = LocalDateTime.now();
+                LocalDateTime localDateTimeForDevicePointRealTime = devicePointRealtimePojoForCoalCurrent.getrTime()
+                        .toLocalDateTime();
+                Duration duration = Duration.between(localDateTimeNow,localDateTimeForDevicePointRealTime);
+                if(Math.abs(duration.toMinutes()) > 15) {
+                    millCurrent = -1f;
+                }else{
+                    millCurrent = devicePointRealtimePojoForCoalCurrent.getPointValue();
+                }
             }
         }
         return millCurrent;
     }
+
 
     /**
      * 生成一台磨得实时数据，包含4个粉管的风速、密度，磨煤机的磨煤量、磨煤机电流

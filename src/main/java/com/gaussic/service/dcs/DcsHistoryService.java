@@ -57,7 +57,6 @@ public class DcsHistoryService {
         }else if(offset < 60){
             historyList = dcs040_059Service.findByTime(offset,begin,end);
         }else if(offset < 80){
-            System.out.println("查询历史：" + offset);
             historyList = dcs060_079Service.findByTime(offset,begin,end);
         }else if(offset < 100){
             historyList = dcs080_099Service.findByTime(offset,begin,end);

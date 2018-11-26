@@ -24,16 +24,19 @@ public class WindPojoToEntityUtil {
         coalPipingEntity.setpTime(new Timestamp(timeLong));
         if (null != pojo && null == pojo.getCommunicationValue() ) {
             //TODO 设置风管浓度
+//            System.out.println("设置粉管浓度：----------");
             handlePipeDensityValue(coalPipingEntity,pojo);
             //TODO 风速数据，获取到的数据，使用指定的距离除以时间量，就是速度
 //            System.out.println("处理速度-------------------------------------");
             handlePipeSpeedValue(coalPipingEntity,pojo);
-            //TODO 设置通讯状态，如果中断，则新增告警，如果正常，检查是否有中断的告警，如果有，则解警
-            handlePipeCommunication(coalPipingEntity,pojo);
+
         } else {
             coalPipingEntity.setpDencity(null);
             coalPipingEntity.setpVelocity(null);
+//            coalPipingEntity.setpCommunicationState(CoalPipingEntity.COMMUNICATION_INTERRUPT);
         }
+        //TODO 设置通讯状态，如果中断，则新增告警，如果正常，检查是否有中断的告警，如果有，则解警
+        handlePipeCommunication(coalPipingEntity,pojo);
         return coalPipingEntity;
     }
     /**

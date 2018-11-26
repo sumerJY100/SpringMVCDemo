@@ -54,12 +54,13 @@ public class PipeHandler {
         try {
             //TODO 后期进行历史数据优化，例如长时间没有数据，可以对数据进行删除，或记录数据的状态。在查询的时候，不至于某一段时间没有数据
             //生成四条历史记录，每台磨煤机一条历史记录
-            if(null == coalMillEntityList) {
+//            if(null == coalMillEntityList) {
+
                 coalMillEntityList = coalMillService.findAll();
                 for(CoalMillEntity coalMillEntity:coalMillEntityList){
                     List<CoalPipingEntity> list = coalMillEntity.getCoalPipingEntityList();
                 }
-            }
+//            }
             //遍历告警信息，将  ”粉管通讯中断”  的告警信息查询出来,并设置到coalPipingEntity中
             //查询当前粉管是否存在通讯中断告警，并且是正在告警中的状态。
             //设置完成后，coalPipingEntity将存在alarmHistoryEntity对象。
@@ -134,8 +135,6 @@ public class PipeHandler {
                 CoalPipingHistory coalPipingHistory = coalPipingHistoryService.generatorHistory(coalMillEntity, now);
                 coalPipingHistorieList.add(coalPipingHistory);
                 List<CoalPipingEntity> coalPipingEntityList_temp = coalMillEntity.getCoalPipingEntityList();
-
-
 
                 for (int m = 0; m < coalPipingEntityList_temp.size(); m++) {
                     CoalPipingEntity coalPipingEntity = coalPipingEntityList_temp.get(m);

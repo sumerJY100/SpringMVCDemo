@@ -12,6 +12,11 @@ import java.util.Optional;
 @Entity
 @Table(name = "coal_piping", schema = "wind", catalog = "")
 public class CoalPipingEntity {
+    public static Integer COMMUNICATION_NORMAL = 0;
+    public static Integer COMMUNICATION_INTERRUPT = 1;
+
+
+
     private long id;
     private String pName;
     private Long pCoalMillId;
@@ -144,6 +149,10 @@ public class CoalPipingEntity {
         return pCommunicationState;
     }
 
+    /**
+     *
+     * @param pCommunicationState 0位通讯正常，1为通讯中断
+     */
     public void setpCommunicationState(Integer pCommunicationState) {
         this.pCommunicationState = pCommunicationState;
     }

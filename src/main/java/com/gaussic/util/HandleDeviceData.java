@@ -24,6 +24,7 @@ public class HandleDeviceData {
         JSONArray jsonArray = null;
         try {
             String jsonPStr = getUrlData(requestUrl, requestMethod);
+//            System.out.println("数据返回值：" + jsonPStr);
             if (null != jsonPStr) {
                 String jsonStr = handleJsonP(jsonPStr);
                 if (null != jsonStr) {

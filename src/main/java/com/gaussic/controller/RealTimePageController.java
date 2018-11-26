@@ -136,7 +136,7 @@ public class RealTimePageController {
                     jsonObject.put("m", coalPipingHistory.getCoalMillValue()/100);
 //                    jsonObject.put("m",-1);
                 }else{
-                    jsonObject.put("m",-1);
+                    jsonObject.put("m",-0.01);
                 }
                 jsonArray.put(jsonObject);
             }

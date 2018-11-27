@@ -45,9 +45,11 @@ public class RealTimePageController {
     private CoalPipingHistoryService coalPipingHistoryService;
     @Autowired
     private MainPageService mainPageService;
+
     /**
      * 查询15分钟内4根粉管的浓度与风速数据，磨煤机的数据
      * 实时画面使用到此方法
+     *
      * @param mill mill:A B C D
      * @return
      */
@@ -87,14 +89,16 @@ public class RealTimePageController {
             }
             //TODO 查询15分钟内的磨煤机数据
             //将磨煤机的磨煤量数据设置到 list的对象中。
-            millHistoryList = HandlDcsHistoryListUtil.getMilHistoryListNoChange(list,hList);
-            //对数据进行平滑处理
+            millHistoryList = HandlDcsHistoryListUtil.getMilHistoryListNoChange(list, hList);
+            //对数据进行平滑，封装处理
             jsonArray = generateInitDataJsonArray(list);
         }
         return jsonArray.toString();
     }
+
     /**
      * 根据磨煤机的编号，返回一台磨煤机的实时数据，包括4根粉管的风速、密度，磨煤机的磨煤量与电流
+     *
      * @param mill
      * @return
      */
@@ -103,20 +107,25 @@ public class RealTimePageController {
     public String getMillRealTimeData(@RequestParam(value = "mill", required = false) String mill) {
         return mainPageService.getMillRealTimeData(mill);
     }
+
     /**
-     * 返回一个jsonArray对象
+     * 返回时间点，与一台磨4个粉管的浓度、风速的 JSONArray对象
+     *      数据进行了平滑处理
      * 每个数组对象为：{time:12,AD:1,BD:1,CD:1,AV:1,BV:1,CV:1,DV:1,m:1}
-     * @param list
-     * @return
+     *
+     * @param list List<? extends CoalPipingHistory> list
+     * @return  JSONArray [{time:12,AD:1,BD:1,CD:1,AV:1,BV:1,CV:1,DV:1,m:1},{}]
      */
     private JSONArray generateInitDataJsonArray(List<? extends CoalPipingHistory> list) {
 //        JSONArray jsonArray = generateInitDataJsonArray(list);
         JSONArray jsonArray = new JSONArray();
 
+        //平滑处理
         PipeDataHandleServer.updatePipeDensityAndVelocityWithAvgHandle(list);
-
-        if (null != list) {
-            for (int i=0;i<list.size()-36   ;i++) {
+        //提取数量减去50
+        List<? extends CoalPipingHistory> resultList = list.subList(0, list.size() - 50);
+        if (null != resultList) {
+            for (int i = 0; i < resultList.size(); i++) {
                 CoalPipingHistory coalPipingHistory = list.get(i);
                 JSONObject jsonObject = new JSONObject();
                 jsonObject.put("time", coalPipingHistory.gethTime().getTime());
@@ -129,14 +138,12 @@ public class RealTimePageController {
                 jsonObject.put("BV", coalPipingHistory.getPipeBVelocityNotNull());
                 jsonObject.put("CV", coalPipingHistory.getPipeCVelocityNotNull());
                 jsonObject.put("DV", coalPipingHistory.getPipeDVelocityNotNull());
-                //TODO 磨煤机 模拟数据
-//                jsonObject.put("m", (Math.random() * 100) + 20);
 
-                if(null != coalPipingHistory.getCoalMillValue()){
-                    jsonObject.put("m", coalPipingHistory.getCoalMillValue()/100);
-//                    jsonObject.put("m",-1);
-                }else{
-                    jsonObject.put("m",-0.01);
+
+                if (null != coalPipingHistory.getCoalMillValue()) {
+                    jsonObject.put("m", coalPipingHistory.getCoalMillValue() / 100);
+                } else {
+                    jsonObject.put("m", -0.01);
                 }
                 jsonArray.put(jsonObject);
             }

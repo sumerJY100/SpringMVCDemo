@@ -9,6 +9,7 @@ import com.gaussic.service.MainPageService;
 
 import com.gaussic.service.PipeDataHandleServer;
 import com.gaussic.util.HandlDcsHistoryListUtil;
+import com.serotonin.json.JsonObject;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,7 +19,6 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import java.sql.Time;
 import java.sql.Timestamp;
 import java.time.LocalDateTime;
 import java.util.*;
@@ -67,14 +67,15 @@ public class MainPageController {
 
     /**
      * 根据millLocation，查询15分钟内的4根粉管的浓度数据
+     *
      * @param millLocation
      * @return
      */
-    @RequestMapping(value="/getDensityRealTime15MinutesDataByMill",method=RequestMethod.GET,produces="text/html;" +
+    @RequestMapping(value = "/getDensityRealTime15MinutesDataByMill", method = RequestMethod.GET, produces = "text/html;" +
             "charset=UTF-8")
     @ResponseBody
-    public String getDensityRealTime15MinutesDataByMill(@RequestParam(value="mill",required = false)String
-                                                                millLocation){
+    public String getDensityRealTime15MinutesDataByMill(@RequestParam(value = "mill", required = false) String
+                                                                millLocation) {
 //        Timestamp latestTimeStamp = getLatestTimeStamp();
 //        List<? extends  CoalPipingHistory> list = findCoalPipingHistoryByMillTypeAndLastesTime(latestTimeStamp,
 //                millLocation);
@@ -82,113 +83,105 @@ public class MainPageController {
         Timestamp begin = Timestamp.valueOf(now.minusMinutes(15));
         Timestamp end = Timestamp.valueOf(now);
         List<CoalPipingHistory> coalPipingHistoryList = coalPipingHistoryService.findMillPipeDataHistoryByMillLocation(millLocation,
-                begin,end);
+                begin, end);
         List<H000Pojo_Base> h000Pojo_baseList = coalPipingHistoryService.findMillDataHistoryByMillLocation
-                (millLocation,begin,end);
+                (millLocation, begin, end);
         HandlDcsHistoryListUtil.getMilHistoryListNoChange(coalPipingHistoryList, h000Pojo_baseList);
         PipeDataHandleServer.updatePipeDensityAndVelocityWithAvgHandle(coalPipingHistoryList);
-        List<CoalPipingHistory> resultList = coalPipingHistoryList.subList(0,coalPipingHistoryList.size()-50);
+        List<CoalPipingHistory> resultList = coalPipingHistoryList.subList(0, coalPipingHistoryList.size() - 50);
         return generateDensityInitDataJsonArray(resultList).toString();
     }
 
     /**
      * 根据millLocation，查询15分钟内的4根粉管的风速数据
+     *
      * @param millLocation
      * @return
      */
-    @RequestMapping(value="/getVelocityRealTime15MinutesDataByMill",method=RequestMethod.GET,produces="text/html;" +
+    @RequestMapping(value = "/getVelocityRealTime15MinutesDataByMill", method = RequestMethod.GET, produces = "text/html;" +
             "charset=UTF-8")
     @ResponseBody
-    public String getVelocityRealTime15MinutesDataByMill(@RequestParam(value="mill",required = false)String
-                                                                 millLocation){
+    public String getVelocityRealTime15MinutesDataByMill(@RequestParam(value = "mill", required = false) String
+                                                                 millLocation) {
         LocalDateTime now = LocalDateTime.now();
         Timestamp begin = Timestamp.valueOf(now.minusMinutes(15));
         Timestamp end = Timestamp.valueOf(now);
-        List<CoalPipingHistory> coalPipingHistoryList = coalPipingHistoryService.findMillPipeDataHistoryByMillLocation(millLocation,
-                begin,end);
+        List<CoalPipingHistory> coalPipingHistoryList = coalPipingHistoryService.findMillPipeDataHistoryByMillLocation(millLocation, begin, end);
+        //数据平滑处理
         PipeDataHandleServer.updatePipeDensityAndVelocityWithAvgHandle(coalPipingHistoryList);
-        List<CoalPipingHistory> resultList = coalPipingHistoryList.subList(0,coalPipingHistoryList.size()-50);
+        //提取数量减去50
+        List<CoalPipingHistory> resultList = coalPipingHistoryList.subList(0, coalPipingHistoryList.size() - 50);
 
 //        Timestamp latestTimeStamp = getLatestTimeStamp();
 //        List<? extends  CoalPipingHistory> list = findCoalPipingHistoryByMillTypeAndLastesTime(latestTimeStamp,
 //                millLocation);
         return generateVelocityInitDataJsonArray(resultList).toString();
     }
+
+
+
     /**
-     * 返回当前时间15分钟前的时间点
-     * @return
+     * 获取一台磨的历史浓度数据，封装成JSONArray
+     * @param list  List<? extends CoalPipingHistory> list
+     * @return  [{time：long类型，data:[A浓度/速度，B浓度/速度，C浓度/速度，D浓度/速度]},{},{}]
      */
-    private Timestamp getLatestTimeStamp(){
-        Calendar c = new GregorianCalendar();
-        c.setTime(new Date());
-        c.set(Calendar.MINUTE, c.get(Calendar.MINUTE) - 15);
-        return new Timestamp(c.getTimeInMillis());
+    private JSONArray generateDensityInitDataJsonArray(List<? extends CoalPipingHistory> list) {
+        return generateInitDensityOrVelocityDataJsonArray(list, "density");
     }
 
-    private List<? extends CoalPipingHistory> findCoalPipingHistoryByMillTypeAndLastesTime(Timestamp laestTimestamp,
-                                                                                           String millLocation){
-        List<? extends CoalPipingHistory> list = null;
-        if(null != millLocation){
-            if(millLocation.equals("A")){
-                list = coalPipingHistoryRepositoryA.findByHTimeAfterOrderByHTimeAsc(laestTimestamp);
-            }else if(millLocation.equals("B")){
-                list = coalPipingHistoryRepositoryB.findByHTimeAfterOrderByHTimeAsc(laestTimestamp);
-            }else if(millLocation.equals("C")){
-                list = coalPipingHistoryRepositoryC.findByHTimeAfterOrderByHTimeAsc(laestTimestamp);
-            }else if(millLocation.equals("D")){
-                list = coalPipingHistoryRepositoryD.findByHTimeAfterOrderByHTimeAsc(laestTimestamp);
-            }
-        }
-        return list;
+    /**
+     * 获取一台磨的历史风速数据，封装成JSONArray
+     * @param list List<? extends CoalPipingHistory> list
+     * @return  [{time：long类型，data:[A浓度/速度，B浓度/速度，C浓度/速度，D浓度/速度]},{},{}]
+     */
+    private JSONArray generateVelocityInitDataJsonArray(List<? extends CoalPipingHistory> list) {
+        return generateInitDensityOrVelocityDataJsonArray(list, "velocity");
     }
-    private JSONArray generateDensityInitDataJsonArray(List<? extends  CoalPipingHistory> list){
-        return generateDensityOrVelocityInitDataJsonArray(list,"density");
-    }
-    private JSONArray generateVelocityInitDataJsonArray(List<? extends  CoalPipingHistory> list){
-        return generateDensityOrVelocityInitDataJsonArray(list,"velocity");
-    }
-    private JSONArray generateDensityOrVelocityInitDataJsonArray(List<? extends CoalPipingHistory> list,String
+
+
+    /**
+     * 生成一台磨的历史数据对象，浓度或者风速，历史数据
+     * @param list  coalPipingList
+     * @param densityOrVelocity density or velocity
+     * @return  JSONArray [{time：long类型，data:[A浓度/速度，B浓度/速度，C浓度/速度，D浓度/速度]},{},{}]
+     */
+    private JSONArray generateInitDensityOrVelocityDataJsonArray(List<? extends CoalPipingHistory> list,String
             densityOrVelocity) {
-        JSONArray jsonArray = new JSONArray();
-        if(densityOrVelocity.equals("density")){
-            jsonArray = generateInitDataJsonArray(list);
-        }else if(densityOrVelocity.equals("velocity")){
-            if (null != list) {
-                for (CoalPipingHistory coalPipingHistory : list) {
-                    JSONObject jsonObject = new JSONObject();
-                    jsonObject.put("time", coalPipingHistory.gethTime().getTime());
-                    JSONArray jsonArrayForData = new JSONArray();
-                    jsonArrayForData.put(coalPipingHistory.gethPipeAVelocity());
-                    jsonArrayForData.put(coalPipingHistory.gethPipeBVelocity());
-                    jsonArrayForData.put(coalPipingHistory.gethPipeCVelocity());
-                    jsonArrayForData.put(coalPipingHistory.gethPipeDVelocity());
-                    jsonObject.put("data", jsonArrayForData);
-
-                    jsonArray.put(jsonObject);
-                }
-            }
-        }
-
-        return jsonArray;
-    }
-
-
-    private JSONArray generateInitDataJsonArray(List<? extends CoalPipingHistory> list) {
         JSONArray jsonArray = new JSONArray();
         if (null != list) {
             for (CoalPipingHistory coalPipingHistory : list) {
-                JSONObject jsonObject = new JSONObject();
-                jsonObject.put("time", coalPipingHistory.gethTime().getTime());
-                JSONArray jsonArrayForData = new JSONArray();
-                jsonArrayForData.put(coalPipingHistory.gethPipeADencity());
-                jsonArrayForData.put(coalPipingHistory.gethPipeBDencity());
-                jsonArrayForData.put(coalPipingHistory.gethPipeCDencity());
-                jsonArrayForData.put(coalPipingHistory.gethPipeDDencity());
-                jsonObject.put("data", jsonArrayForData);
-
+                JSONObject jsonObject = generateJsonObject(coalPipingHistory, densityOrVelocity);
                 jsonArray.put(jsonObject);
             }
         }
         return jsonArray;
     }
+
+    /**
+     *  将一台磨的4个粉管的浓度或者风速与时间封装成一个对象，{time：long类型，data:[A浓度/速度，B浓度/速度，C浓度/速度，D浓度/速度]}
+     * @param coalPipingHistory     CoalPipingHistory对象
+     * @param densityOrVelocity     density or velocity
+     * @return  JSONObject {time：long类型，data:[A浓度/速度，B浓度/速度，C浓度/速度，D浓度/速度]}
+     */
+    private JSONObject generateJsonObject(CoalPipingHistory coalPipingHistory, String densityOrVelocity) {
+        JSONObject jsonObject = new JSONObject();
+        jsonObject.put("time", coalPipingHistory.gethTime().getTime());
+        JSONArray jsonArrayForData = new JSONArray();
+        if (densityOrVelocity.equals("density")) {
+            jsonArrayForData.put(coalPipingHistory.gethPipeADencity());
+            jsonArrayForData.put(coalPipingHistory.gethPipeBDencity());
+            jsonArrayForData.put(coalPipingHistory.gethPipeCDencity());
+            jsonArrayForData.put(coalPipingHistory.gethPipeDDencity());
+        } else if (densityOrVelocity.equals("velocity")) {
+            jsonArrayForData.put(coalPipingHistory.gethPipeAVelocity());
+            jsonArrayForData.put(coalPipingHistory.gethPipeBVelocity());
+            jsonArrayForData.put(coalPipingHistory.gethPipeCVelocity());
+            jsonArrayForData.put(coalPipingHistory.gethPipeDVelocity());
+        }
+        jsonObject.put("data", jsonArrayForData);
+        return jsonObject;
+    }
+
+
+
 }

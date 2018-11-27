@@ -1,6 +1,8 @@
 package com.gaussic.quartz3;
 
+import com.gaussic.dataGet.dcsHandle.DCSGetDataByModbusRtuSlave;
 import com.gaussic.model.AlarmHistoryEntity;
+import com.gaussic.model.dcs.DeviceDcsPojo;
 import com.gaussic.model.history.*;
 import com.gaussic.repository.*;
 import com.gaussic.service.CoalPipingHistoryService;
@@ -10,6 +12,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.sql.Timestamp;
+import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -26,6 +29,8 @@ public class CheckDeviceAlarmQuartz {
 
     //TODO 进行告警信息生产的开关
     public static final boolean CHECK_ALARM_FUN = false;
+
+    public static final boolean CHECK_DCS_ALARM_FUN = true;
 
 
 
@@ -46,7 +51,10 @@ public class CheckDeviceAlarmQuartz {
     private CoalPipingHistoryRepositoryD coalPipingHistoryRepositoryD;
     @Autowired
     private AlarmHistoryRepository alarmHistoryRepository;
-
+    @Autowired
+    private DevicePointRepository devicePointRepository;
+    @Autowired
+    private DeviceDcsRepository deviceDcsRepository;
 
     //进行计算的最少数据量
     public static final int calculateMinCount = 40;
@@ -75,10 +83,37 @@ public class CheckDeviceAlarmQuartz {
      * 5、当4个环的数据进行比较的时候，最大环的均值与最小环的均值偏差超过30%为三级告警，超过40%进行二级告警，超过50%，一级告警，
      */
     public void checkDeviceAlarm() {
+
+        if(CHECK_DCS_ALARM_FUN){
+            /****************检查DCS通讯中断******************/
+            LocalDateTime localDateTime = LocalDateTime.now();
+            LocalDateTime dcsLatestTime = DCSGetDataByModbusRtuSlave.LATEST_DCS_TIME;
+            Duration duration = Duration.between(dcsLatestTime,localDateTime);
+
+            DeviceDcsPojo deviceDcsPojo = deviceDcsRepository.findOne(1L);
+            if(Math.abs(duration.getSeconds()) > 60  ){
+                //通讯中断，更新DCS对象
+                if(deviceDcsPojo.getDeviceLinkState() == DeviceDcsPojo.COMMUNICATION_INTERRUPT){
+
+                }else{
+                    deviceDcsPojo.setDeviceLinkState(DeviceDcsPojo.COMMUNICATION_INTERRUPT);
+                    deviceDcsRepository.saveAndFlush(deviceDcsPojo);
+                }
+            }else{
+                //通讯正常，更新DCS对象
+                if(deviceDcsPojo.getDeviceLinkState() == DeviceDcsPojo.COMMUNICATION_NORMAL){
+
+                }else{
+                    deviceDcsPojo.setDeviceLinkState(DeviceDcsPojo.COMMUNICATION_NORMAL);
+                    deviceDcsRepository.saveAndFlush(deviceDcsPojo);
+                }
+            }
+        }
+
+
         //TODO 是否进行告警信息查询与录入数据库，11月13日进行此操作，有问题，暂时搁置
         if(CHECK_ALARM_FUN ) {
 //        System.out.println("检查告警信息");
-
             LocalDateTime end = LocalDateTime.now();
             LocalDateTime begin = end.minusSeconds(60);
             Timestamp queryEndTime = Timestamp.valueOf(end);

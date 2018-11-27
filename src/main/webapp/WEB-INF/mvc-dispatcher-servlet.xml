@@ -149,7 +149,7 @@
             <list>
                 <ref bean="simpleTrigger"/>
                 <ref bean="dcsCacheTrigger"/>
-                <!--<ref bean="dcsCheckAlarmTrigger"/>-->
+                <ref bean="dcsCheckAlarmTrigger"/>
                 <ref bean="dcsSendDataTrigger"/>
 
             </list>

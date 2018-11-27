@@ -9,6 +9,11 @@ import java.util.Objects;
 @Entity
 @Table(name = "device_dcs", schema = "wind", catalog = "")
 public class DeviceDcsPojo {
+
+    public static final Integer COMMUNICATION_NORMAL = 0;
+    public static final Integer COMMUNICATION_INTERRUPT = 1;
+
+
     private Long deviceId;
     private String deviceName;
     private String deviceAddress;

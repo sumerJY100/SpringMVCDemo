@@ -49,6 +49,9 @@ public class DCSGetDataByModbusRtuSlave implements InitializingBean {
     private static ModbusSlaveSet modbusSlaveSet;
     private static BasicProcessImage processImage;
 
+
+    public static  LocalDateTime LATEST_DCS_TIME = LocalDateTime.now();
+
     @Autowired
     private DcsHistoryService dcsHistoryService;
     /**
@@ -210,6 +213,11 @@ public class DCSGetDataByModbusRtuSlave implements InitializingBean {
 
             @Override
             public void holdingRegisterWrite(int offset, short oldValue, short newValue) {
+                //更新LATEST_DCS_TIME的时间，如果有数据，更新为最新时间，如果没有，则不变化
+                LATEST_DCS_TIME = LocalDateTime.now();
+
+
+
 //                System.out.println("hodingRegister:offset" + offset + ",oldValue:" + oldValue + ",newValue:" +
 //                        newValue);
                 try {
@@ -236,6 +244,10 @@ public class DCSGetDataByModbusRtuSlave implements InitializingBean {
             @Override
             public void holdingRegisterWrite(int offset, short[] value) {
                 try {
+                    //更新LATEST_DCS_TIME的时间，如果有数据，更新为最新时间，如果没有，则不变化
+                    LATEST_DCS_TIME = LocalDateTime.now();
+
+
                     int[] arr = new int[value.length];
                     for (int i = 0; i < value.length; i++) {
                         int v = getValue(offset + i, value[i]);

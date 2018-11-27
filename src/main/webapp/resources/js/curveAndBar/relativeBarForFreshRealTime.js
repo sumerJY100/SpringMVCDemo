@@ -22,7 +22,8 @@ function getRelativeBarWithOptions(divId, titleName, subTile, chartOption, serie
                 }
             }
         },
-        title: {text: titleName},
+        title: {text: titleName,
+            style:titleStyle},
         subtitle: {text: subTile},
         xAxis: {categories: [""]},
         yAxis: {title: {text: ""}},

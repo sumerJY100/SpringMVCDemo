@@ -9,7 +9,7 @@ const velocityRadioValue = "1";
 var group1 = new Group(), group2 = new Group(), group3 = new Group(), group4 = new Group();
 
 var groupArr = [group1, group2, group3, group4];
-
+var titleStyle = {fontFamily:'微软雅黑 Light serif',fontWeight:'lighter',fontSize:14};
 /**
  * 通过divID查询Group
  * @param curveId

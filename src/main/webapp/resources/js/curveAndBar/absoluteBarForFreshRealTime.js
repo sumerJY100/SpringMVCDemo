@@ -22,7 +22,8 @@ function getAbsoluteBarWithOptions(divId, titleName, subtitleName, chartOption, 
             }
         },
         title: {
-            text: titleName
+            text: titleName,
+            style:titleStyle
         },
         subtitle: {
             text: subtitleName

@@ -40,7 +40,8 @@ function getCurveChartOptions(titleName,subtitle){
             marginRight: 10/*,
             events: getLoadFunction()*/
         },
-        title: {text: titleName},
+        title: {text: titleName,
+            style:titleStyle},
         subtitle: {text: subtitle},
         plotOptions: {
             series: {

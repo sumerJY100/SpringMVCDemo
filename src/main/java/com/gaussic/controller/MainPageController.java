@@ -54,11 +54,7 @@ public class MainPageController {
         return mainPageService.getAllMillRealTimeData();
     }
 
-    @RequestMapping(value = "/getMillARealTimeData", method = RequestMethod.GET, produces = "text/html;charset=UTF-8")
-    @ResponseBody
-    public String getMillARealTimeData() {
-        return mainPageService.getMillARealTimeData();
-    }
+
 
     /**
      * 根据millLocation，查询15分钟内的4根粉管的【浓度】数据

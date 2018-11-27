@@ -148,7 +148,7 @@ public class WindPojoToEntityUtil {
         String note = pojo.getCommunicationValue();
         alarmHistoryEntity.setaAlarmNote(note);
         alarmHistoryEntity.setaAlarmPipeId(coalPipingEntity.getId());
-        alarmHistoryEntity.setaAlarmPipeString(coalPipingEntity.getpName());
+        alarmHistoryEntity.setaAlarmPipeString(coalPipingEntity.getpNameUserDefined());
         alarmHistoryEntity.setaAlarmMillId(coalPipingEntity.getpCoalMillId());
         alarmHistoryEntity.setaAlarmMillName(coalPipingEntity.getCoalMillEntity().getcName());
         //TODO 通讯故障告警，不需要进行告警确认

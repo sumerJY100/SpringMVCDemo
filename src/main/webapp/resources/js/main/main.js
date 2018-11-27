@@ -138,24 +138,39 @@ function getDivIdFromChartByChart(chart) {
     }
     return targetDivId;
 }
-function generatorAndInitGroup(group, baseDivId, chartOptions, millLocation){
+
+function generatorAndInitGroup(group, baseDivId, chartOptions, millLocation) {
     // var baseDivId = "container1";
-    var seriesNameArr = ["1","2","3","4"];
+    var millId = 10;
+    if (millLocation === "A") {
+        millId = 10;
+    } else if (millLocation === "B") {
+        millId = 20;
+    } else if (millLocation === "C") {
+        millId = 30;
+    } else if (millLocation === "D") {
+        millId = 40;
+    }
+    var seriesNameArr = [];
+    seriesNameArr.push(millId + 1);
+    seriesNameArr.push(millId + 2);
+    seriesNameArr.push(millId + 3);
+    seriesNameArr.push(millId + 4);
     var absDensityDivId = baseDivId + "_absoluteBar",
         relativeDensityDiveId = baseDivId + "_relativeBar",
         velocityCurveDivId = baseDivId + "V",
         absVelocityDivId = baseDivId + "V_absoluteBar",
         relativeVelocityDiveId = baseDivId + "V_relativeBar";
-    var absoluteBarForDensity = getAbsoluteBarWithOptions(absDensityDivId, densityChartTitle+"  ("+ absoluteChartSubtitle+")","",chartOptions ,seriesNameArr);
-    var relativeBarForDensity = getRelativeBarWithOptions(relativeDensityDiveId, densityChartTitle+"  ("+ relativeChartSubtitle+")","",chartOptions,seriesNameArr);
-    var curveForDensity = getCurveChartWithOptions(baseDivId, densityChartTitle, "",chartOptions,seriesNameArr);
+    var absoluteBarForDensity = getAbsoluteBarWithOptions(absDensityDivId, densityChartTitle + "  (" + absoluteChartSubtitle + ")", "", chartOptions, seriesNameArr);
+    var relativeBarForDensity = getRelativeBarWithOptions(relativeDensityDiveId, densityChartTitle + "  (" + relativeChartSubtitle + ")", "", chartOptions, seriesNameArr);
+    var curveForDensity = getCurveChartWithOptions(baseDivId, densityChartTitle, "", chartOptions, seriesNameArr);
 
-    var absoluteBarForVelocity = getAbsoluteBarWithOptions(absVelocityDivId, velocityChartTitle+"("+absoluteChartSubtitle+")","",chartOptions,seriesNameArr);
-    var relativeBarForVelocity = getRelativeBarWithOptions(relativeVelocityDiveId, velocityChartTitle+"("+relativeChartSubtitle+")","",chartOptions,seriesNameArr);
-    var curveForVelocity = getCurveChartWithOptions(velocityCurveDivId, velocityChartTitle, "",chartOptions,seriesNameArr);
+    var absoluteBarForVelocity = getAbsoluteBarWithOptions(absVelocityDivId, velocityChartTitle + "(" + absoluteChartSubtitle + ")", "", chartOptions, seriesNameArr);
+    var relativeBarForVelocity = getRelativeBarWithOptions(relativeVelocityDiveId, velocityChartTitle + "(" + relativeChartSubtitle + ")", "", chartOptions, seriesNameArr);
+    var curveForVelocity = getCurveChartWithOptions(velocityCurveDivId, velocityChartTitle, "", chartOptions, seriesNameArr);
 
 
-    group.divJqueryDom = $("#"+baseDivId);
+    group.divJqueryDom = $("#" + baseDivId);
     group.curveForDensity = curveForDensity;
     group.barRelativeForDensity = relativeBarForDensity;
     group.barAbsoluteForDensity = absoluteBarForDensity;
@@ -168,6 +183,7 @@ function generatorAndInitGroup(group, baseDivId, chartOptions, millLocation){
 
     return group;
 }
+
 /**
  * 初始化Group
  */
@@ -176,22 +192,24 @@ function initGroup() {
         exporting: {enabled: false},
         legend: {
             align: "right",
-            verticalAlign: "top",
+            verticalAlign: "bottom",
             floating: true,
-            y: 40,
+            y: 10,
             itemDistance: 5,
             itemStyle: {fontFamily: "宋体", fontWeight: 'light'}
+        }, credits: {
+            enabled: false
         }
     };
-    generatorAndInitGroup(group1,"container1",chartOptions,"A");
-    generatorAndInitGroup(group2,"container2",chartOptions,"B");
-    generatorAndInitGroup(group3,"container3",chartOptions,"C");
-    generatorAndInitGroup(group4,"container4",chartOptions,"D");
+    generatorAndInitGroup(group1, "container1", chartOptions, "A");
+    generatorAndInitGroup(group2, "container2", chartOptions, "B");
+    generatorAndInitGroup(group3, "container3", chartOptions, "C");
+    generatorAndInitGroup(group4, "container4", chartOptions, "D");
 
 
 }
 
-function freshCurrentChartAndTableByJsonData(group,time,millJqueryData,tableDiv){
+function freshCurrentChartAndTableByJsonData(group, time, millJqueryData, tableDiv) {
     var millADensityData = getDensityDataFromMill(millJqueryData);
     var millADensityDataForRelative = getMillDataFromAbsoluteToRelative(millADensityData);
     var millAVelocityData = getVelocityDataFromMill(millJqueryData);
@@ -207,6 +225,7 @@ function freshCurrentChartAndTableByJsonData(group,time,millJqueryData,tableDiv)
     group.freshCurrentChart();
     freshMainPageTable(group, tableDiv);
 }
+
 /**
  * 刷新当前正在显示的图表
  * @param result
@@ -218,10 +237,10 @@ function freshCurrentChartAndTable(result) {
     var millC = result.millC;
     var millD = result.millD;
 
-    freshCurrentChartAndTableByJsonData(group1,time,millA,"coalMillTableADiv");
-    freshCurrentChartAndTableByJsonData(group2,time,millB,"coalMillTableBDiv");
-    freshCurrentChartAndTableByJsonData(group3,time,millC,"coalMillTableCDiv");
-    freshCurrentChartAndTableByJsonData(group4,time,millD,"coalMillTableDDiv");
+    freshCurrentChartAndTableByJsonData(group1, time, millA, "coalMillTableADiv");
+    freshCurrentChartAndTableByJsonData(group2, time, millB, "coalMillTableBDiv");
+    freshCurrentChartAndTableByJsonData(group3, time, millC, "coalMillTableCDiv");
+    freshCurrentChartAndTableByJsonData(group4, time, millD, "coalMillTableDDiv");
 
 }
 
@@ -237,10 +256,10 @@ function freshMainPageTable(group, tableDivId) {
         var $tableA = $(tableArr[0]);
         // alert($tableA.html())
         //磨煤机电流
-       // $tableA.find("tr:eq(1) th:eq(0)").html(group.millCurrent );
-       $tableA.find("tr:eq(1) th:eq(0)").html("给煤量" );
+        // $tableA.find("tr:eq(1) th:eq(0)").html(group.millCurrent );
+        $tableA.find("tr:eq(1) th:eq(0)").html("给煤量");
         //磨煤机煤量
-        $tableA.find("tr:eq(3) td:eq(0)").html(group.coalCount/100);
+        $tableA.find("tr:eq(3) td:eq(0)").html(group.coalCount / 100);
         //pipe1绝对浓度
         $tableA.find("tr:eq(1) td:eq(1)").html(velocityData.pipe1Data);
         $tableA.find("tr:eq(1) td:eq(2)").html(velocityData.pipe2Data);
@@ -379,13 +398,13 @@ function divAddBtnAndBindClickFunction(curveId) {
     var checkBoxDTop = checkBoxCTop;
 
     var checkBoxName = curveId + "Checkbox";
-/**
-    var $ACheckBox = addCheckBox($container, curveId, checkBoxName, "checkBoxIdA", "A", checkBoxALeft, checkBoxATop);
-    var $BCheckBox = addCheckBox($container, curveId, checkBoxName, "checkBoxIdB", "B", checkBoxBLeft, checkBoxBTop);
-    var $CCheckBox = addCheckBox($container, curveId, checkBoxName, "checkBoxIdC", "C", checkBoxCLeft, checkBoxCTop);
-    var $DCheckBox = addCheckBox($container, curveId, checkBoxName, "checkBoxIdD", "D", checkBoxDLeft, checkBoxDTop);
-*/
-    //柱状图与曲线图切换按钮
+    /**
+     var $ACheckBox = addCheckBox($container, curveId, checkBoxName, "checkBoxIdA", "A", checkBoxALeft, checkBoxATop);
+     var $BCheckBox = addCheckBox($container, curveId, checkBoxName, "checkBoxIdB", "B", checkBoxBLeft, checkBoxBTop);
+     var $CCheckBox = addCheckBox($container, curveId, checkBoxName, "checkBoxIdC", "C", checkBoxCLeft, checkBoxCTop);
+     var $DCheckBox = addCheckBox($container, curveId, checkBoxName, "checkBoxIdD", "D", checkBoxDLeft, checkBoxDTop);
+     */
+        //柱状图与曲线图切换按钮
     var btnLeft = baseLeft + "px";
     var top_relativeBar = top;
     var top_absoluteBar = top + 40 + "px";

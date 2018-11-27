@@ -42,7 +42,7 @@ function initHistoryData() {
         xDatas = new PipeHistoryData(densityType, "x", pipe1Color, result.xDatas);
         yDatas = new PipeHistoryData(densityType, "y", pipe2Color, result.yDatas);
         vDatas = new PipeHistoryData(velocityType, "v", pipe3Color, result.vDatas);
-        millDatas = new PipeHistoryData(velocityType, "mill", pipe4Color, result.coalMillDatas);
+        millDatas = new PipeHistoryData(velocityType, "mill", millColor, result.coalMillDatas);
 
 
         //创建masterChart

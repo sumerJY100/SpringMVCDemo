@@ -42,7 +42,7 @@ function createContrastChart(master, startTime, endTime, seriesData,chartName) {
     });
     var constraintSeries = {
         name: '磨煤量',
-        color: 'red',
+        color: millColor,
         pointStart: startTime,
         pointInterval: 1 * 1000,
         lineWidth: 1,
@@ -76,7 +76,7 @@ function createContrastChartWithSerialData(master, startTime, endTime, seriesDat
     });*/
     var constraintSeries = {
         name: '磨煤量',
-        color: 'red',
+        color: millColor,
         pointStart: startTime,
         pointInterval: 1 * 1000,
         lineWidth: 1,

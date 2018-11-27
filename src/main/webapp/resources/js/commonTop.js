@@ -8,4 +8,6 @@ ddsmoothmenu.init({
 var pipe1Color = "#ff0000",
     pipe2Color = "#00ff00",
     pipe3Color = "#1200ff",
-    pipe4Color = "#fff91a";
+    pipe4Color = "#fff91a",
+    //磨煤机磨煤量的颜色
+    millColor = "#ffa436";

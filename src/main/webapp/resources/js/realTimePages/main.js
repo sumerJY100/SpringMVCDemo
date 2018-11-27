@@ -34,7 +34,8 @@ $(document).ready(function () {
     var seriesNameArr = ["1", "2", "3", "4"];
     var curveOptions = $.extend({}, chartOptions);
     curveOptions.legend.y = 10;
-    millCurve = getCurveChartWithOptionsAndSerieNames("container_Mill", "磨煤量", "", curveOptions, ["磨煤量"]);
+    millCurve = getCoalMillCurveChartWithOptionsAndSeriesNames("container_Mill", "磨煤量", "", curveOptions, ["磨煤量"]);
+
     absoluteBarForDensity = getAbsoluteBarWithOptions("container_absoluteBar", densityChartTitle + "(" + absoluteChartSubtitle + ")", "", chartOptions, seriesNameArr);
     relativeBarForDensity = getRelativeBarWithOptions("container_relativeBar", densityChartTitle + "(" + relativeChartSubtitle + ")", "", chartOptions, seriesNameArr);
     curveForDensity = getCurveChartWithOptions("container", densityChartTitle, "", curveOptions, seriesNameArr);

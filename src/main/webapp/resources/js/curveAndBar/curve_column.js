@@ -64,10 +64,10 @@ function getCurveChartWithOptionsAndSeries(divId, titleName, subtitle,chartOptio
     $.extend(chartOptions,chartOption);
     return Highcharts.chart(divId,chartOptions);
 }
-function getCurveChartWithOptionsAndSerieNames(divId, titleName, subtitle,chartOption,seriesNames) {
+function getCoalMillCurveChartWithOptionsAndSeriesNames(divId, titleName, subtitle, chartOption, seriesNames) {
     var series = [];
     for(var i=0;i<seriesNames.length;i++){
-        var obj = {name:seriesNames[i],data:[]};
+        var obj = {name:seriesNames[i],data:[],color:millColor};
         series.push(obj);
     }
     var chart = getCurveChartWithOptionsAndSeries(divId, titleName, subtitle,chartOption,series);

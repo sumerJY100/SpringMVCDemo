@@ -12,7 +12,7 @@ function freshRelativeBar(chart, barData) {
     series[3].setData([barData.pipe4Data]);
 }
 
-function getRelativeBarWithOptions(divId, titleName, subTile, chartOption,seriesNameArr) {
+function getRelativeBarWithOptions(divId, titleName, subTile, chartOption, seriesNameArr) {
     var chartOptions = {
         chart: {
             type: 'column',
@@ -25,8 +25,16 @@ function getRelativeBarWithOptions(divId, titleName, subTile, chartOption,series
         title: {text: titleName},
         subtitle: {text: subTile},
         xAxis: {categories: [""]},
-        yAxis: {title: {text:""}},
-        series: [{name: seriesNameArr[0], data: [],dataLabels:{enabled:true}}, {name: seriesNameArr[1], data: [],dataLabels:{enabled:true}}, {name: seriesNameArr[2], data: [],dataLabels:{enabled:true}}, {name: seriesNameArr[3], data: [],dataLabels:{enabled:true}}]
+        yAxis: {title: {text: ""}},
+        series: [{name: seriesNameArr[0],color:pipe1Color, data: [], dataLabels: {enabled: true}}, {
+            name: seriesNameArr[1],color:pipe2Color,
+            data: [],
+            dataLabels: {enabled: true}
+        }, {name: seriesNameArr[2],color:pipe3Color, data: [], dataLabels: {enabled: true}}, {
+            name: seriesNameArr[3],color:pipe4Color,
+            data: [],
+            dataLabels: {enabled: true}
+        }]
     };
     $.extend(chartOptions, chartOption);
     return Highcharts.chart(divId, chartOptions);
@@ -72,8 +80,8 @@ function getRelativeBar(divId, titleName, subTile) {
         subtitle: {
             text: subTile
         },
-        yAxis: {title: {text:""}},
-        exporting:false,
+        yAxis: {title: {text: ""}},
+        exporting: false,
         xAxis: {
             categories: [""]
         },

@@ -35,25 +35,25 @@
         pipe2Color = "#00ff00",
         pipe3Color = "#1200ff",
         pipe4Color = "#00eaff";--%>
-        <tr style="background-color: #ff0000;color:#ffffff;">
+        <tr id="pipe1Tr" style="color:#ffffff;">
             <td>pipe1</td>
             <c:forEach begin="1" end="15">
                 <td></td>
             </c:forEach>
         </tr>
-        <tr style="background-color: #00ff00">
+        <tr id="pipe2Tr" style="">
             <td>pipe2</td>
             <c:forEach begin="1" end="15">
                 <td></td>
             </c:forEach>
         </tr>
-        <tr style="background-color: #1200ff;color:#ffffff;">
+        <tr id="pipe3Tr" style="color:#ffffff;">
             <td>pipe3</td>
             <c:forEach begin="1" end="15">
                 <td></td>
             </c:forEach>
         </tr>
-        <tr style="background-color: #fff91a">
+        <tr id="pipe4Tr" style="">
             <td>pipe4</td>
             <c:forEach begin="1" end="15">
                 <td></td>

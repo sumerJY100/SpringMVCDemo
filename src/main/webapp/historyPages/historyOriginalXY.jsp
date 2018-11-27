@@ -60,19 +60,19 @@
                pipe2Color = "#00ff00",
                pipe3Color = "#1200ff",
                pipe4Color = "#00eaff";--%>
-        <tr style="background-color: #ff0000;color:#ffffff;">
+        <tr id="xTr" style="color:#ffffff;">
             <td>x</td>
             <c:forEach begin="1" end="15">
                 <td></td>
             </c:forEach>
         </tr>
-        <tr style="background-color: #00ff00">
+        <tr id="yTr" style="">
             <td>y</td>
             <c:forEach begin="1" end="15">
                 <td></td>
             </c:forEach>
         </tr>
-        <tr style="background-color: #1200ff;color:#ffffff;">
+        <tr id="vTr" style="color:#ffffff;">
             <td>v</td>
             <c:forEach begin="1" end="15">
                 <td></td>
@@ -103,7 +103,9 @@
 
 
 <script type="text/javascript">
+    $(document).ready(function(){
 
+    });
 
 </script>
 </body>

@@ -161,16 +161,19 @@ function getInitSeriesArray(seriesNameArr) {
     var AData = [], BData = [], CData = [], DData = [];
     var seriesArray = [{
         name: seriesNameArr[0],
-        data: AData
+        data: AData,
+        color:pipe1Color
     }, {
         name: seriesNameArr[1],
-        data: BData
+        data: BData,color:pipe2Color
     }, {
         name: seriesNameArr[2],
-        data: CData
+        data: CData,
+        color:pipe3Color
     }, {
         name: seriesNameArr[3],
-        data: DData
+        data: DData,
+        color:pipe4Color
     }];
     return seriesArray;
 }

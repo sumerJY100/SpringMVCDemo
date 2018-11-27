@@ -1,3 +1,9 @@
+$(document).ready(function(){
+    $("#xTr").css("backgroundColor",pipe1Color);
+    $("#yTr").css("backgroundColor",pipe2Color);
+    $("#vTr").css("backgroundColor",pipe3Color);
+});
+
 function getQueryUrl(millLocation,pipeId) {
     var millLocation = $("#millLocation").val();
     var pipeId = $("#pipeId").val();
@@ -31,10 +37,7 @@ function initHistoryData() {
     $.getJSON(url, queryData, function (result) {
         var densityType = "density",
             velocityType = "velocity";
-        var pipe1Color = "#ff0000",
-            pipe2Color = "#00ff00",
-            pipe3Color = "#1200ff",
-            pipe4Color = "#fff91a";
+
 
         xDatas = new PipeHistoryData(densityType, "x", pipe1Color, result.xDatas);
         yDatas = new PipeHistoryData(densityType, "y", pipe2Color, result.yDatas);

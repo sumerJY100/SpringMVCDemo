@@ -78,6 +78,12 @@ $(document).ready(function () {
     $("#queryRightBtn6Hours").bind("click", function () {
         queryDataByTimeWithHours(6);
     })
+
+
+    $("#pipe1Tr").css("backgroundColor",pipe1Color).css("color","white");
+    $("#pipe2Tr").css("backgroundColor",pipe2Color);
+    $("#pipe3Tr").css("backgroundColor",pipe3Color).css("color","white");
+    $("#pipe4Tr").css("backgroundColor",pipe4Color);
 });
 
 /**

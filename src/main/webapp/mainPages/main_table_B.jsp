@@ -10,10 +10,10 @@
             <th></th>
             <th style="width:10px;height:30px;"></th>
 
-            <th style="width:100px;">管道21</th>
-            <th style="width:100px;">管道22</th>
-            <th style="width:100px;">管道23</th>
-            <th style="width:100px;">管道24</th>
+            <th class="detailTableThClass" style="width:100px;">管道 21</th>
+            <th class="detailTableThClass" style="width:100px;">管道 22</th>
+            <th class="detailTableThClass" style="width:100px;">管道 23</th>
+            <th class="detailTableThClass" style="width:100px;">管道 24</th>
         </tr>
         <jsp:include page="millTable.jsp"></jsp:include>
     </table>

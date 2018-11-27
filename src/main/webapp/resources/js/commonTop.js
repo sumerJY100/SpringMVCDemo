@@ -11,3 +11,5 @@ var pipe1Color = "#ff0000",
     pipe4Color = "#fff91a",
     //磨煤机磨煤量的颜色
     millColor = "#ffa436";
+
+var titleStyle = {fontFamily:'微软雅黑 Light serif',fontWeight:'lighter',fontSize:14};

@@ -270,7 +270,7 @@ function generatorWithDataDetailChart(seriesDataArr,chartName) {
         chart: detailChartOptions,
         credits: {enabled: false},
         title: {
-            text: chartName/*,
+            text: chartName,style:titleStyle/*,
             style:{"color":"red"}*/
         },
         subtitle: {text: ''},

@@ -208,7 +208,7 @@ function generatorWithDataContrastChart(series,chartName) {
     return Highcharts.chart(contrastContainer, {
         chart: contrastChartOptions,
         //  title: {text: chartName,margin:0},
-        title:{text:""},
+        title:{text:"",style:titleStyle},
         xAxis: contrastXAxis,
         yAxis: contrastYAxis,
         tooltip: curveToolTipForContrast,

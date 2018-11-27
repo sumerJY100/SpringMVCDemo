@@ -8,12 +8,12 @@
         <tr>
             <th rowspan=5 style="width:50px;" class="detailTableMillNameClass">#30<br/>磨煤机</th>
             <th></th>
-            <th style="width:10px;height:30px;"></th>
+            <th class="detailTableThClass" style="width:10px;height:30px;"></th>
 
-            <th style="width:100px;">管道31</th>
-            <th style="width:100px;">管道32</th>
-            <th style="width:100px;">管道33</th>
-            <th style="width:100px;">管道34</th>
+            <th class="detailTableThClass" style="width:100px;">管道 31</th>
+            <th class="detailTableThClass" style="width:100px;">管道 32</th>
+            <th class="detailTableThClass" style="width:100px;">管道 33</th>
+            <th class="detailTableThClass" style="width:100px;">管道 34</th>
         </tr>
         <jsp:include page="millTable.jsp"></jsp:include>
     </table>

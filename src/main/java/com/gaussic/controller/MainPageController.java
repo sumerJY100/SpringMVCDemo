@@ -3,13 +3,13 @@ package com.gaussic.controller;
 
 import com.gaussic.model.dcs_history.H000Pojo_Base;
 import com.gaussic.model.history.CoalPipingHistory;
-import com.gaussic.repository.*;
+
 import com.gaussic.service.CoalPipingHistoryService;
 import com.gaussic.service.MainPageService;
 
 import com.gaussic.service.PipeDataHandleServer;
 import com.gaussic.util.HandlDcsHistoryListUtil;
-import com.serotonin.json.JsonObject;
+
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,22 +26,11 @@ import java.util.*;
 @Controller
 public class MainPageController {
 
-    @Autowired
-    private CoalPipingRepository coalPipingRepository;
-    @Autowired
-    private CoalMillRepository coalMillRepository;
+
     @Autowired
     private MainPageService mainPageService;
     @Autowired
-    private CoalPipingHistoryRepositoryA coalPipingHistoryRepositoryA;
-    @Autowired
-    private CoalPipingHistoryRepositoryB coalPipingHistoryRepositoryB;
-    @Autowired
-    private CoalPipingHistoryRepositoryC coalPipingHistoryRepositoryC;
-    @Autowired
-    private CoalPipingHistoryRepositoryD coalPipingHistoryRepositoryD;
-    @Autowired
-    private CoalPipingHistoryService coalPipingHistoryService;
+    private CoalPipingHistoryService<? extends CoalPipingHistory> coalPipingHistoryService;
 
     public MainPageController() {
     }
@@ -49,7 +38,13 @@ public class MainPageController {
     /**
      * 获取四台磨的密度与风速的实时数据，并返回每台磨得磨煤量数据与磨煤机的电流数据
      *
-     * @return
+     * @return String JSONObject {time:_,
+     *  millA:{coalCurrent:_,coalCount:_,
+     *      pipe1:{pipeName:_,pipeId:_,density:_,Velocity:_},pipe2:{},pipe3:{},pipe4:{}},
+     *  millB:{},
+     *  millC:{},
+     *  millD:{}
+     * }
      */
     @RequestMapping(value = "/getAllMillRealTimeData", method = RequestMethod.GET, produces = "text/html;charset=UTF-8")
     @ResponseBody
@@ -66,10 +61,10 @@ public class MainPageController {
     }
 
     /**
-     * 根据millLocation，查询15分钟内的4根粉管的浓度数据
+     * 根据millLocation，查询15分钟内的4根粉管的【浓度】数据
      *
-     * @param millLocation
-     * @return
+     * @param millLocation  A B C D
+     * @return  [{time：long类型，data:[A浓度/速度，B浓度/速度，C浓度/速度，D浓度/速度]},{},{}]
      */
     @RequestMapping(value = "/getDensityRealTime15MinutesDataByMill", method = RequestMethod.GET, produces = "text/html;" +
             "charset=UTF-8")
@@ -93,10 +88,10 @@ public class MainPageController {
     }
 
     /**
-     * 根据millLocation，查询15分钟内的4根粉管的风速数据
+     * 根据millLocation，查询15分钟内的4根粉管的【风速】数据
      *
-     * @param millLocation
-     * @return
+     * @param millLocation  A B C D
+     * @return   [{time：long类型，data:[A浓度/速度，B浓度/速度，C浓度/速度，D浓度/速度]},{},{}]
      */
     @RequestMapping(value = "/getVelocityRealTime15MinutesDataByMill", method = RequestMethod.GET, produces = "text/html;" +
             "charset=UTF-8")

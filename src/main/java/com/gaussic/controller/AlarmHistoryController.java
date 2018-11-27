@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -38,7 +39,10 @@ public class AlarmHistoryController {
             (value = "offset", required = false) int offset) {
 
 //        List<AlarmHistoryEntity> alarmHistoryEntityList = alarmHistoryRepository.findAlarmHistoryByPage(limit,offset);
-        Pageable pageable = new PageRequest(offset, limit);
+        int page = offset/limit;
+        System.out.println("page:" + page + ",offset:" + offset);
+        Sort sort = new Sort(Sort.Direction.DESC,"aAlarmTime");
+        Pageable pageable = new PageRequest(offset/limit, limit,sort);
         Page<AlarmHistoryEntity> alarmHistoryEntityPage = alarmHistoryRepository.findAll(pageable);
         long totalElements = alarmHistoryEntityPage.getTotalElements();
         long totalPages = alarmHistoryEntityPage.getTotalPages();
@@ -48,12 +52,15 @@ public class AlarmHistoryController {
         jsonObject.put("total", totalElements);
 //        jsonObject.put("rows",totalPages);
         JSONArray jsonArray = new JSONArray();
+        offset++;
         for (AlarmHistoryEntity a : list) {
             LocalDateTime localDateTime = a.getaAlarmTime().toLocalDateTime();
             LocalDate localDate = localDateTime.toLocalDate();
             LocalTime localTime = localDateTime.toLocalTime();
             JSONObject jsonObject1 = new JSONObject();
             jsonObject1.put("id", a.getId());
+            int index = offset ++;
+            jsonObject1.put("index",index);
             jsonObject1.put("alarmDate", localDate);
             jsonObject1.put("alarmTime", localTime);
 

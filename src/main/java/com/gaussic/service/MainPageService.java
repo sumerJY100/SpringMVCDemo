@@ -121,7 +121,7 @@ public class MainPageService {
             //生成1台磨的实时数据，此数据进行平滑处理
             JSONObject millAJsonObj = getMillRealTimeDataToJsonObjByMillIdAndPipeIds(millId, pipe1Id,pipe2Id,pipe3Id, pipe4Id);
             jsonObject.put("millA", millAJsonObj);
-            jsonObject.put("time", new Date().getTime());
+            jsonObject.put("time", ((long)(new Date().getTime()/1000)) * 1000);
             //磨煤机的磨煤量数据
             float millData = getMillCount(coalMillEntity);
             //磨煤机的电流数据

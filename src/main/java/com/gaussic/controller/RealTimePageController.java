@@ -99,8 +99,9 @@ public class RealTimePageController {
     /**
      * 根据磨煤机的编号，返回一台磨煤机的实时数据，包括4根粉管的风速、密度，磨煤机的磨煤量与电流
      *
-     * @param mill
-     * @return
+     * @param mill String A B C D
+     * @return  String JSONObject {time:_,millCurrent:_,millData:_,
+     * millA:{pipe1:{density:_,Velocity:_},pipe2:{}, pipe3:{},pipe4:{}}}
      */
     @RequestMapping(value = "/getMillRealTimeData", method = RequestMethod.GET, produces = "text/html;charset=UTF-8")
     @ResponseBody

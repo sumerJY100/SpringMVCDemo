@@ -5,6 +5,27 @@
     background: white;
 }
 
+.detailTableThClass {
+    width: 100px;
+    font-family: '微软雅黑 Light', serif;
+    font-size: 13px;
+    font-weight: normal
+}
+
+.detailTableMillNameClass {
+    font-family: '微软雅黑 Light', serif;
+    font-weight: lighter;
+    font-size: 14px;
+}
+
+.detailTableRowTdClass {
+    font-family: '微软雅黑 Light', serif;
+    font-weight: normal;
+    font-size: 7px;
+}
+.oddTd{
+    background-color:rgba(53,53,55,0.18)
+}
 /*//绝对定位，这个是随页面走动的，可以换成fixed，不随页面走动。*/
 .container1 {
     left: 100px;
@@ -45,6 +66,6 @@
 }
 
 /*按钮被选择以后，按钮的样式*/
-.currentBtnClass{
-    border:2px solid red;
+.currentBtnClass {
+    border: 2px solid red;
 }

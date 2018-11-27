@@ -192,7 +192,7 @@ function initGroup() {
         exporting: {enabled: false},
         legend: {
             align: "right",
-            verticalAlign: "bottom",
+            verticalAlign: "top",
             floating: true,
             y: 10,
             itemDistance: 5,

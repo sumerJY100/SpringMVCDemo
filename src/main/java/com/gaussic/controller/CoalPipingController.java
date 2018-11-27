@@ -205,22 +205,6 @@ public class CoalPipingController {
         return new Timestamp(c.getTimeInMillis());
     }
 
-    private List<? extends CoalPipingHistory> findCoalPipingHistoryByMillTypeAndLastesTime(Timestamp laestTimestamp,
-                                                                                           String millLocation){
-        List<? extends CoalPipingHistory> list = null;
-        if(null != millLocation){
-            if(millLocation.equals("A")){
-                list = coalPipingHistoryRepositoryA.findByHTimeAfterOrderByHTimeAsc(laestTimestamp);
-            }else if(millLocation.equals("B")){
-                list = coalPipingHistoryRepositoryB.findByHTimeAfterOrderByHTimeAsc(laestTimestamp);
-            }else if(millLocation.equals("C")){
-                list = coalPipingHistoryRepositoryC.findByHTimeAfterOrderByHTimeAsc(laestTimestamp);
-            }else if(millLocation.equals("D")){
-                list = coalPipingHistoryRepositoryD.findByHTimeAfterOrderByHTimeAsc(laestTimestamp);
-            }
-        }
-        return list;
-    }
     private JSONArray generateVelocityInitDataJsonArray(List<? extends  CoalPipingHistory> list){
         return generateDensityOrVelocityInitDataJsonArray(list,"velocity");
     }

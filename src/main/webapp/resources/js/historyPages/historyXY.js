@@ -189,8 +189,13 @@ function initTable() {
         $table.find("tr:eq(2)").find("td:eq(14)").html(xDif.toFixed(2));
         $table.find("tr:eq(3)").find("td:eq(14)").html(yDif.toFixed(2));
 
-        $table.find("tr:eq(2)").find("td:eq(15)").html((xDif / xyAvg * 100).toFixed(2) + "%");
-        $table.find("tr:eq(3)").find("td:eq(15)").html((yDif / xyAvg * 100).toFixed(2) + "%");
+        if(xyAvg === 0){
+            $table.find("tr:eq(2)").find("td:eq(15)").html("0" + "%");
+            $table.find("tr:eq(3)").find("td:eq(15)").html("0" + "%");
+        }else {
+            $table.find("tr:eq(2)").find("td:eq(15)").html((xDif / xyAvg * 100).toFixed(2) + "%");
+            $table.find("tr:eq(3)").find("td:eq(15)").html((yDif / xyAvg * 100).toFixed(2) + "%");
+        }
     }
 }
 

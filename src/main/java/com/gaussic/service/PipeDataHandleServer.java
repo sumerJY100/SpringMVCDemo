@@ -23,13 +23,16 @@ public class PipeDataHandleServer {
 
     /**
      * 对浓度与速度进行平滑处理，并将数据对应实际的磨煤量与风速
+     *  浓度平滑处理，浓度实际值处理
+     *  风速平滑处理，风速实际值处理
      *
-     * @param coalPipingHistoryList
+     * @param coalPipingHistoryList List<? extends CoalPipingHistory> coalPipingHistoryList
      */
     public static void updatePipeDensityAndVelocityWithAvgHandle(List<? extends CoalPipingHistory>
                                                                          coalPipingHistoryList) {
         //将4个粉管的浓度与风速形成float[]对象，进行平滑处理
         Map<String, float[]> map = getHandlerDensityAndVelocityData(coalPipingHistoryList);
+        //浓度与风速的实际值处理
         if (null != map) {
             float[] d1 = map.get("d1"), d2 = map.get("d2"), d3 = map.get("d3"), d4 = map.get("d4");
             float[] v1 = map.get("v1"), v2 = map.get("v2"), v3 = map.get("v3"), v4 = map.get("v4");
@@ -41,21 +44,22 @@ public class PipeDataHandleServer {
                     mill = coalPipingHistory.getCoalMillValue();
                 }
 //                        mill = mill/100;
-                float[] densityArr = new float[]{d1[i], d2[i], d3[i], d4[i]};
-                Float desity1Real = PipeDataHandleServer.getDencityRealValue(d1[i], mill, densityArr);
-                Float desity2Real = PipeDataHandleServer.getDencityRealValue(d2[i], mill, densityArr);
-                Float desity3Real = PipeDataHandleServer.getDencityRealValue(d3[i], mill, densityArr);
-                Float desity4Real = PipeDataHandleServer.getDencityRealValue(d4[i], mill, densityArr);
-
+                Float[] densityArr = new Float[]{d1[i], d2[i], d3[i], d4[i]};
+                //浓度实际值处理
+                Float density1Real = PipeDataHandleServer.getDencityRealValue(d1[i], mill, densityArr);
+                Float density2Real = PipeDataHandleServer.getDencityRealValue(d2[i], mill, densityArr);
+                Float density3Real = PipeDataHandleServer.getDencityRealValue(d3[i], mill, densityArr);
+                Float density4Real = PipeDataHandleServer.getDencityRealValue(d4[i], mill, densityArr);
+                //风速实际值处理
                 Float velocity1Real = PipeDataHandleServer.getVelocityRealValue(v1[i]);
                 Float velocity2Real = PipeDataHandleServer.getVelocityRealValue(v2[i]);
                 Float velocity3Real = PipeDataHandleServer.getVelocityRealValue(v3[i]);
                 Float velocity4Real = PipeDataHandleServer.getVelocityRealValue(v4[i]);
 
-                coalPipingHistory.sethPipeADencity(desity1Real);
-                coalPipingHistory.sethPipeBDencity(desity2Real);
-                coalPipingHistory.sethPipeCDencity(desity3Real);
-                coalPipingHistory.sethPipeDDencity(desity4Real);
+                coalPipingHistory.sethPipeADencity(density1Real);
+                coalPipingHistory.sethPipeBDencity(density2Real);
+                coalPipingHistory.sethPipeCDencity(density3Real);
+                coalPipingHistory.sethPipeDDencity(density4Real);
 
                 coalPipingHistory.sethPipeAVelocity(velocity1Real);
                 coalPipingHistory.sethPipeBVelocity(velocity2Real);
@@ -67,10 +71,12 @@ public class PipeDataHandleServer {
     }
 
     /**
-     * 返回平滑处理后的浓度与风速数据
-     *
-     * @param coalPipeHistoryEntityList
-     * @return
+     * 返回平滑处理后的浓度与风速数据,封装成Map<String,float[]>对象
+     *  map中的健值对象为：d1：pipe1的浓度数据的数组
+     *                    v1: pipe1的风速数据的数组
+     *  所有对象为：d1,d2,d3,d4,v1,v2,v3,v4
+     * @param coalPipeHistoryEntityList List<? extends CoalPipingHistory> coalPipeHistoryEntityList
+     * @return  Map<String,float[]>
      */
     public static Map<String, float[]> getHandlerDensityAndVelocityData(List<? extends CoalPipingHistory>
                                                                                 coalPipeHistoryEntityList) {
@@ -136,29 +142,29 @@ public class PipeDataHandleServer {
         JSONObject millPipe2JsonObj = millObj.getJSONObject("pipe2");
         JSONObject millPipe3JsonObj = millObj.getJSONObject("pipe3");
         JSONObject millPipe4JsonObj = millObj.getJSONObject("pipe4");
-        float mill = millObj.getFloat("coalCount");
-        float pipe1Density = millPipe1JsonObj.getFloat("density");
-        float pipe2Density = millPipe2JsonObj.getFloat("density");
-        float pipe3Density = millPipe3JsonObj.getFloat("density");
-        float pipe4Density = millPipe4JsonObj.getFloat("density");
-        float[] densityArr = new float[]{pipe1Density, pipe2Density, pipe3Density, pipe4Density};
+        Float mill = millObj.getFloat("coalCount");
+        Float pipe1Density = millPipe1JsonObj.getFloat("density");
+        Float pipe2Density = millPipe2JsonObj.getFloat("density");
+        Float pipe3Density = millPipe3JsonObj.getFloat("density");
+        Float pipe4Density = millPipe4JsonObj.getFloat("density");
+        Float[] densityArr = new Float[]{pipe1Density, pipe2Density, pipe3Density, pipe4Density};
 
 
-        float pipe1Velocity = millPipe1JsonObj.getFloat("Velocity");
-        float pipe2Velocity = millPipe2JsonObj.getFloat("Velocity");
-        float pipe3Velocity = millPipe3JsonObj.getFloat("Velocity");
-        float pipe4Velocity = millPipe4JsonObj.getFloat("Velocity");
+        Float pipe1Velocity = millPipe1JsonObj.getFloat("Velocity");
+        Float pipe2Velocity = millPipe2JsonObj.getFloat("Velocity");
+        Float pipe3Velocity = millPipe3JsonObj.getFloat("Velocity");
+        Float pipe4Velocity = millPipe4JsonObj.getFloat("Velocity");
 
-        float pipe1DensityReal = getDencityRealValue(pipe1Density, mill, densityArr);
-        float pipe2DensityReal = getDencityRealValue(pipe2Density, mill, densityArr);
-        float pipe3DensityReal = getDencityRealValue(pipe3Density, mill, densityArr);
-        float pipe4DensityReal = getDencityRealValue(pipe4Density, mill, densityArr);
+        Float pipe1DensityReal = getDencityRealValue(pipe1Density, mill, densityArr);
+        Float pipe2DensityReal = getDencityRealValue(pipe2Density, mill, densityArr);
+        Float pipe3DensityReal = getDencityRealValue(pipe3Density, mill, densityArr);
+        Float pipe4DensityReal = getDencityRealValue(pipe4Density, mill, densityArr);
 
 
-        float pipe1VelocityReal = getVelocityRealValue(pipe1Velocity);
-        float pipe2VelocityReal = getVelocityRealValue(pipe2Velocity);
-        float pipe3VelocityReal = getVelocityRealValue(pipe3Velocity);
-        float pipe4VelocityReal = getVelocityRealValue(pipe4Velocity);
+        Float pipe1VelocityReal = getVelocityRealValue(pipe1Velocity);
+        Float pipe2VelocityReal = getVelocityRealValue(pipe2Velocity);
+        Float pipe3VelocityReal = getVelocityRealValue(pipe3Velocity);
+        Float pipe4VelocityReal = getVelocityRealValue(pipe4Velocity);
 
 
         millPipe1JsonObj.put("Velocity", pipe1VelocityReal);
@@ -207,7 +213,7 @@ public class PipeDataHandleServer {
      * @param densityArr 4个粉管的浓度电压值信号的数组
      * @return float 当前浓度电压值对应的 实际浓度数据
      */
-    public static float getDencityRealValue(float dencity, float mill, float[] densityArr) {
+    public static float getDencityRealValue(Float dencity, Float mill, Float[] densityArr) {
         float densityReal = 0f;
 
 //        float totalDensity = pipe1Density + pipe2Density + pipe3Density + pipe4Density;
@@ -240,10 +246,17 @@ public class PipeDataHandleServer {
                     count++;
                 }
             }*/
+           /* List<Object > objectList = Arrays.asList(densityArr);
+            objectList.forEach(o->{
+                System.out.println("o:" + o + "," + o.getClass().getSimpleName());
+            });
+            Stream.of(densityArr).forEach(x-> System.out.println(x + "," + x.getClass().getSimpleName()));
+            List<Float> list = Arrays.asList(densityArr).stream().map(Float.class::cast).collect(Collectors.toList());
+            List<Double> list1 = Arrays.asList(densityArr).stream().map(Float.class::cast).map(Float::doubleValue).collect(Collectors.toList());
+            List<Double> doubleList =  Arrays.asList(densityArr).stream().map(Float.class::cast).map(Float::doubleValue).filter(d->d>500000).filter(d->d<20000000).collect(Collectors.toList());
+            List<Double> doubleList =  Arrays.asList(densityArr).stream().map(Float.class::cast).map(Float::doubleValue).filter(d->d>500000).filter(d->d<20000000).collect(Collectors.toList());*/
 
-
-
-            List<Double> doubleList = Stream.of(densityArr).map(Double.class::cast).filter(d->d>500000).filter(d->d<20000000).collect(Collectors.toList());
+            List<Double> doubleList = Stream.of(densityArr).map(Float.class::cast).map(Float::doubleValue).filter(d->d>500000).filter(d->d<20000000).collect(Collectors.toList());
             int count = doubleList.size();
             float totalDensity = (float) doubleList.stream().mapToDouble(Double::doubleValue).sum();
 

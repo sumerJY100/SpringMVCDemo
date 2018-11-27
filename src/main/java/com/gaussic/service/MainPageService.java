@@ -35,12 +35,18 @@ public class MainPageService {
     @Autowired
     private CoalMillRepository coalMillRepository;
     @Autowired
-    private CoalPipingHistoryService coalPipingHistoryService;
+    private CoalPipingHistoryService<? extends CoalPipingHistory> coalPipingHistoryService;
 
     /**
      * 获取四台磨的密度与风速的实时数据，包含磨煤机的磨煤量
      *
-     * @return
+     * @return  String JSONObject {time:_,
+     *  millA:{coalCurrent:_,coalCount:_,
+     *      pipe1:{pipeName:_,pipeId:_,density:_,Velocity:_},pipe2:{},pipe3:{},pipe4:{}},
+     *  millB:{},
+     *  millC:{},
+     *  millD:{}
+     * }
      */
     public String getAllMillRealTimeData() {
         JSONObject jsonObject = new JSONObject();
@@ -49,7 +55,7 @@ public class MainPageService {
         JSONObject millCJsonObj = getMillRealTimeDataToJsonObjByMillIdAndPipeIds(3L, 31, 32, 33, 34);
         JSONObject millDJsonObj = getMillRealTimeDataToJsonObjByMillIdAndPipeIds(4L, 41, 42, 43, 44);
 
-        jsonObject.put("time", new Date().getTime());
+        jsonObject.put("time", new Date().getTime()/1000 *1000);
         jsonObject.put("millA", millAJsonObj);
         jsonObject.put("millB", millBJsonObj);
         jsonObject.put("millC", millCJsonObj);
@@ -60,11 +66,16 @@ public class MainPageService {
 
     /**获取A磨得4根粉管的实时数据
      *
-     * 此方法为临时方法，已经停用，并且磨煤机的磨煤量数据为临时的随机数据
+     * 此方法为临时方法，已经停用，并且磨煤机的【磨煤量数据为临时的随机数据】
      *
-     * @return
+     * @return  String  JSONObject
+     *          { time:_, millData:_,millCurrent:_,
+     *              pipe1:{density:_,Velocity:_},
+     *              pipe2:{},pipe3:{},pipe4:{}
+     *          }
      */
-    public String getMillARealTimeData() {
+
+    /*public String getMillARealTimeData() {
         JSONObject jsonObject = new JSONObject();
         JSONObject millAPipe1JsonObj = getMillPipingJsonObj(11L);
         JSONObject millAPipe2JsonObj = getMillPipingJsonObj(12L);
@@ -80,13 +91,15 @@ public class MainPageService {
         jsonObject.put("millData", (int) (Math.random() * 100) + 30);
         jsonObject.put("millA", millAJsonObj);
         return jsonObject.toString();
-    }
+    }*/
 
     /**
      * 根据磨煤机的编号，返回当前磨煤机对应的所有风管的风速、密度与磨煤量数据【实时数据】
-     *
-     * @param mill
-     * @return
+     *  一台磨的数据
+     *  数据经过了平滑均值处理，提取了当前时间【30秒 - 230秒】的数据进行处理，获取最后30个数据再进行平均，得到最终的浓度与风速
+     * @param mill  A B C D
+     * @return  String JSONObject {time:_,millCurrent:_,millData:_,
+     * millA:{pipe1:{density:_,Velocity:_},pipe2:{}, pipe3:{},pipe4:{}}}
      */
     public String getMillRealTimeData(String mill) {
         JSONObject jsonObject = new JSONObject();
@@ -178,8 +191,8 @@ public class MainPageService {
     /**
      * 获取单根粉管的实时风速与实时磨煤量,封装成jsonObject
      *
-     * @param coalMillAPiping1Entity
-     * @return
+     * @param coalMillAPiping1Entity    CoalPipingEntity
+     * @return  JSONObject {pipeId:_,pipeName:_,density:_,Velocity:_}
      */
     private JSONObject getMillPipingJsonObj(CoalPipingEntity coalMillAPiping1Entity) {
         JSONObject millAPipe1JsonObj = new JSONObject();
@@ -193,8 +206,8 @@ public class MainPageService {
     /**
      * 获取单根粉管的实时风速与实时磨煤量,封装成jsonObject
      *
-     * @param coalPipingId
-     * @return
+     * @param coalPipingId  coalPipingId
+     * @return  JSONObject {pipeId:_,pipeName:_,density:_,Velocity:_}
      */
     private JSONObject getMillPipingJsonObj(Long coalPipingId) {
         //TODO 改变数据的显示方式
@@ -204,11 +217,12 @@ public class MainPageService {
     }
 
     /**
-     * 获取单根粉管的实时风速与实时磨煤量，封装成jsonObject
+     * 获取单根粉管【实时】风速与实时磨煤量，封装成jsonObject
      *
-     * @param coalPipingId
-     * @param handleType   DATA_SHOW_TYPE_ORIGINAL使用原始数据，DATA_SHOW_TYPE_AVG使用平滑均值处理后的数据
-     * @return
+     * @param coalPipingId  Long coalPipingId
+     * @param handleType   DATA_SHOW_TYPE_ORIGINAL使用原始数据，
+     *                     DATA_SHOW_TYPE_AVG使用平滑均值处理后的数据
+     * @return  JSONObject {pipeId:_,pipeName:_,density:_,Velocity:_}
      */
     private JSONObject getMillPipingJsonObj(Long coalPipingId, int handleType) {
         if (handleType == DATA_SHOW_TYPE_ORIGINAL) {
@@ -224,8 +238,8 @@ public class MainPageService {
     /**
      * 获取单根粉管的历史平滑数据后的实时数据，将数据平滑处理，封装成jsonObject
      *
-     * @param coalPipingId
-     * @return
+     * @param coalPipingId Long coalPipingId
+     * @return  JSONObject {pipeId:_,pipeName:_,density:_,Velocity:_}
      */
     private JSONObject getMillPipingJsonObjForAvg(Long coalPipingId) {
         //TODO 未进行
@@ -243,7 +257,7 @@ public class MainPageService {
 
 
     /**
-     * 查询磨煤机的磨煤量数据
+     * 查询磨煤机的磨煤量数据，磨煤量的实时数据
      *
      * @param coalMillEntity 磨煤机entity
      * @return  浮点数据
@@ -254,7 +268,7 @@ public class MainPageService {
     }
 
     /**
-     * 查询磨煤机的磨煤机电流数据
+     * 查询磨煤机的磨煤机电流数据，磨煤机电流的实时数据
      *
      * @param coalMillEntity 磨煤机entity
      * @return float
@@ -318,7 +332,7 @@ public class MainPageService {
 
         Timestamp end = Timestamp.valueOf(now.minusSeconds(30));
         Timestamp begin = Timestamp.valueOf(now.minusSeconds(230));
-        List<CoalPipingHistory> coalPipingHistoryList = coalPipingHistoryService.findMillPipeDataHistoryByMillLocation(coalMillId, begin, end);
+        List<? extends  CoalPipingHistory> coalPipingHistoryList = coalPipingHistoryService.findMillPipeDataHistoryByMillLocation(coalMillId, begin, end);
         //将风速与密度封装成float[]数组对象，对应v1，d1等数据，并进行了平滑均值处理
         Map<String, float[]> map = PipeDataHandleServer.getHandlerDensityAndVelocityData(coalPipingHistoryList);
 
@@ -338,55 +352,53 @@ public class MainPageService {
         millAJsonObj.put("coalCount", getMillCount(coalMillEntity));
         //磨煤机电流
         millAJsonObj.put("coalCurrent", getMillCurrent(coalMillEntity));
-
-
         millAJsonObj.put("pipe1", millPipe1JsonObj);
         millAJsonObj.put("pipe2", millPipe2JsonObj);
         millAJsonObj.put("pipe3", millPipe3JsonObj);
         millAJsonObj.put("pipe4", millPipe4JsonObj);
-
-        /*******************浓度与风速，更正为真实的浓度与风速******begin*****************/
+        ///*******************浓度与风速，更正为真实的浓度与风速******begin*****************/
         PipeDataHandleServer.updatePipeDensityAndVelocity(millAJsonObj);
-        /*******************浓度与风速，更正为真实的浓度与风速******end*****************/
-
-
-
+        ///*******************浓度与风速，更正为真实的浓度与风速******end*****************/
         return millAJsonObj;
     }
 
 
-    /*public static void main(String[] args) {
-        float f = 11;
-        float operatorValue = 1.8f;
-        float distance = 5.0f;
-        float pipe1VelocityReal = ((int)(distance/(f * operatorValue) * 1000))/10f;
-        System.out.println(pipe1VelocityReal);
-    }*/
+    /**
+     * 获取最新的一个数据
+     * 默认使用30个数据的平均数
+     * @param arr   float[] arr 数组
+     * @return  float 处理后的数据
+     */
+    public static float getLatestValue(float[] arr){
+        int type = DATA_SHOW_TYPE_AVG;
+        return getLatestValue(arr,type);
+    }
     /**
      * 数据均值处理，返回一个float数据
      * type==1的时候，取最后一个数据
      * 当type == 2的时候，取最后30个数据进行均值
-     * @param arr
-     * @return
+     * @param arr   float[] arr 数组
+     * @param type int type type==1的时候，使用最近的数据，不进行处理
+     *                      type==2时，使用最近30个数据的平均数
+     * @return  float 处理后的数据
      */
-    public static float getLatestValue(float[] arr) {
-        //TODO 重要的数据点，1位取最后一个数据，2位最后30个数据取均值
-        int type = 2;
+    public static float getLatestValue(float[] arr,int type) {
+        // 重要的数据点，type==1为取最后一个数据，type==2为最后30个数据取均值
+//        int type = 2;
         float result = 0;
-        if(type == 1) {
-
+        if(DATA_SHOW_TYPE_ORIGINAL == type) {
             if (null != arr && arr.length > 0) {
                 int length = arr.length;
                 result = arr[length - 1];
             }
-        }else if(type == 2){
+        }else if(DATA_SHOW_TYPE_AVG == type){
             if(null != arr ) {
                 if (arr.length > 30) {
                     int length = arr.length;
                     float[] arrForAvg = Arrays.copyOfRange(arr, length - 30, length);
                     float total = 0f;
-                    for(int i=0;i<arrForAvg.length;i++){
-                        total+=arrForAvg[i];
+                    for (float anArrForAvg : arrForAvg) {
+                        total += anArrForAvg;
                     }
                     result = total/arrForAvg.length;
                 }

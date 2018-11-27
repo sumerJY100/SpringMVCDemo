@@ -219,7 +219,7 @@ public class CoalPipingHistoryService<T extends CoalPipingHistory> {
                         if(null == mill)
                             mill = 100f;
 //                        mill = mill/100;
-                        float[] densityArr = new float[]{d1[i], d2[i], d3[i], d4[i]};
+                        Float[] densityArr = new Float[]{d1[i], d2[i], d3[i], d4[i]};
                         Float desity1Real = 0f;
                         Float desity2Real = 0f;
                         Float desity3Real = 0f;

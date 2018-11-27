@@ -197,6 +197,7 @@ function initGroup() {
             y: 10,
             itemDistance: 5,
             itemStyle: {fontFamily: "宋体", fontWeight: 'light'}
+
         }, credits: {
             enabled: false
         }

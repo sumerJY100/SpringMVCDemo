@@ -74,7 +74,7 @@ public class TaskForDcsSendData {
                     float pipe2Density = MainPageService.getLatestValue(map.get("d2"));
                     float pipe3Density = MainPageService.getLatestValue(map.get("d3"));
                     float pipe4Density = MainPageService.getLatestValue(map.get("d4"));
-                    float[] densityArr = new float[]{pipe1Density, pipe2Density, pipe3Density, pipe4Density};
+                    Float[] densityArr = new Float[]{pipe1Density, pipe2Density, pipe3Density, pipe4Density};
                     float pipe1DensityReal = PipeDataHandleServer.getDencityRealValue(pipe1Density, mill, densityArr);
                     float pipe2DensityReal = PipeDataHandleServer.getDencityRealValue(pipe2Density, mill, densityArr);
                     float pipe3DensityReal = PipeDataHandleServer.getDencityRealValue(pipe3Density, mill, densityArr);

@@ -330,9 +330,9 @@ public class CoalPipingHistoryService<T extends CoalPipingHistory> {
                     }else if(pipeId%10 == 4){
                         x = c.gethPipeDX();y=c.gethPipeDY();v=c.gethPipeDV();
                     }
-                    jsonArrayForX.put(x);
-                    jsonArrayForY.put(y);
-                    jsonArrayForV.put(v);
+                    jsonArrayForX.put(Optional.ofNullable(x).orElse(0f));
+                    jsonArrayForY.put(Optional.ofNullable(y).orElse(0f));
+                    jsonArrayForV.put(Optional.ofNullable(v).orElse(0f));
 
                     jsonArrayForCoalMill.put(c.getCoalMillValue());
                 }

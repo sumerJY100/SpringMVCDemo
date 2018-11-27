@@ -38,7 +38,7 @@ public class MainPageService {
     private CoalPipingHistoryService coalPipingHistoryService;
 
     /**
-     * 获取四台磨的密度与风速的实时数据，包含磨煤机的
+     * 获取四台磨的密度与风速的实时数据，包含磨煤机的磨煤量
      *
      * @return
      */
@@ -293,13 +293,14 @@ public class MainPageService {
 
     /**
      * 生成一台磨得实时数据，包含4个粉管的风速、密度，磨煤机的磨煤量、磨煤机电流
+     *  获取【30秒-230秒】之前的数据，进行平滑处理，返回最近30个数据的平均值
      *  2018-11-13 浓度与风速进行数据处理，得到真实的浓度与风速
-     * @param coalMillId
-     * @param pipe1Id
-     * @param pipe2Id
-     * @param pipe3Id
-     * @param pipe4Id
-     * @return
+     * @param coalMillId    coalMillId
+     * @param pipe1Id       pipe1Id
+     * @param pipe2Id       pipe2Id
+     * @param pipe3Id       pipe3Id
+     * @param pipe4Id       pipe4Id
+     * @return  {coalCount:_,coalCurrent:_,pipe1:{Velocity:_,density:_},pipe2:{},pipe3:{},pipe4:{}}
      */
     public JSONObject getMillRealTimeDataToJsonObjByMillIdAndPipeIds(Long coalMillId, long pipe1Id, long pipe2Id, long pipe3Id, long pipe4Id) {
 

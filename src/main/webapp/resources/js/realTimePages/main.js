@@ -172,7 +172,8 @@ function freshRealTimeMainPageTable(millADensityData, millAVelocityData, millADe
     var $table = $("#realTimeTable");
     // alert(millCurrent);
     //运行状态
-    $table.find("tr:eq(1) th:eq(0)").html(millCurrent);
+    // $table.find("tr:eq(1) th:eq(0)").html(millCurrent);
+    $table.find("tr:eq(1) th:eq(0)").html("磨煤量");
     // alert($table.find("tr:eq(1) th:eq(0)").html());
     //磨煤机磨煤量
     $table.find("tr:eq(3) td:eq(0)").html(mill);

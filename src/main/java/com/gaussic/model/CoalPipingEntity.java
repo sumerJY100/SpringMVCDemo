@@ -8,6 +8,7 @@ import java.sql.Timestamp;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.function.Predicate;
 
 @Entity
 @Table(name = "coal_piping", schema = "wind", catalog = "")
@@ -291,6 +292,38 @@ public class CoalPipingEntity {
         this.alarmHistoryEntity = alarmHistoryEntity;
     }
 
+
+    public AlarmHistoryEntity getAlarmHistoryEntity(List<AlarmHistoryEntity> alarmHistoryEntities){
+        for(AlarmHistoryEntity alarmHistoryEntity:alarmHistoryEntities){
+            if(alarmHistoryEntity.getaAlarmPipeId().equals(this.getCoalMillEntity().getId())){
+                return alarmHistoryEntity;
+            }
+        }
+        return null;
+    }
+    public AlarmHistoryEntity getAlarmHistoryEntity2(List<AlarmHistoryEntity> alarmHistoryEntities){
+
+        Predicate<AlarmHistoryEntity> predicate = o -> o.getaAlarmPipeId().equals(this.getId());
+        return alarmHistoryEntities.stream().filter(predicate).findFirst().orElse(null);
+    }
+
+
+
+
+
+    public boolean hasAlarmHistory(List<AlarmHistoryEntity> alarmHistoryEntities){
+        for(AlarmHistoryEntity alarmHistoryEntity:alarmHistoryEntities){
+            if(alarmHistoryEntity.getaAlarmPipeId().equals(this.getCoalMillEntity().getId())){
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public boolean hasAlarmHistory2(List<AlarmHistoryEntity> alarmHistoryEntities){
+        Predicate<AlarmHistoryEntity> predicate = o -> o.getaAlarmPipeId().equals(this.getId());
+        return alarmHistoryEntities.stream().anyMatch(predicate);
+    }
     @Transient
     public Float getX() {
         return x;

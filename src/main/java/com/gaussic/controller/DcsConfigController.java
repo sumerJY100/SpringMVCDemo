@@ -1,5 +1,6 @@
 package com.gaussic.controller;
 
+import com.gaussic.model.AlarmHistoryEntity;
 import com.gaussic.model.dcs.DeviceDcsPojo;
 import com.gaussic.model.dcs.DevicePointPojo;
 import com.gaussic.model.dcsRemote.DcsRemotePointPojo;
@@ -9,12 +10,21 @@ import com.serotonin.json.JsonObject;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import javax.persistence.criteria.*;
+import java.util.Comparator;
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * @ClassName DcsConfigController
@@ -70,14 +80,14 @@ public class DcsConfigController {
 
         jsonObject.put("devicePort",deviceDcsPojo.getDevicePort());
         jsonObject.put("deviceBoundRate",deviceDcsPojo.getDeviceBoundRate());
-        jsonObject.put("deviceLinkState",deviceDcsPojo.getDeviceLinkState());
+        jsonObject.put("deviceLinkState",deviceDcsPojo.getDeviceLinkStateString());
         jsonObject.put("deviceNote",deviceDcsPojo.getDeviceNote());
         jsonObject.put("deviceNum",deviceDcsPojo.getDeviceNum());
         jsonObject.put("deviceFlowControlIn",deviceDcsPojo.getDeviceFlowControlIn());
         jsonObject.put("deviceFlowControlOut",deviceDcsPojo.getDeviceFlowControlOut());
         jsonObject.put("deviceDataBits",deviceDcsPojo.getDeviceDataBits());
         jsonObject.put("deviceStopBits",deviceDcsPojo.getDeviceStopBits());
-        jsonObject.put("deviceParity",deviceDcsPojo.getDeviceParity());
+        jsonObject.put("deviceParity",deviceDcsPojo.getDeviceParityString());
         jsonArray.put(jsonObject);
 
         resultJsonObject.put("rows",jsonArray);
@@ -112,22 +122,49 @@ public class DcsConfigController {
      **/
     @RequestMapping(value="remoteGetDataIndex" ,method=RequestMethod.GET,produces="text/html;charset=UTF-8")
     @ResponseBody
-    public String remoteGetDataIndex(){
-        JSONObject jsonObject = new JSONObject();
-        try {
-            List<DevicePointPojo> devicePointPojoList = devicePointRepository.findByPointNameNotLike("");
+    public String remoteGetDataIndex(@RequestParam(value = "limit", required = false) int limit, @RequestParam
+            (value = "offset", required = false) int offset){
+        int page = offset/limit;
+        Sort sort = new Sort(Sort.Direction.ASC,"pointHistoryDeviceTableName");
+        Pageable pageable = new PageRequest(page, limit,sort);
+        String pointNameNotLike = "";
+        Specification<DevicePointPojo> specification = new Specification<DevicePointPojo>() {
+            @Override
+            public Predicate toPredicate(Root root, CriteriaQuery criteriaQuery, CriteriaBuilder criteriaBuilder) {
+                Path<String> $PointName = root.get("pointName");
+                Predicate key = criteriaBuilder.notEqual($PointName, "" + pointNameNotLike + "");
 
+                return criteriaBuilder.and(key);
+            }
+        };
+        Page<DevicePointPojo> devicePointPojoPage = devicePointRepository.findAll(specification, pageable);
+        long totalElements = devicePointPojoPage.getTotalElements();
+        long totalPages = devicePointPojoPage.getTotalPages();
+        List<DevicePointPojo> devicePointPojoList = devicePointPojoPage.getContent();
+
+
+        JSONObject jsonObject = new JSONObject();
+        jsonObject.put("total", totalElements);
+        try {
+//            List<DevicePointPojo> devicePointPojoList = devicePointRepository.findByPointNameNotLike("");
+            System.out.println("devicePointPojoList:" + devicePointPojoList.size() + ",totalElements:" + totalElements);
             if (null != devicePointPojoList && devicePointPojoList.size() > 0) {
 
-                jsonObject.put("total", devicePointPojoList.size());
+//                jsonObject.put("total", devicePointPojoList.size());
                 JSONArray jsonArray = new JSONArray();
-                devicePointPojoList.forEach((p) -> {
+                int count = 1;
+//                devicePointPojoList.forEach((p) -> {
+                for(int i=0;i<devicePointPojoList.size();i++){
+                    DevicePointPojo p = devicePointPojoList.get(i);
                     if(null == p.getPointName()){
                         System.out.println("---------------------");
                     }
                     JSONObject jo = new JSONObject();
+                    jo.put("index",i+1+offset);
                     jo.put("pointId", p.getPointId());
                     jo.put("dcsId", p.getDeviceDcsPojo().getDeviceId());
+                    jo.put("dcsName", p.getDeviceDcsPojo().getDeviceName());
+
                     jo.put("pointName", p.getPointName());
                     jo.put("pointAddress", p.getPointAddress());
                     //数据类型参照 DataType的数据类型进行配置
@@ -146,7 +183,7 @@ public class DcsConfigController {
                         jo.put("realTime", "--");
                     }
                     jsonArray.put(jo);
-                });
+                }
                 jsonObject.put("rows", jsonArray);
             }
 //        System.out.println(jsonObject.toString());
@@ -181,30 +218,51 @@ public class DcsConfigController {
      **/
     @RequestMapping(value="remoteSendDataIndex",method=RequestMethod.GET,produces = "text/html;charset=UTF-8")
     @ResponseBody
-    public String remoteSendDataIndex(){
+    public String remoteSendDataIndex(@RequestParam(value = "limit", required = false) int limit, @RequestParam
+            (value = "offset", required = false) int offset){
+
+        int page = offset/limit;
+        Sort sort = new Sort(Sort.Direction.ASC,"address");
+        Pageable pageable = new PageRequest(page, limit,sort);
+        Page<DcsRemotePointPojo> devicePointPojoPage = dcsRemotePointRepository.findAll(pageable);
+
+        long totalElements = devicePointPojoPage.getTotalElements();
+        long totalPages = devicePointPojoPage.getTotalPages();
+        List<DcsRemotePointPojo> dcsRemotePointPojoList = devicePointPojoPage.getContent();
+        System.out.println("dcsRemotePointPojoList:" + dcsRemotePointPojoList.size());
 
         JSONObject jsonObject = new JSONObject();
+        jsonObject.put("total", totalElements);
         try {
-            List<DcsRemotePointPojo> dcsRemotePointPojoList = dcsRemotePointRepository.findAll();
-            jsonObject.put("total", dcsRemotePointPojoList.size());
+//            List<DcsRemotePointPojo> dcsRemotePointPojoList = dcsRemotePointRepository.findAll();
+            List<DcsRemotePointPojo> dcsRemotePointPojos = dcsRemotePointPojoList.stream().sorted(Comparator.comparing(
+                    (DcsRemotePointPojo::getAddress)))
+                    .collect(Collectors.toList());
+//            jsonObject.put("total", dcsRemotePointPojos.size());
             JSONArray jsonArray = new JSONArray();
-            dcsRemotePointPojoList.forEach((p) -> {
+            for (int i=0;i<dcsRemotePointPojos.size();i++){
+//            dcsRemotePointPojoList.forEach((p) -> {
+                DcsRemotePointPojo p = dcsRemotePointPojos.get(i);
                 JSONObject jsonObjectTemp = new JSONObject();
+
+                jsonObjectTemp.put("index", i+1+offset);
                 jsonObjectTemp.put("dcsRemotePointId", p.getDcsRemotePointId());
                 jsonObjectTemp.put("remotePointName", p.getRemotePointName());
                 jsonObjectTemp.put("dcsId", p.getDeviceDcsPojo().getDeviceId());
+                jsonObjectTemp.put("dcsName", p.getDeviceDcsPojo().getDeviceName());
                 jsonObjectTemp.put("address", p.getAddress());
                 jsonObjectTemp.put("currentDate", p.getCurrTime().toLocalDateTime().toLocalDate());
                 jsonObjectTemp.put("currentTime", p.getCurrTime().toLocalDateTime().toLocalTime());
                 jsonObjectTemp.put("currentValue", p.getCurrentValue());
                 jsonObjectTemp.put("note", p.getNote() == null ? "" : p.getNote());
                 jsonObjectTemp.put("pipeId", p.getCoalPipingEntity().getId());
-                jsonObjectTemp.put("densityOrVelocity", p.getDensityOrVelocity());
+                jsonObjectTemp.put("pipeName", p.getCoalPipingEntity().getpNameUserDefined());
+                jsonObjectTemp.put("densityOrVelocity", p.getDensityOrVelocity()==1?"浓度":"风速");
                 jsonObjectTemp.put("slaveId", p.getSlaveId());
 
 //            jsonObjectTemp.put("devcieName",p.getDevice)
                 jsonArray.put(jsonObjectTemp);
-            });
+            }
             jsonObject.put("rows", jsonArray);
         }catch (Exception e){
             e.printStackTrace();

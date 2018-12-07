@@ -199,4 +199,30 @@ public class DeviceDcsPojo {
 
         return Objects.hash(deviceId, deviceName, deviceAddress, devicePort, deviceBoundRate, deviceLinkState, deviceNote, deviceNum);
     }
+    @Transient
+    public String getDeviceLinkStateString() {
+        String deviceLinkStateString = "-";
+        if(null != this.getDeviceLinkState()){
+            if(this.getDeviceLinkState() == 0){
+                deviceLinkStateString = "通讯正常";
+            }else if(this.getDeviceLinkState() == 1){
+                deviceLinkStateString = "<span style='font-color:red'>通讯中断</span>";
+            }
+        }
+        return deviceLinkStateString;
+    }
+    @Transient
+    public String getDeviceParityString() {
+        String deviceParityString = "-";
+        if(null != this.getDeviceParity()){
+            if(this.getDeviceParity() == 0){
+                deviceParityString="无校验";
+            }else if(this.getDeviceParity() == 1){
+                deviceParityString="奇校验";
+            }else if(this.getDeviceParity() == 2){
+                deviceParityString="偶校验";
+            }
+        }
+        return deviceParityString;
+    }
 }

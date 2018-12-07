@@ -46,9 +46,5 @@
 
 
 <style type="text/css">
-    .titleDivClass {
-        font-size: 20;
-        margin-top: 15px;
-        height: 40px;
-    }
+
 </style>

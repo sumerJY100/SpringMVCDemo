@@ -30,7 +30,7 @@ public class TaskForDcsSendData {
     @Autowired
     private CoalMillRepository coalMillRepository;
     @Autowired
-    private CoalPipingHistoryService coalPipingHistoryService;
+    private CoalPipingHistoryService<? extends CoalPipingHistory> coalPipingHistoryService;
 
     public void updateSendDcsData(){
 //        System.out.println("更新DCS数据");
@@ -57,7 +57,7 @@ public class TaskForDcsSendData {
             for (CoalMillEntity coalMillEntity : coalMillEntityList) {
 
 
-                List<CoalPipingHistory> coalPipingHistoryList = coalPipingHistoryService
+                List<? extends  CoalPipingHistory> coalPipingHistoryList = coalPipingHistoryService
                         .findMillPipeDataHistoryByMillLocation(coalMillEntity.getId(), begin, end);
 //                System.out.println("磨煤机名称："+ coalMillEntity.getcName());
                 //将风速与密度封装成float[]数组对象，对应v1，d1等数据，并进行了平滑均值处理

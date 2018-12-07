@@ -20,12 +20,14 @@
     <link href="<c:url value='/resources/js/BootstrapTable/bootstrap-table.css'/>" rel="stylesheet"/>
 
 
-
     <script type="text/javascript" src="<c:url value='/resources/js/BootstrapTable/bootstrap-table.js'/>"></script>
-    <script type="text/javascript"  src="<c:url value='/resources/js/BootstrapTable/bootstrap-table-zh-CN.js'/>"></script>
+    <script type="text/javascript"
+            src="<c:url value='/resources/js/BootstrapTable/bootstrap-table-zh-CN.js'/>"></script>
     <script type="text/javascript" src="<c:url value='/resources/js/BootstrapV3/js/bootstrap.js'/>"></script>
-    <script type="text/javascript"  src="<c:url value='/resources/js/bootstrap3-editable/js/bootstrap-editable.js'/>"></script>
-    <script type="text/javascript" src="<c:url value='/resources/js/bootstrap3-editable/bootstrap-table-edittable.js'/>"></script>
+    <script type="text/javascript"
+            src="<c:url value='/resources/js/bootstrap3-editable/js/bootstrap-editable.js'/>"></script>
+    <script type="text/javascript"
+            src="<c:url value='/resources/js/bootstrap3-editable/bootstrap-table-edittable.js'/>"></script>
 
     <script src="<c:url value='/resources/js/dcsConfig/common.js'/>"></script>
     <script src="<c:url value='/resources/js/dcsConfig/dcsConfigIndex.js'/>"></script>
@@ -33,8 +35,9 @@
 </head>
 <body>
 <jsp:include page="/common/commonTopMenuBody.jsp"></jsp:include>
-
-DCS参数配置
+<DIV class="titleDivClass">
+    DCS参数配置
+</DIV>
 <div class="panel-body" style="padding-bottom:0px;">
     <div class="panel panel-default" style="display:none;">
         <div class="panel-heading">查询条件</div>

@@ -17,7 +17,6 @@
     <context:component-scan base-package="com.gaussic.controller"/>
     <context:component-scan base-package="com.gaussic.service"/>
     <context:component-scan base-package="com.gaussic.service.dcs"/>
-    <!--<context:component-scan base-package="com.gaussic.quartz" />-->
     <context:component-scan base-package="com.gaussic.dataGet" />
 
     <context:component-scan base-package="com.gaussic.dataGet.dcsHandle"/>

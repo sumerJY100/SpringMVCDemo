@@ -4,7 +4,7 @@
 
 
     <tr>
-        <th rowspan="2" style="width:60px;"  class="detailTableThClass">运行中</th>
+        <th rowspan="2" style="width:60px;"  class="detailTableThClass"></th>
         <td style="" class="detailTableRowTdClass oddTd">风速 (m/s)</td>
         <td >0</td>
         <td >0</td>

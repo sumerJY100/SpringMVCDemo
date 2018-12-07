@@ -33,8 +33,9 @@
 </head>
 <body>
 <jsp:include page="/common/commonTopMenuBody.jsp"></jsp:include>
+<DIV class="titleDivClass">
 远程发送数据配置
-
+</DIV>
 <div class="panel-body" style="padding-bottom:0px;">
     <div class="panel panel-default" style="display:none;">
         <div class="panel-heading">查询条件</div>

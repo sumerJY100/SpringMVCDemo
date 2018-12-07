@@ -6,6 +6,11 @@ $(function () {
 
     oTable.Init();
 
+
+    $("#tb_departments").bootstrapTable('hideColumn',"pointHistoryColumnName");
+    $("#tb_departments").bootstrapTable('hideColumn',"pointHistoryPropertyName");
+    $("#tb_departments").bootstrapTable('hideColumn',"pointHistoryOffset");
+    $("#tb_departments").bootstrapTable('hideColumn',"dcsId");
     //2.初始化Button的点击事件
     // var oButtonInit = new ButtonInit();
     // oButtonInit.Init();
@@ -34,13 +39,13 @@ var TableInit = function () {
             pageList: [10, 25, 50, 100],        //可供选择的每页的行数（*）
             // search: true,                       //是否显示表格搜索，此搜索是客户端搜索，不会进服务端，所以，个人感觉意义不大
             strictSearch: true,
-            showColumns: true,                  //是否显示所有的列
-            showRefresh: true,                  //是否显示刷新按钮
+            showColumns: false,                  //是否显示所有的列
+            showRefresh: false,                  //是否显示刷新按钮
             minimumCountColumns: 2,             //最少允许的列数
             clickToSelect: true,                //是否启用点击选中行
-            height: 1000,                        //行高，如果没有设置height属性，表格自动根据记录条数觉得表格高度
+            height: 800,                        //行高，如果没有设置height属性，表格自动根据记录条数觉得表格高度
             uniqueId: "ID",                     //每一行的唯一标识，一般为主键列
-            showToggle: true,                    //是否显示详细视图和列表视图的切换按钮
+            showToggle: false,                    //是否显示详细视图和列表视图的切换按钮
             // cardView: false,                    //是否显示详细视图
             detailView: false,                   //是否显示父子表
             columns: [{
@@ -51,7 +56,9 @@ var TableInit = function () {
                 title: '编号',
                 visible: false
             },
-                generatorColumn('dcsId', 'DCS设备名称', false),
+                generatorColumn('index', '序号', false),
+                generatorColumn('dcsId', 'DCSId', false),
+                generatorColumn('dcsName', 'DCS设备名称', false),
                 generatorColumn('pointName', '点名', true),
                 generatorColumn('pointAddress', '地址', true),
                 //数据类型根据DataType的数据类型进行配置，2表示TWO_BYTE_INT_UNSIGNED，3表示TWO_BYTE_INT_SIGNED

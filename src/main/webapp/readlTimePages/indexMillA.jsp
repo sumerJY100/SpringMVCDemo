@@ -49,44 +49,15 @@
     <table cellpadding="0" cellspacing="0" id="realTimeTable">
         <tr>
             <th rowspan=5 style="width:100px;">#10<br/>磨煤机</th>
-            <th>状态</th>
-            <th style="width:120px;">值</th>
+            <th></th>
+            <th style="width:120px;"></th>
 
-            <th style="width:100px;">管道11</th>
-            <th style="width:100px;">管道12</th>
-            <th style="width:100px;">管道13</th>
-            <th style="width:100px;">管道14</th>
+            <th style="width:100px;">管道 11</th>
+            <th style="width:100px;">管道 12</th>
+            <th style="width:100px;">管道 13</th>
+            <th style="width:100px;">管道 14</th>
         </tr>
-        <tr>
-            <th rowspan="2" style="width:60px;">运行</th>
-            <td>风速[绝对]</td>
-            <td>0</td>
-            <td>0</td>
-            <td>0</td>
-            <td>0</td>
-        </tr>
-        <tr>
-            <td>风速[相对]</td>
-            <td>0</td>
-            <td>0</td>
-            <td>0</td>
-            <td>0</td>
-        </tr>
-        <tr>
-            <td rowspan="2">0</td>
-            <td>浓度[绝对]</td>
-            <td>0</td>
-            <td>0</td>
-            <td>0</td>
-            <td>0</td>
-        </tr>
-        <tr>
-            <td>浓度[相对]</td>
-            <td>0</td>
-            <td>0</td>
-            <td>0</td>
-            <td>0</td>
-        </tr>
+        <jsp:include page="../mainPages/millTable.jsp"></jsp:include>
     </table>
 </div>
 

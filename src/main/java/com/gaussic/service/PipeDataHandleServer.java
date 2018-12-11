@@ -101,6 +101,7 @@ public class PipeDataHandleServer {
                 velocity2Avg[i] = c.getPipeBVelocityNotNull();
                 velocity3Avg[i] = c.getPipeCVelocityNotNull();
                 velocity4Avg[i] = c.getPipeDVelocityNotNull();
+//                System.out.println(density1Avg[i]);
             }
 
             //平滑处理
@@ -113,6 +114,8 @@ public class PipeDataHandleServer {
             float[] v2 = new PipeHandlerUtil().getHandleData(velocity2Avg);
             float[] v3 = new PipeHandlerUtil().getHandleData(velocity3Avg);
             float[] v4 = new PipeHandlerUtil().getHandleData(velocity4Avg);
+
+
 
             Map<String, float[]> map = new HashMap<>();
             map.put("d1", d1);
@@ -218,7 +221,13 @@ public class PipeDataHandleServer {
 
 //        float totalDensity = pipe1Density + pipe2Density + pipe3Density + pipe4Density;
 
-        if (dencity < 500000 && dencity > 20000000) {
+
+//        List<Double> doubleList = Stream.of(densityArr).map(Float.class::cast).map(Float::doubleValue).filter(d->d>500000).filter(d->d<20000000).collect(Collectors.toList());
+
+        boolean flag = false;
+
+
+        if (flag && dencity < 500000 && dencity > 20000000) {
             densityReal = 0f;
         } else {
 //            int count = 0;
@@ -255,8 +264,12 @@ public class PipeDataHandleServer {
             List<Double> list1 = Arrays.asList(densityArr).stream().map(Float.class::cast).map(Float::doubleValue).collect(Collectors.toList());
             List<Double> doubleList =  Arrays.asList(densityArr).stream().map(Float.class::cast).map(Float::doubleValue).filter(d->d>500000).filter(d->d<20000000).collect(Collectors.toList());
             List<Double> doubleList =  Arrays.asList(densityArr).stream().map(Float.class::cast).map(Float::doubleValue).filter(d->d>500000).filter(d->d<20000000).collect(Collectors.toList());*/
-
-            List<Double> doubleList = Stream.of(densityArr).map(Float.class::cast).map(Float::doubleValue).filter(d->d>500000).filter(d->d<20000000).collect(Collectors.toList());
+            List<Double> doubleList = null;
+           if(flag) {
+               doubleList = Stream.of(densityArr).map(Float.class::cast).map(Float::doubleValue).filter(d -> d > 500000).filter(d -> d < 20000000).collect(Collectors.toList());
+           }else{
+                   doubleList = Stream.of(densityArr).map(Float.class::cast).map(Float::doubleValue).collect(Collectors.toList());
+               }
             int count = doubleList.size();
             float totalDensity = (float) doubleList.stream().mapToDouble(Double::doubleValue).sum();
 

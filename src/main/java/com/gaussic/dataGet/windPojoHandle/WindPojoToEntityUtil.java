@@ -47,6 +47,9 @@ public class WindPojoToEntityUtil {
      * @return
      **/
     private static void handlePipeCommunication(CoalPipingEntity coalPipingEntity,WindDataPojo pojo){
+        if(null == pojo || null == coalPipingEntity){
+            return;
+        }
         if (null == coalPipingEntity.getpCommunicationState()) {
             coalPipingEntity.setpCommunicationState(0);
         }

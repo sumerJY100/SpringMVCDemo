@@ -126,5 +126,25 @@ public class WindDataPojo {
     public void setHandelDataValue(String handelDataValue) {
         this.handelDataValue = handelDataValue;
     }
+
+
+    public void setDensityXValue(String densityXValue) {
+        this.densityXValue = densityXValue;
+    }
+
+
+
+    public void setDensityYKeyValue(String densityYKeyValue) {
+        this.densityYKeyValue = densityYKeyValue;
+
+    }
+
+    public void setSpeedValue(String speedValue) {
+        this.speedValue = speedValue;
+    }
+
+    public void setDensityYValue(String densityYValue) {
+        this.densityYValue = densityYValue;
+    }
 }
 

@@ -17,10 +17,12 @@
 <body>
 
 <jsp:include page="/common/commonTopMenuBody.jsp"></jsp:include>
+<!--
 <div style="position: absolute;top:100px;width:400px;padding-left:0px;">
     <input type="text" value="10" id="millValue" style="width:40px;padding-top:-100px;margin-top:10px;"/>
     <input type="checkbox" value="1" id="forceSetMillValue" value="force"/>
 </div>
+-->
 <div align="center">
     <DIV class="titleDivClass">
         磨煤机【20】

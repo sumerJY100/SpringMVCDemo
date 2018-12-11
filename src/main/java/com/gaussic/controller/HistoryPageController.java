@@ -9,6 +9,7 @@ import com.gaussic.repository.CoalPipingHistoryRepositoryC;
 import com.gaussic.repository.CoalPipingHistoryRepositoryD;
 import com.gaussic.service.CoalPipingHistoryService;
 import com.gaussic.service.dcs.DcsHistoryService;
+import com.gaussic.util.DataFilter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.propertyeditors.CustomDateEditor;
 import org.springframework.stereotype.Controller;
@@ -91,11 +92,11 @@ public class HistoryPageController {
 
 
     /**
-     * 查询历史曲线数据
-     * @param beginTime
-     * @param endTime
-     * @param millLocation
-     * @return
+     * 查询历史曲线数据【原始数据】
+     * @param beginTime 开始时间
+     * @param endTime   结束时间
+     * @param millLocation  磨煤机名称 A B C D
+     * @return  jsonObj
      */
     @RequestMapping(value = "/getMillHistoryOriginalDataWithMill", method = RequestMethod.GET, produces = "text/html;charset=UTF-8")
     @ResponseBody
@@ -123,11 +124,11 @@ public class HistoryPageController {
     }
 
     /**
-     * 查询历史曲线数据
-     * @param beginTime
-     * @param endTime
-     * @param millLocation
-     * @return
+     * 查询历史曲线数据【实际磨煤机磨煤量数据】
+     * @param beginTime 开始时间
+     * @param endTime   结束时间
+     * @param millLocation  磨煤机名称A B C D
+     * @return  JSONObject
      */
     @RequestMapping(value = "/getMillHistoryDataWithMill", method = RequestMethod.GET, produces = "text/html;charset=UTF-8")
     @ResponseBody
@@ -156,7 +157,11 @@ public class HistoryPageController {
         if(null == list || list.size() == 0){
             list = handleExceptionHistoryList(be);
         }
+        /***************************历史数据查询偏差重新设定****************************/
 
+        //数据偏差记录，读取excel中的偏差
+        DataFilter.updateHandleDataWithExcel(millLocation,list);
+//        DataFilter.filter(millLocation,list);
         return coalPipingHistoryService.generateJsonStringByHistroyList(list, be
                 .getBeginTimestamp(), be.getEndTimestamp(),h000Pojo_baseList,false);
     }

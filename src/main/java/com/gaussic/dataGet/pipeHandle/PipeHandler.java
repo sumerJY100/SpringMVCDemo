@@ -59,6 +59,16 @@ public class PipeHandler {
                 coalMillEntityList = coalMillService.findAll();
                 for(CoalMillEntity coalMillEntity:coalMillEntityList){
                     List<CoalPipingEntity> list = coalMillEntity.getCoalPipingEntityList();
+//                    list.forEach(coalPipingEntity -> coalPipingEntity.);
+                    if(null != list) {
+                        list.forEach(coalPipingEntity -> {
+                            if(null != coalPipingEntity){
+                                if(null != coalPipingEntity.getCoalPipingSetEntity()){
+
+                                }
+                            }
+                        });
+                    }
                 }
 //            }
             //遍历告警信息，将  ”粉管通讯中断”  的告警信息查询出来,并设置到coalPipingEntity中
@@ -135,24 +145,24 @@ public class PipeHandler {
                 CoalPipingHistory coalPipingHistory = coalPipingHistoryService.generatorHistory(coalMillEntity, now);
                 coalPipingHistorieList.add(coalPipingHistory);
                 List<CoalPipingEntity> coalPipingEntityList_temp = coalMillEntity.getCoalPipingEntityList();
+                if(null != coalPipingEntityList_temp) {
+                    for (int m = 0; m < coalPipingEntityList_temp.size(); m++) {
+                        CoalPipingEntity coalPipingEntity = coalPipingEntityList_temp.get(m);
+                        String url = coalPipingEntity.getCoalPipingSetEntity().getsUrl();
+                        final String urlFinal = new String(url);
+                        new Thread(() -> {
+                            try {
 
-                for (int m = 0; m < coalPipingEntityList_temp.size(); m++) {
-                    CoalPipingEntity coalPipingEntity = coalPipingEntityList_temp.get(m);
-                    String url = coalPipingEntity.getCoalPipingSetEntity().getsUrl();
-                    final String urlFinal = new String(url);
-                    new Thread(() -> {
-                        try {
+                                /*Instant instant10 = Instant.now();*/
 
-                            /*Instant instant10 = Instant.now();*/
-
-                            PipingGetSingleDataThread pipingGetSingleDataThread = new PipingGetSingleDataThread();
-                            pipingGetSingleDataThread.setCoalPipingEntity(coalPipingEntity);
-                            pipingGetSingleDataThread.setNow(now);
-                            //采集数据，并更新实时数据【不进行更新保存到数据库】
-                            //TODO 历史数据录入，进行判定告警信息，此线程中，无法调用spring管理的bean
-                            //TODO 粉管数据关键处理类
-                            /************关键处理类****************/
-                            pipingGetSingleDataThread.updateData(urlFinal);
+                                PipingGetSingleDataThread pipingGetSingleDataThread = new PipingGetSingleDataThread();
+                                pipingGetSingleDataThread.setCoalPipingEntity(coalPipingEntity);
+                                pipingGetSingleDataThread.setNow(now);
+                                //采集数据，并更新实时数据【不进行更新保存到数据库】
+                                //TODO 历史数据录入，进行判定告警信息，此线程中，无法调用spring管理的bean
+                                //TODO 粉管数据关键处理类
+                                /************关键处理类****************/
+                                pipingGetSingleDataThread.updateData(urlFinal);
 //                            System.out.println("---------------coalPipingEntity:" + coalPipingEntity.getpName() + "," + coalPipingEntity + "," + coalPipingEntity.getpDencity() );
 
 
@@ -160,13 +170,14 @@ public class PipeHandler {
                             Duration duration1011 = Duration.between(instant10,instant11);
                             System.out.println("采集单根根管，时间：" + duration1011.getSeconds() + "秒,"+duration1011.getNano()
                                     /1000/1000 +"毫秒");*/
-                            countDownLatch.countDown();
+                                countDownLatch.countDown();
 
-                        }catch (Exception e){
-                            e.printStackTrace();
-                        }
-                    }).start();
+                            } catch (Exception e) {
+                                e.printStackTrace();
+                            }
+                        }).start();
 
+                    }
                 }
 
             }

@@ -59,13 +59,15 @@ public class CoalPipingService {
     public void handleCoalPipingWithAlarmForCommunication(List<CoalMillEntity> coalMillEntityList) {
         List<AlarmHistoryEntity> alarmHistoryEntityList = alarmHistoryRepository.findByAAlarmTypeAndAAlarmState(AlarmHistoryEntity.ALARM_TYPE_COMMUNICATION_PIPE, 1);
         for (CoalMillEntity coalMillEntity : coalMillEntityList) {
-            for (CoalPipingEntity coalPipingEntity : coalMillEntity.getCoalPipingEntityList()) {
-                if (null != alarmHistoryEntityList) {
-                    for (AlarmHistoryEntity alarmHistoryEntity : alarmHistoryEntityList) {
-                        if (null != alarmHistoryEntity.getaAlarmPipeId()) {
-                            if (alarmHistoryEntity.getaAlarmPipeId().equals(coalPipingEntity.getId())) {
-                                coalPipingEntity.setAlarmHistoryEntity(alarmHistoryEntity);
-                                break;
+            if(null != coalMillEntity.getCoalPipingEntityList()) {
+                for (CoalPipingEntity coalPipingEntity : coalMillEntity.getCoalPipingEntityList()) {
+                    if (null != alarmHistoryEntityList) {
+                        for (AlarmHistoryEntity alarmHistoryEntity : alarmHistoryEntityList) {
+                            if (null != alarmHistoryEntity.getaAlarmPipeId()) {
+                                if (alarmHistoryEntity.getaAlarmPipeId().equals(coalPipingEntity.getId())) {
+                                    coalPipingEntity.setAlarmHistoryEntity(alarmHistoryEntity);
+                                    break;
+                                }
                             }
                         }
                     }

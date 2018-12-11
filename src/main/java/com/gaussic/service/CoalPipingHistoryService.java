@@ -7,15 +7,28 @@ import com.gaussic.model.dcs_history.H000Pojo_Base;
 import com.gaussic.model.history.*;
 import com.gaussic.repository.*;
 import com.gaussic.service.dcs.DcsHistoryService;
+import com.gaussic.util.DataFilter;
 import com.gaussic.util.DataHandleUtil.PipeHandlerUtil;
+import com.gaussic.util.DateUtil;
 import com.gaussic.util.HandlDcsHistoryListUtil;
 import com.serotonin.modbus4j.sero.timer.TimeSource;
+import org.apache.poi.hssf.usermodel.HSSFCell;
+import org.apache.poi.hssf.usermodel.HSSFDateUtil;
+import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.CellType;
+import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.xssf.usermodel.XSSFRow;
+import org.apache.poi.xssf.usermodel.XSSFSheet;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import java.io.File;
+import java.io.FileInputStream;
 import java.sql.Timestamp;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.time.*;
 import java.util.*;
@@ -64,6 +77,7 @@ public class CoalPipingHistoryService<T extends CoalPipingHistory> {
         return generateJsonStringByHistroyList(coalPipeHistoryEntityList, beginC, endC, original);
 
     }
+
     /**
      * @param coalPipeHistoryEntityList
      * @param beginT
@@ -81,16 +95,18 @@ public class CoalPipingHistoryService<T extends CoalPipingHistory> {
         return generateJsonStringByHistroyList(coalPipeHistoryEntityList, beginC, endC, pipeId);
 
     }
+
     /**
-     * @param coalPipeHistoryEntityList
-     * @param beginT
-     * @param endT
-     * @param hList
+     * @param coalPipeHistoryEntityList List<T> coalPipeHistoryEntityList
+     * @param beginT                    开始时间
+     * @param endT                      结束时间
+     * @param hList                     磨煤机磨煤量集合    List<H000Pojo_Base>
      * @param original                  true为原始值，false为平滑处理值
-     * @return
+     * @return jsonString
      */
     public String generateJsonStringByHistroyList(List<T> coalPipeHistoryEntityList, Timestamp beginT, Timestamp
             endT, List<H000Pojo_Base> hList, boolean original) {
+
         if (null == hList) {
             return generateJsonStringByHistroyList(coalPipeHistoryEntityList, beginT, endT, original);
         } else {
@@ -103,6 +119,7 @@ public class CoalPipingHistoryService<T extends CoalPipingHistory> {
 
 
     }
+
     /**
      * @param coalPipeHistoryEntityList
      * @param beginT
@@ -123,6 +140,7 @@ public class CoalPipingHistoryService<T extends CoalPipingHistory> {
             return generateJsonStringByHistroyList(coalPipeHistoryEntityList, beginC, endC, hList, pipeId);
         }
     }
+
     /**
      * @param coalPipeHistoryEntityList
      * @param beginT
@@ -163,12 +181,13 @@ public class CoalPipingHistoryService<T extends CoalPipingHistory> {
         return generateJsonStringByHistroyList(coalPipeHistoryEntityList, beginC, endC, original);
 
     }
+
     /**
      * @param coalPipeHistoryEntityList
      * @param beginC
      * @param endC
      * @param hList
-     * @param pipeId                  true为原始值，false为平滑处理值
+     * @param pipeId                    true为原始值，false为平滑处理值
      * @return
      */
     public String generateJsonStringByHistroyList(List<T> coalPipeHistoryEntityList,
@@ -216,7 +235,7 @@ public class CoalPipingHistoryService<T extends CoalPipingHistory> {
 
 
                         Float mill = coalPipeHistoryEntityList.get(i).getCoalMillValue();
-                        if(null == mill)
+                        if (null == mill)
                             mill = 100f;
 //                        mill = mill/100;
                         Float[] densityArr = new Float[]{d1[i], d2[i], d3[i], d4[i]};
@@ -245,6 +264,7 @@ public class CoalPipingHistoryService<T extends CoalPipingHistory> {
                             desity3Real = PipeDataHandleServer.getDencityRealValue(d3[i], mill, densityArr);
                             desity4Real = PipeDataHandleServer.getDencityRealValue(d4[i], mill, densityArr);
 
+
                             velocity1Real = PipeDataHandleServer.getVelocityRealValue(v1[i]);
                             velocity2Real = PipeDataHandleServer.getVelocityRealValue(v2[i]);
                             velocity3Real = PipeDataHandleServer.getVelocityRealValue(v3[i]);
@@ -265,7 +285,7 @@ public class CoalPipingHistoryService<T extends CoalPipingHistory> {
                 int dif = coalPipeHistoryEntityList.size() - jsonArrayForPipe1Density.length();
                 for (int i = dif; i < coalPipeHistoryEntityList.size(); i++) {
                     Float mill = coalPipeHistoryEntityList.get(i).getCoalMillValue();
-                    if(null == mill)
+                    if (null == mill)
                         mill = 100f;
                     mill = mill / 100;
                     jsonArrayForCoalMill.put(mill);
@@ -274,7 +294,6 @@ public class CoalPipingHistoryService<T extends CoalPipingHistory> {
 //                    jsonArrayForCoalMill.put(h.getCoalMillValue());
 //                }
             }
-//            System.out.println("jsonArrayForPipe1Density:"+jsonArrayForPipe1Density.toString());
 
             jsonObject.put("startTime", beginC.getTimeInMillis());
             jsonObject.put("endTime", endC.getTimeInMillis());
@@ -300,6 +319,7 @@ public class CoalPipingHistoryService<T extends CoalPipingHistory> {
 //        System.out.println(jsonObject.toString());
         return jsonObject.toString();
     }
+
     /**
      * 处理一台磨的历史数据，返回jsonString,返回一根粉管的XY数据，V数据，还有磨煤机数据【原始数据】
      *
@@ -319,16 +339,24 @@ public class CoalPipingHistoryService<T extends CoalPipingHistory> {
             JSONArray jsonArrayForV = new JSONArray();
             JSONArray jsonArrayForCoalMill = new JSONArray();
             if (null != coalPipeHistoryEntityList) {
-                for(CoalPipingHistory c:coalPipeHistoryEntityList){
-                    Float x =0f,y=0f,v=0f;
-                    if(pipeId%10 == 1){
-                        x = c.gethPipeAX();y=c.gethPipeAY();v=c.gethPipeAV();
-                    }else if(pipeId%10 == 2){
-                        x = c.gethPipeBX();y=c.gethPipeBY();v=c.gethPipeBV();
-                    }else if(pipeId%10 == 3){
-                        x = c.gethPipeCX();y=c.gethPipeCY();v=c.gethPipeCV();
-                    }else if(pipeId%10 == 4){
-                        x = c.gethPipeDX();y=c.gethPipeDY();v=c.gethPipeDV();
+                for (CoalPipingHistory c : coalPipeHistoryEntityList) {
+                    Float x = 0f, y = 0f, v = 0f;
+                    if (pipeId % 10 == 1) {
+                        x = c.gethPipeAX();
+                        y = c.gethPipeAY();
+                        v = c.gethPipeAV();
+                    } else if (pipeId % 10 == 2) {
+                        x = c.gethPipeBX();
+                        y = c.gethPipeBY();
+                        v = c.gethPipeBV();
+                    } else if (pipeId % 10 == 3) {
+                        x = c.gethPipeCX();
+                        y = c.gethPipeCY();
+                        v = c.gethPipeCV();
+                    } else if (pipeId % 10 == 4) {
+                        x = c.gethPipeDX();
+                        y = c.gethPipeDY();
+                        v = c.gethPipeDV();
                     }
                     jsonArrayForX.put(Optional.ofNullable(x).orElse(0f));
                     jsonArrayForY.put(Optional.ofNullable(y).orElse(0f));
@@ -338,79 +366,79 @@ public class CoalPipingHistoryService<T extends CoalPipingHistory> {
                 }
             }
 
-                //将每个粉管的浓度与风速，封装成float对象
-                /****
-                Map<String, float[]> map = PipeDataHandleServer.getHandlerDensityAndVelocityData
-                        (coalPipeHistoryEntityList);
-                if (null != map) {
-                    float[] d1 = map.get("d1"), d2 = map.get("d2"), d3 = map.get("d3"), d4 = map.get("d4");
-                    float[] v1 = map.get("v1"), v2 = map.get("v2"), v3 = map.get("v3"), v4 = map.get("v4");
-                    for (int i = 0; i < d1.length; i++) {
+            //将每个粉管的浓度与风速，封装成float对象
+            /****
+             Map<String, float[]> map = PipeDataHandleServer.getHandlerDensityAndVelocityData
+             (coalPipeHistoryEntityList);
+             if (null != map) {
+             float[] d1 = map.get("d1"), d2 = map.get("d2"), d3 = map.get("d3"), d4 = map.get("d4");
+             float[] v1 = map.get("v1"), v2 = map.get("v2"), v3 = map.get("v3"), v4 = map.get("v4");
+             for (int i = 0; i < d1.length; i++) {
 
 
-                        Float mill = coalPipeHistoryEntityList.get(i).getCoalMillValue();
-                        if(null == mill)
-                            mill = 100f;
-//                        mill = mill/100;
-                        float[] densityArr = new float[]{d1[i], d2[i], d3[i], d4[i]};
-                        Float desity1Real = 0f;
-                        Float desity2Real = 0f;
-                        Float desity3Real = 0f;
-                        Float desity4Real = 0f;
+             Float mill = coalPipeHistoryEntityList.get(i).getCoalMillValue();
+             if(null == mill)
+             mill = 100f;
+             //                        mill = mill/100;
+             float[] densityArr = new float[]{d1[i], d2[i], d3[i], d4[i]};
+             Float desity1Real = 0f;
+             Float desity2Real = 0f;
+             Float desity3Real = 0f;
+             Float desity4Real = 0f;
 
-                        Float velocity1Real = 0f;
-                        Float velocity2Real = 0f;
-                        Float velocity3Real = 0f;
-                        Float velocity4Real = 0f;
-                        if (original) {
-                            desity1Real = d1[i];
-                            desity2Real = d2[i];
-                            desity3Real = d3[i];
-                            desity4Real = d4[i];
+             Float velocity1Real = 0f;
+             Float velocity2Real = 0f;
+             Float velocity3Real = 0f;
+             Float velocity4Real = 0f;
+             if (original) {
+             desity1Real = d1[i];
+             desity2Real = d2[i];
+             desity3Real = d3[i];
+             desity4Real = d4[i];
 
-                            velocity1Real = v1[i];
-                            velocity2Real = v2[i];
-                            velocity3Real = v3[i];
-                            velocity4Real = v4[i];
-                        } else {
-                            desity1Real = PipeDataHandleServer.getDencityRealValue(d1[i], mill, densityArr);
-                            desity2Real = PipeDataHandleServer.getDencityRealValue(d2[i], mill, densityArr);
-                            desity3Real = PipeDataHandleServer.getDencityRealValue(d3[i], mill, densityArr);
-                            desity4Real = PipeDataHandleServer.getDencityRealValue(d4[i], mill, densityArr);
+             velocity1Real = v1[i];
+             velocity2Real = v2[i];
+             velocity3Real = v3[i];
+             velocity4Real = v4[i];
+             } else {
+             desity1Real = PipeDataHandleServer.getDencityRealValue(d1[i], mill, densityArr);
+             desity2Real = PipeDataHandleServer.getDencityRealValue(d2[i], mill, densityArr);
+             desity3Real = PipeDataHandleServer.getDencityRealValue(d3[i], mill, densityArr);
+             desity4Real = PipeDataHandleServer.getDencityRealValue(d4[i], mill, densityArr);
 
-                            velocity1Real = PipeDataHandleServer.getVelocityRealValue(v1[i]);
-                            velocity2Real = PipeDataHandleServer.getVelocityRealValue(v2[i]);
-                            velocity3Real = PipeDataHandleServer.getVelocityRealValue(v3[i]);
-                            velocity4Real = PipeDataHandleServer.getVelocityRealValue(v4[i]);
-                        }
-                        jsonArrayForPipe1Velocity.put(velocity1Real);
-                        jsonArrayForPipe2Velocity.put(velocity2Real);
-                        jsonArrayForPipe3Velocity.put(velocity3Real);
-                        jsonArrayForPipe4Velocity.put(velocity4Real);
+             velocity1Real = PipeDataHandleServer.getVelocityRealValue(v1[i]);
+             velocity2Real = PipeDataHandleServer.getVelocityRealValue(v2[i]);
+             velocity3Real = PipeDataHandleServer.getVelocityRealValue(v3[i]);
+             velocity4Real = PipeDataHandleServer.getVelocityRealValue(v4[i]);
+             }
+             jsonArrayForPipe1Velocity.put(velocity1Real);
+             jsonArrayForPipe2Velocity.put(velocity2Real);
+             jsonArrayForPipe3Velocity.put(velocity3Real);
+             jsonArrayForPipe4Velocity.put(velocity4Real);
 
-                        jsonArrayForPipe1Density.put(desity1Real);
-                        jsonArrayForPipe2Density.put(desity2Real);
-                        jsonArrayForPipe3Density.put(desity3Real);
-                        jsonArrayForPipe4Density.put(desity4Real);
-                    }
-                }
+             jsonArrayForPipe1Density.put(desity1Real);
+             jsonArrayForPipe2Density.put(desity2Real);
+             jsonArrayForPipe3Density.put(desity3Real);
+             jsonArrayForPipe4Density.put(desity4Real);
+             }
+             }
 
-                int dif = coalPipeHistoryEntityList.size() - jsonArrayForPipe1Density.length();
-                for (int i = dif; i < coalPipeHistoryEntityList.size(); i++) {
-                    Float mill = coalPipeHistoryEntityList.get(i).getCoalMillValue();
-                    if(null == mill)
-                        mill = 100f;
-                    mill = mill / 100;
-                    jsonArrayForCoalMill.put(mill);
-                }
-//                for (CoalPipingHistory h : coalPipeHistoryEntityList) {
-//                    jsonArrayForCoalMill.put(h.getCoalMillValue());
-//                }
-            }
-//            System.out.println("jsonArrayForPipe1Density:"+jsonArrayForPipe1Density.toString());
+             int dif = coalPipeHistoryEntityList.size() - jsonArrayForPipe1Density.length();
+             for (int i = dif; i < coalPipeHistoryEntityList.size(); i++) {
+             Float mill = coalPipeHistoryEntityList.get(i).getCoalMillValue();
+             if(null == mill)
+             mill = 100f;
+             mill = mill / 100;
+             jsonArrayForCoalMill.put(mill);
+             }
+             //                for (CoalPipingHistory h : coalPipeHistoryEntityList) {
+             //                    jsonArrayForCoalMill.put(h.getCoalMillValue());
+             //                }
+             }
+             //            System.out.println("jsonArrayForPipe1Density:"+jsonArrayForPipe1Density.toString());
 
 
-                 */
+             */
 
 
             jsonObject.put("startTime", beginC.getTimeInMillis());
@@ -743,9 +771,9 @@ public class CoalPipingHistoryService<T extends CoalPipingHistory> {
     /**
      * 查询一段时间范围内的一台磨煤机的四根粉管的原始数据，多线程查询
      *
-     * @param millLocation  A   B   C   D
-     * @param begin     开始时间
-     * @param end       结束时间
+     * @param millLocation A   B   C   D
+     * @param begin        开始时间
+     * @param end          结束时间
      */
     public List<CoalPipingHistory> findMillPipeDataHistoryByMillLocationWithThreads(String millLocation,
                                                                                     Timestamp begin, Timestamp end) {
@@ -810,23 +838,23 @@ public class CoalPipingHistoryService<T extends CoalPipingHistory> {
             e.printStackTrace();
         }
 
-
+        /***************************粉管参数设定的偏差计算*****************************/
         //四根粉管的XY数据标定数据，进行计算，生成一个数组
         List<CoalPipingSetEntity> coalPipingSetEntityList = coalMillPipingSetRepository.findAll();
-        Map<Long,CoalPipingSetEntity> map = new HashMap<>();
-        for(CoalPipingSetEntity coalPipingSetEntity:coalPipingSetEntityList){
-            map.put(coalPipingSetEntity.getCoalPipeId(),coalPipingSetEntity);
+        Map<Long, CoalPipingSetEntity> map = new HashMap<>();
+        for (CoalPipingSetEntity coalPipingSetEntity : coalPipingSetEntityList) {
+            map.put(coalPipingSetEntity.getCoalPipeId(), coalPipingSetEntity);
         }
 
-        Float p1X=0f,p1Y=0f,p2X=0f,p2Y=0f,p3X=0f,p3Y=0f,p4X=0f,p4Y=0f;
+        Float p1X = 0f, p1Y = 0f, p2X = 0f, p2Y = 0f, p3X = 0f, p3Y = 0f, p4X = 0f, p4Y = 0f;
         Long millBaseLocation = 1L;
-        if(millLocation.equals("A")){
-             millBaseLocation = 1L;
-        }else if(millLocation.equals("B")){
+        if (millLocation.equals("A")) {
+            millBaseLocation = 1L;
+        } else if (millLocation.equals("B")) {
             millBaseLocation = 2L;
-        }else if(millBaseLocation.equals("C")){
+        } else if (millBaseLocation.equals("C")) {
             millBaseLocation = 3L;
-        }else if(millBaseLocation.equals("D")){
+        } else if (millBaseLocation.equals("D")) {
             millBaseLocation = 4L;
         }
         millBaseLocation = millBaseLocation * 10L;
@@ -839,23 +867,83 @@ public class CoalPipingHistoryService<T extends CoalPipingHistory> {
         p4X = map.get(millBaseLocation + 4L).getsParam4();
         p4Y = map.get(millBaseLocation + 4L).getsParam4();
 
-//        for(int i=0;i<resultList.size();i++){
-//            CoalPipingHistory coalPipingHistory = resultList.get(i);
-//            coalPipingHistory.sethPipeAX(Optional.ofNullable(coalPipingHistory.gethPipeAX()).orElse(0F) * p1X);
-//            coalPipingHistory.sethPipeAY(Optional.ofNullable(coalPipingHistory.gethPipeAY()).orElse(0F) * p1Y);
+        for (int i = 0; i < resultList.size(); i++) {
+            CoalPipingHistory coalPipingHistory = resultList.get(i);
+            coalPipingHistory.sethPipeAX(Optional.ofNullable(coalPipingHistory.gethPipeAX()).orElse(0F) * p1X);
+            coalPipingHistory.sethPipeAY(Optional.ofNullable(coalPipingHistory.gethPipeAY()).orElse(0F) * p1Y);
+
+            coalPipingHistory.sethPipeBX(Optional.ofNullable(coalPipingHistory.gethPipeBX()).orElse(0F) * p2X);
+            coalPipingHistory.sethPipeBY(Optional.ofNullable(coalPipingHistory.gethPipeBY()).orElse(0F) * p2Y);
+
+            coalPipingHistory.sethPipeCX(Optional.ofNullable(coalPipingHistory.gethPipeCX()).orElse(0F) * p3X);
+            coalPipingHistory.sethPipeCY(Optional.ofNullable(coalPipingHistory.gethPipeCY()).orElse(0F) * p3Y);
+
+            coalPipingHistory.sethPipeDX(Optional.ofNullable(coalPipingHistory.gethPipeDX()).orElse(0F) * p4X);
+            coalPipingHistory.sethPipeDY(Optional.ofNullable(coalPipingHistory.gethPipeDY()).orElse(0F) * p4Y);
+//            System.out.println(i+"," + resultList.get(i).gethTime() + "," + resultList.get(i).getPipeADensityNotNull());
+        }
+
+        /***************************历史数据查询偏差重新设定****************************/
+
+        //数据偏差记录，读取excel中的偏差
+//        DataFilter.filter(millLocation,resultList);
+
+
+
+
+
+
+        //处理数据，去除0的数据
+        for(int i=0;i<resultList.size();i++){
+            if(null == resultList.get(i).gethPipeADencity() || resultList.get(i).gethPipeADencity() < 10000){
+                if(i-1>0){
+                    CoalPipingHistory coalPipingHistoryBefor = resultList.get(i-1);
+                    resultList.get(i).sethPipeADencity(coalPipingHistoryBefor.gethPipeADencity());
+                }
+            }
+            if(null == resultList.get(i).gethPipeBDencity() || resultList.get(i).gethPipeBDencity() <
+                    10000){
+                if(i-1>0){
+                    CoalPipingHistory coalPipingHistoryBefor = resultList.get(i-1);
+                    resultList.get(i).sethPipeBDencity(coalPipingHistoryBefor.gethPipeBDencity());
+                }
+            }
+            if(null == resultList.get(i).gethPipeCDencity() || resultList.get(i).gethPipeCDencity() <
+                    10000){
+                if(i-1>0){
+                    CoalPipingHistory coalPipingHistoryBefor = resultList.get(i-1);
+                    resultList.get(i).sethPipeCDencity(coalPipingHistoryBefor.gethPipeCDencity());
+                }
+            }
+            if(null == resultList.get(i).gethPipeDDencity() || resultList.get(i).gethPipeDDencity() <
+                    10000){
+                if(i-1>0){
+                    CoalPipingHistory coalPipingHistoryBefor = resultList.get(i-1);
+                    resultList.get(i).sethPipeDDencity(coalPipingHistoryBefor.gethPipeDDencity());
+                }
+            }
+        }
+
+
+
+
+        /*******************************历史数据 磨煤量与电荷量对比关系*******************************************/
 //
-//            coalPipingHistory.sethPipeBX(Optional.ofNullable(coalPipingHistory.gethPipeBX()).orElse(0F) * p2X);
-//            coalPipingHistory.sethPipeBY(Optional.ofNullable(coalPipingHistory.gethPipeBY()).orElse(0F) * p2Y);
+        //读取幂指数开关与幂指数
+        DataFilter.updateOrigianlDataWithExcel(resultList);
+
+
+
+//        resultList.forEach(coalPipingHistory -> {
 //
-//            coalPipingHistory.sethPipeCX(Optional.ofNullable(coalPipingHistory.gethPipeCX()).orElse(0F) * p3X);
-//            coalPipingHistory.sethPipeCY(Optional.ofNullable(coalPipingHistory.gethPipeCY()).orElse(0F) * p3Y);
-//
-//            coalPipingHistory.sethPipeDX(Optional.ofNullable(coalPipingHistory.gethPipeDX()).orElse(0F) * p4X);
-//            coalPipingHistory.sethPipeDY(Optional.ofNullable(coalPipingHistory.gethPipeDY()).orElse(0F) * p4Y);
-////            System.out.println(i+"," + resultList.get(i).gethTime() + "," + resultList.get(i).getPipeADensityNotNull());
-//        }
+//            coalPipingHistory.sethPipeADencity((float) Math.log(coalPipingHistory.gethPipeADencity()));
+//            coalPipingHistory.sethPipeBDencity((float) Math.log(coalPipingHistory.gethPipeBDencity()));
+//            coalPipingHistory.sethPipeCDencity((float) Math.log(coalPipingHistory.gethPipeCDencity()));
+//            coalPipingHistory.sethPipeDDencity((float) Math.log(coalPipingHistory.gethPipeDDencity()));
+//        });
         return resultList;
     }
+
 
     /**
      * 查询一段时间范围内的一台磨煤机的磨煤量历史数据
@@ -878,7 +966,7 @@ public class CoalPipingHistoryService<T extends CoalPipingHistory> {
                 h000Pojo_baseList = dcsHistoryService.findByTime(78, begin, end);
             }
         }
-        if(null == h000Pojo_baseList || h000Pojo_baseList.size() == 0){
+        if (null == h000Pojo_baseList || h000Pojo_baseList.size() == 0) {
             h000Pojo_baseList = new ArrayList<>();
             H000Pojo_Base h000Pojo_base = new H000Pojo_Base();
             h000Pojo_base.setV(-1f);

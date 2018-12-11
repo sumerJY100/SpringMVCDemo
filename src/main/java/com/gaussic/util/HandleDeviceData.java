@@ -7,6 +7,7 @@ import java.io.*;
 import java.net.*;
 import java.time.Duration;
 import java.time.Instant;
+import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.CountDownLatch;
@@ -36,6 +37,33 @@ public class HandleDeviceData {
         }
         return jsonArray;
     }
+
+
+    public static void main(String[] args) {
+
+        try {
+            String url = "http://172.18.33.113:8080/pulver";
+            HandleDeviceData handleDeviceData = new HandleDeviceData();
+            for (int i = 0; i < 100; i++) {
+                new Thread(() -> {
+//                    System.out.print(LocalDateTime.now().toString());
+                    JSONArray jsonArray = handleDeviceData.httpRequest(url, "GET");
+                    System.out.println("," + jsonArray.toString());
+                }).start();
+                Thread.sleep(50);
+            }
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+    }
+
+
+
+
+
+
+
+
 
     /**
      * jsonP数据转换为json数据

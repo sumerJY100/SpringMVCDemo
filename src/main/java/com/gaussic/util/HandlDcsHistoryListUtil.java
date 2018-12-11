@@ -22,8 +22,9 @@ public class HandlDcsHistoryListUtil {
                 //排序
                 Comparator<H000Pojo_Base> comparator = Comparator.comparing(H000Pojo_Base::getvTime);
                 List<H000Pojo_Base> sortedList = hList.stream().sorted(comparator).collect(Collectors.toList());
-                System.out.println("开始时间：" +sortedList.get(0).getvTime());
-                System.out.println("结束时间：" + sortedList.get(sortedList.size() -1).getvTime());
+//                System.out.println("开始时间：" +sortedList.get(0).getvTime());
+//                System.out.println(hList.size() + "," + hList.get(0).getV());
+//                System.out.println("结束时间：" + sortedList.get(sortedList.size() -1).getvTime());
                 //循环遍历，并将数据煤量数据根据粉管数据进行赋值
                 /**
                  * 基本思路
@@ -88,6 +89,7 @@ public class HandlDcsHistoryListUtil {
                             }
                         }
                         coalPipingHistory.setCoalMillValue(resultValue);
+//                        System.out.println("resultValue:" + resultValue);
                     }
                 });
             }

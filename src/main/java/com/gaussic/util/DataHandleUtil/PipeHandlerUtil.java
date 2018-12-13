@@ -89,7 +89,7 @@ public class PipeHandlerUtil {
                     filterData(floats,50000000,5000);
                 }else{
                     //风速数据过滤
-                    System.out.println("风速过滤" +",floats:"+floats.length);
+//                    System.out.println("风速过滤" +",floats:"+floats.length);
                     filterData(floats,30,8);
                 }
 //        List<Float> floatList = new ArrayList<>();

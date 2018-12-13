@@ -23,8 +23,8 @@ public class PipeDataHandleServer {
 
     /**
      * 对浓度与速度进行平滑处理，并将数据对应实际的磨煤量与风速
-     *  浓度平滑处理，浓度实际值处理
-     *  风速平滑处理，风速实际值处理
+     * 浓度平滑处理，浓度实际值处理
+     * 风速平滑处理，风速实际值处理
      *
      * @param coalPipingHistoryList List<? extends CoalPipingHistory> coalPipingHistoryList
      */
@@ -72,11 +72,12 @@ public class PipeDataHandleServer {
 
     /**
      * 返回平滑处理后的浓度与风速数据,封装成Map<String,float[]>对象
-     *  map中的健值对象为：d1：pipe1的浓度数据的数组
-     *                    v1: pipe1的风速数据的数组
-     *  所有对象为：d1,d2,d3,d4,v1,v2,v3,v4
+     * map中的健值对象为：d1：pipe1的浓度数据的数组
+     * v1: pipe1的风速数据的数组
+     * 所有对象为：d1,d2,d3,d4,v1,v2,v3,v4
+     *
      * @param coalPipeHistoryEntityList List<? extends CoalPipingHistory> coalPipeHistoryEntityList
-     * @return  Map<String,float[]>
+     * @return Map<String   ,   float   [   ]>
      */
     public static Map<String, float[]> getHandlerDensityAndVelocityData(List<? extends CoalPipingHistory>
                                                                                 coalPipeHistoryEntityList) {
@@ -114,7 +115,6 @@ public class PipeDataHandleServer {
             float[] v2 = new PipeHandlerUtil().getHandleData(velocity2Avg);
             float[] v3 = new PipeHandlerUtil().getHandleData(velocity3Avg);
             float[] v4 = new PipeHandlerUtil().getHandleData(velocity4Avg);
-
 
 
             Map<String, float[]> map = new HashMap<>();
@@ -190,7 +190,7 @@ public class PipeDataHandleServer {
      */
     public static float getVelocityRealValue(float velocity) {
         float pipe1VelocityReal = 0f;
-        float min = 3,minLimit=0,max = 30;
+        float min = 3, minLimit = 0, max = 30;
         if (velocity >= min && velocity <= max) {
             pipe1VelocityReal = ((int) ((distance / (velocity * operatorValue)) * 1000)) / 10f;
         } else if (velocity < min && velocity > minLimit) {
@@ -266,11 +266,11 @@ public class PipeDataHandleServer {
             List<Double> doubleList =  Arrays.asList(densityArr).stream().map(Float.class::cast).map(Float::doubleValue).filter(d->d>500000).filter(d->d<20000000).collect(Collectors.toList());
             List<Double> doubleList =  Arrays.asList(densityArr).stream().map(Float.class::cast).map(Float::doubleValue).filter(d->d>500000).filter(d->d<20000000).collect(Collectors.toList());*/
             List<Double> doubleList = null;
-           if(flag) {
-               doubleList = Stream.of(densityArr).map(Float.class::cast).map(Float::doubleValue).filter(d -> d > 500000).filter(d -> d < 20000000).collect(Collectors.toList());
-           }else{
-                   doubleList = Stream.of(densityArr).map(Float.class::cast).map(Float::doubleValue).collect(Collectors.toList());
-               }
+            if (flag) {
+                doubleList = Stream.of(densityArr).map(Float.class::cast).map(Float::doubleValue).filter(d -> d > 500000).filter(d -> d < 20000000).collect(Collectors.toList());
+            } else {
+                doubleList = Stream.of(densityArr).map(Float.class::cast).map(Float::doubleValue).collect(Collectors.toList());
+            }
             int count = doubleList.size();
             float totalDensity = (float) doubleList.stream().mapToDouble(Double::doubleValue).sum();
 

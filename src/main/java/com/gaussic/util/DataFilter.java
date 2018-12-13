@@ -92,14 +92,23 @@ public class DataFilter {
                 //创建一个工作簿
                 XSSFWorkbook workbook = new XSSFWorkbook(fileInputStream);
                 //创建一个电子表格
-                XSSFSheet sheet;
-                sheet = workbook.getSheet(millLocation);
+                XSSFSheet sheet = workbook.getSheet(millLocation);
+                XSSFSheet sheetForVelocity = workbook.getSheet(millLocation+"V");
                 if (null != sheet) {
                     //行对象
 
                     List<TT> ttList = new ArrayList<>();
+                    List<TT> ttListForVelocity = new ArrayList<>();
                     for (int i = 2; i < 100; i++) {
                         XSSFRow row = sheet.getRow(i);
+                        XSSFRow rowForVelocity = sheetForVelocity.getRow(i);
+                        if(null != rowForVelocity){
+                            Cell firstCell = rowForVelocity.getCell(0);
+                            if(null != firstCell){
+                                TT tt = new TT(rowForVelocity);
+                                ttListForVelocity.add(tt);
+                            }
+                        }
                         if (null != row) {
                             Cell firstCell = row.getCell(0);
                             if (null != firstCell) {
@@ -119,6 +128,19 @@ public class DataFilter {
                                 coalPipingHistory.sethPipeBDencity((float) (coalPipingHistory.gethPipeBDencity() * tt.getValues()[1]));
                                 coalPipingHistory.sethPipeCDencity((float) (coalPipingHistory.gethPipeCDencity() * tt.getValues()[2]));
                                 coalPipingHistory.sethPipeDDencity((float) (coalPipingHistory.gethPipeDDencity() * tt.getValues()[3]));
+                            }
+                        }
+                        for(int i=0;i<ttListForVelocity.size();i++){
+                            TT tt = ttListForVelocity.get(i);
+//                            System.out.println(tt.getValues()[0] +","+tt.getValues()[1] +","+ tt.getValues()[2] + "," +
+//                                    ""+tt.getValues()[3]);
+                            if (localDateTime.isAfter(tt.getBegin()) && localDateTime.isBefore(tt.getEnd())) {
+//                                System.out.print("old:"+coalPipingHistory.gethPipeAVelocity());
+                                coalPipingHistory.sethPipeAVelocity((float) (coalPipingHistory.gethPipeAVelocity() * tt.getValues()[0]));
+//                                System.out.println(",new:"+coalPipingHistory.gethPipeAVelocity());
+                                coalPipingHistory.sethPipeBVelocity((float) (coalPipingHistory.gethPipeBVelocity() * tt.getValues()[1]));
+                                coalPipingHistory.sethPipeCVelocity((float) (coalPipingHistory.gethPipeCVelocity() * tt.getValues()[2]));
+                                coalPipingHistory.sethPipeDVelocity((float) (coalPipingHistory.gethPipeDVelocity() * tt.getValues()[3]));
                             }
                         }
 

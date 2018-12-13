@@ -190,13 +190,14 @@ public class PipeDataHandleServer {
      */
     public static float getVelocityRealValue(float velocity) {
         float pipe1VelocityReal = 0f;
-        if (velocity >= 5 && velocity <= 20) {
+        float min = 3,minLimit=0,max = 30;
+        if (velocity >= min && velocity <= max) {
             pipe1VelocityReal = ((int) ((distance / (velocity * operatorValue)) * 1000)) / 10f;
-        } else if (velocity < 5 && velocity > 0) {
+        } else if (velocity < min && velocity > minLimit) {
             pipe1VelocityReal = 0f;
-        } else if (velocity > 20) {
+        } else if (velocity > max) {
             pipe1VelocityReal = -1f;
-        } else if (velocity == 0) {
+        } else if (velocity <= minLimit) {
             pipe1VelocityReal = 0f;
         }
         return pipe1VelocityReal;

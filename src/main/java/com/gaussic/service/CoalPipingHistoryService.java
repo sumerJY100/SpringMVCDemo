@@ -108,6 +108,7 @@ public class CoalPipingHistoryService<T extends CoalPipingHistory> {
             endT, List<H000Pojo_Base> hList, boolean original) {
 
         if (null == hList) {
+
             return generateJsonStringByHistroyList(coalPipeHistoryEntityList, beginT, endT, original);
         } else {
             Calendar beginC = new GregorianCalendar();
@@ -231,6 +232,30 @@ public class CoalPipingHistoryService<T extends CoalPipingHistory> {
                 if (null != map) {
                     float[] d1 = map.get("d1"), d2 = map.get("d2"), d3 = map.get("d3"), d4 = map.get("d4");
                     float[] v1 = map.get("v1"), v2 = map.get("v2"), v3 = map.get("v3"), v4 = map.get("v4");
+
+
+                    //如果当前查询时间的磨煤量数据平均值为-1,
+                    //  如果density的数据>100万，小于5000万，则mill为1000
+                    //  否则mill = -1
+                    Double millAvg = coalPipeHistoryEntityList.stream().mapToDouble(c->c.getCoalMillValue().doubleValue()).average().orElse(0);
+                    if(millAvg.intValue()==-1){
+                        double densityMin = 1000000,densityMax = 50000000;
+
+                        coalPipeHistoryEntityList.forEach(coalPipeHistoryEntity->{
+                            if((coalPipeHistoryEntity.gethPipeADencity()>densityMin && coalPipeHistoryEntity
+                                    .gethPipeADencity()<densityMax) || (coalPipeHistoryEntity.gethPipeBDencity()>densityMin
+                                    && coalPipeHistoryEntity.gethPipeBDencity()<densityMax) ||(coalPipeHistoryEntity
+                                    .gethPipeCDencity()>densityMin && coalPipeHistoryEntity
+                                    .gethPipeCDencity()<densityMax) ||(coalPipeHistoryEntity.gethPipeDDencity()
+                                    >densityMin && coalPipeHistoryEntity
+                                    .gethPipeDDencity()<densityMax)){
+                                coalPipeHistoryEntity.setCoalMillValue(1000f);
+                            }else{
+
+                            }
+                        });
+                    }
+
                     for (int i = 0; i < d1.length; i++) {
 
 
@@ -239,15 +264,9 @@ public class CoalPipingHistoryService<T extends CoalPipingHistory> {
                             mill = 100f;
 //                        mill = mill/100;
                         Float[] densityArr = new Float[]{d1[i], d2[i], d3[i], d4[i]};
-                        Float desity1Real = 0f;
-                        Float desity2Real = 0f;
-                        Float desity3Real = 0f;
-                        Float desity4Real = 0f;
+                        Float desity1Real = 0f, desity2Real = 0f, desity3Real = 0f, desity4Real = 0f;
 
-                        Float velocity1Real = 0f;
-                        Float velocity2Real = 0f;
-                        Float velocity3Real = 0f;
-                        Float velocity4Real = 0f;
+                        Float velocity1Real = 0f, velocity2Real = 0f, velocity3Real = 0f, velocity4Real = 0f;
                         if (original) {
                             desity1Real = d1[i];
                             desity2Real = d2[i];
@@ -293,6 +312,8 @@ public class CoalPipingHistoryService<T extends CoalPipingHistory> {
 //                for (CoalPipingHistory h : coalPipeHistoryEntityList) {
 //                    jsonArrayForCoalMill.put(h.getCoalMillValue());
 //                }
+
+
             }
 
             jsonObject.put("startTime", beginC.getTimeInMillis());

@@ -35,6 +35,7 @@ public class PipeHandlerUtil {
         long countForDensity = 0L;
         float avgForDensity = 0f;
         for(int i=0;i<floats.length;i++){
+//            System.out.println("float:" +Arrays.toString(floats));
             if(floats[i]<low || floats[i] > top){
                 //异常数据点
             }else{
@@ -42,15 +43,22 @@ public class PipeHandlerUtil {
                 totalForDensity += floats[i];
             }
         }
-
+        avgForDensity = totalForDensity / countForDensity;
+//        System.out.println("百分比："+(float)countForDensity/(float)floats.length +","+avgForDensity);
         if(countForDensity > 0){
-            System.out.println("百分比："+(float)countForDensity/(float)floats.length);
-            if((float)countForDensity/(float)floats.length > 0.9) {
+
+            if((float)countForDensity/(float)floats.length > 0.7) {
                 //正常点数量超过80%
                 avgForDensity = totalForDensity / countForDensity;
                 for(int i=0;i<floats.length;i++){
                     if(floats[i]<low || floats[i] > top){
-                        floats[i] = avgForDensity;
+//                        System.out.println(floats[i] +", " + avgForDensity);
+//                        floats[i] = avgForDensity;
+                        if(i-1>0) {
+                            floats[i] = floats[i - 1];
+                        }else{
+                            floats[i] = avgForDensity;
+                        }
                     }else{
 
                     }
@@ -65,25 +73,9 @@ public class PipeHandlerUtil {
      */
     public float[] getHandleData(float[] floats) {
 
-
-
-
-
-
-
-
-
-
         float[] resultArr = floats;
         try {
             if(floats.length > 230) {
-
-
-
-
-
-
-
 
                 /*************************过滤数据，如果超出平均值50%，则为平均值*****************************************/
                 float avg = 0f;
@@ -94,10 +86,11 @@ public class PipeHandlerUtil {
                 avg = total/floats.length;
                 if(avg > 1000){
                     //浓度数据过滤
-//                    filterData(floats,50000000,5000);
+                    filterData(floats,50000000,5000);
                 }else{
                     //风速数据过滤
-//                    filterData(floats,30,5);
+                    System.out.println("风速过滤" +",floats:"+floats.length);
+                    filterData(floats,30,8);
                 }
 //        List<Float> floatList = new ArrayList<>();
 //        for(int i=0;i<floats.length;i++){
@@ -114,26 +107,6 @@ public class PipeHandlerUtil {
 //            floats[i] = floatList.get(i);
 //        }
                 /************************过滤数据，如果超出平均值50%，则为平均值*****************************************/
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
                 float[] originalArr = Arrays.copyOfRange(floats, 0, 200);
 

@@ -7,11 +7,13 @@ import com.gaussic.model.dcs.DevicePointRealtimePojo;
 import com.gaussic.model.history.CoalPipingHistory;
 import com.gaussic.repository.CoalMillRepository;
 import com.gaussic.repository.CoalPipingRepository;
+import com.gaussic.util.DataFilter;
 import com.serotonin.json.JsonObject;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import java.io.IOException;
 import java.sql.Timestamp;
 import java.time.Duration;
 import java.time.LocalDateTime;
@@ -37,6 +39,15 @@ public class MainPageService {
     @Autowired
     private CoalPipingHistoryService<? extends CoalPipingHistory> coalPipingHistoryService;
 
+
+    public static Map<String,List<DataFilter.TT>> offSetMap;
+    static{
+        try {
+            offSetMap = DataFilter.getOffset();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
     /**
      * 获取四台磨的密度与风速的实时数据，包含磨煤机的磨煤量
      *
@@ -336,17 +347,73 @@ public class MainPageService {
         //将风速与密度封装成float[]数组对象，对应v1，d1等数据，并进行了平滑均值处理
         Map<String, float[]> map = PipeDataHandleServer.getHandlerDensityAndVelocityData(coalPipingHistoryList);
 
+
+
+
+
+        String millLocation = "A";
+        if(coalMillId == 1){
+
+        }else if(coalMillId == 2){
+            millLocation = "B";
+        }else if(coalMillId == 3){
+            millLocation = "C";
+        }else if(coalMillId == 4){
+            millLocation = "D";
+        }
+        List<DataFilter.TT> densityOffSetList = offSetMap.get(millLocation);
+        List<DataFilter.TT> velocityOffSetList = offSetMap.get(millLocation +"V");
+
         //磨煤机的管道数据
         if (null != map) {
             //数据进行最后30个数据均值处理
-            millPipe1JsonObj.put("Velocity", getLatestValue(map.get("v1")));
-            millPipe1JsonObj.put("density", getLatestValue(map.get("d1")));
-            millPipe2JsonObj.put("Velocity", getLatestValue(map.get("v2")));
-            millPipe2JsonObj.put("density", getLatestValue(map.get("d2")));
-            millPipe3JsonObj.put("Velocity", getLatestValue(map.get("v3")));
-            millPipe3JsonObj.put("density", getLatestValue(map.get("d3")));
-            millPipe4JsonObj.put("Velocity", getLatestValue(map.get("v4")));
-            millPipe4JsonObj.put("density", getLatestValue(map.get("d4")));
+            float v1 = getLatestValue(map.get("v1"));
+            float v2 = getLatestValue(map.get("v2"));
+            float v3 = getLatestValue(map.get("v3"));
+            float v4 = getLatestValue(map.get("v4"));
+
+            float d1 = getLatestValue(map.get("d1"));
+            float d2 = getLatestValue(map.get("d2"));
+            float d3 = getLatestValue(map.get("d3"));
+            float d4 = getLatestValue(map.get("d4"));
+
+
+
+            LocalDateTime currentTime = LocalDateTime.now();
+
+            for(DataFilter.TT ttForDensity:densityOffSetList){
+                if(ttForDensity.getBegin().isBefore(currentTime) && ttForDensity.getEnd
+                        ().isAfter(currentTime)){
+                    d1 = (float)(d1 * ttForDensity.getValues()[0]);
+                    d2 = (float)(d2 * ttForDensity.getValues()[1]);
+                    d3 = (float)(d3 * ttForDensity.getValues()[2]);
+                    d4 = (float)(d4 * ttForDensity.getValues()[3]);
+                }
+            }
+            for(DataFilter.TT ttForVelocity:velocityOffSetList){
+                if(ttForVelocity.getBegin().isBefore(currentTime) && ttForVelocity.getEnd
+                        ().isAfter(currentTime)){
+                    v1 = (float)(v1 * ttForVelocity.getValues()[0]);
+                    v2 = (float)(v2 * ttForVelocity.getValues()[1]);
+                    v3 = (float)(v3 * ttForVelocity.getValues()[2]);
+                    v4 = (float)(v4 * ttForVelocity.getValues()[3]);
+                }
+            }
+
+
+
+
+
+
+
+            millPipe1JsonObj.put("Velocity", v1);
+            millPipe1JsonObj.put("density", d1);
+            millPipe2JsonObj.put("Velocity", v2);
+            millPipe2JsonObj.put("density", d2);
+            millPipe3JsonObj.put("Velocity", v3);
+            millPipe3JsonObj.put("density", d3);
+            millPipe4JsonObj.put("Velocity", v4);
+            millPipe4JsonObj.put("density", d4);
         }
         //磨煤机的磨煤量
         millAJsonObj.put("coalCount", getMillCount(coalMillEntity));

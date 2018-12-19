@@ -559,8 +559,8 @@ $(document).ready(function () {
         var curveId = containersIdArr[x];
         // 每个曲线图线面添加按钮，并给按钮绑定点击事件
         divAddBtnAndBindClickFunction(curveId);
-        var $showDiv = $(curveId + "_relativeBar");
-        var $hideDiv1 = $(curveId + "_absoluteBar");
+        var $hideDiv1 = $(curveId + "_relativeBar");
+        var  $showDiv= $(curveId + "_absoluteBar");
         var $hideDiv2 = $(curveId);
 
         var $hideDiv3 = $(curveId + "V");

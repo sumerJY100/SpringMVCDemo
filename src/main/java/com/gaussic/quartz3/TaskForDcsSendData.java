@@ -9,11 +9,18 @@ import com.gaussic.repository.DcsRemotePointRepository;
 import com.gaussic.service.CoalPipingHistoryService;
 import com.gaussic.service.MainPageService;
 import com.gaussic.service.PipeDataHandleServer;
+import com.gaussic.util.DataFilter;
+import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.xssf.usermodel.XSSFSheet;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.aspectj.lang.annotation.After;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.io.File;
+import java.io.IOException;
 import java.sql.Timestamp;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -31,6 +38,16 @@ public class TaskForDcsSendData {
     private CoalMillRepository coalMillRepository;
     @Autowired
     private CoalPipingHistoryService<? extends CoalPipingHistory> coalPipingHistoryService;
+
+    public static Map<String,List<DataFilter.TT>> offSetMap;
+    static{
+        try {
+            offSetMap = DataFilter.getOffset();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
 
     public void updateSendDcsData(){
 //        System.out.println("更新DCS数据");
@@ -86,6 +103,50 @@ public class TaskForDcsSendData {
 
                     List<CoalPipingEntity> coalPipingEntityList = coalMillEntity.getCoalPipingEntityList();
 //                    System.out.println("millid:" + coalMillEntity.getId());
+
+
+
+                    //获取A磨的偏执参数进行处理，浓度与风速
+                    String millLocation = "A";
+                    if(coalMillEntity.getId() == 1){
+
+                    }else if(coalMillEntity.getId() == 2){
+                        millLocation = "B";
+                    }else if(coalMillEntity.getId() == 3){
+                        millLocation = "C";
+                    }else if(coalMillEntity.getId() == 4){
+                        millLocation = "D";
+                    }
+                    List<DataFilter.TT> densityOffSetList = offSetMap.get(millLocation);
+                    List<DataFilter.TT> velocityOffSetList = offSetMap.get(millLocation +"V");
+                    for(DataFilter.TT ttForDensity:densityOffSetList){
+                        if(ttForDensity.getBegin().isBefore(currentTime.toLocalDateTime()) && ttForDensity.getEnd
+                                ().isAfter(currentTime.toLocalDateTime())){
+                            pipe1DensityReal = (float)(pipe1DensityReal * ttForDensity.getValues()[0]);
+                            pipe2DensityReal = (float)(pipe2DensityReal * ttForDensity.getValues()[1]);
+                            pipe3DensityReal = (float)(pipe3DensityReal * ttForDensity.getValues()[2]);
+                            pipe4DensityReal = (float)(pipe4DensityReal * ttForDensity.getValues()[3]);
+                        }
+                    }
+                    for(DataFilter.TT ttForVelocity:velocityOffSetList){
+                        if(ttForVelocity.getBegin().isBefore(currentTime.toLocalDateTime()) && ttForVelocity.getEnd
+                                ().isAfter(currentTime.toLocalDateTime())){
+                            pipe1Velocity = (float)(pipe1Velocity * ttForVelocity.getValues()[0]);
+                            pipe2Velocity = (float)(pipe2Velocity * ttForVelocity.getValues()[1]);
+                            pipe3Velocity = (float)(pipe3Velocity * ttForVelocity.getValues()[2]);
+                            pipe4Velocity = (float)(pipe4Velocity * ttForVelocity.getValues()[3]);
+                        }
+                    }
+
+
+
+
+
+
+
+
+
+
                     if (coalMillEntity.getId() == 1) {
 //                        System.out.println("A磨：" );
                         setDcsRemotePojoCurrentValue(dcsMap, 11L, currentTime, pipe1Velocity, pipe1DensityReal);
@@ -93,6 +154,7 @@ public class TaskForDcsSendData {
                         setDcsRemotePojoCurrentValue(dcsMap, 13L, currentTime, pipe3Velocity, pipe3DensityReal);
                         setDcsRemotePojoCurrentValue(dcsMap, 14L, currentTime, pipe4Velocity, pipe4DensityReal);
                     } else if (coalMillEntity.getId() == 2) {
+
                         setDcsRemotePojoCurrentValue(dcsMap, 21L, currentTime, pipe1Velocity, pipe1DensityReal);
                         setDcsRemotePojoCurrentValue(dcsMap, 22L, currentTime, pipe2Velocity, pipe2DensityReal);
                         setDcsRemotePojoCurrentValue(dcsMap, 23L, currentTime, pipe3Velocity, pipe3DensityReal);

@@ -1,5 +1,6 @@
 package com.gaussic.util;
 
+import com.gaussic.model.dcsTemp.TT;
 import com.gaussic.model.history.CoalPipingHistory;
 import com.gaussic.service.CoalPipingHistoryService;
 import org.apache.poi.ss.usermodel.Cell;
@@ -10,19 +11,18 @@ import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.IOException;
 import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
+import java.util.*;
 
 public class DataFilter {
 
     private static final String excelSwitchFileName = "d:/A.xlsx";
 
 
-    public static void test(String millLocation){
+    public static void test(String millLocation) {
         if (millLocation.equals("A")) {
             LocalDateTime localDateTime01 = LocalDateTime.of(2018, 12, 1, 10, 00);
             LocalDateTime localDateTime02 = LocalDateTime.of(2018, 12, 1, 13, 00);
@@ -75,36 +75,33 @@ public class DataFilter {
         }
     }
 
-
-    /**
-     *  将磨煤机的4根粉管的数据，所有取值乘以系数
-     *  系数来自d:/ABCD.xlsx文件
-     * @param millLocation  磨煤机名称A B C D
-     * @param resultList    List<? extends  CoalPipingHistory>
-     */
-    public static void filter(String  millLocation,List<? extends  CoalPipingHistory> resultList){
-        try {
-            String path = "d:/ABCD.xlsx";
-            File file = new File(path);
+    public static Map<String,List<TT>> getOffset() throws IOException {
+        String path = "d:/ABCD.xlsx";
+        File file = new File(path);
 //            file.createNewFile();
-            if(file.exists()) {
-                FileInputStream fileInputStream = new FileInputStream(path);
-                //创建一个工作簿
-                XSSFWorkbook workbook = new XSSFWorkbook(fileInputStream);
-                //创建一个电子表格
+        Map<String,List<TT>> map = new HashMap<>();
+        if (file.exists()) {
+            FileInputStream fileInputStream = new FileInputStream(path);
+            //创建一个工作簿
+            XSSFWorkbook workbook = new XSSFWorkbook(fileInputStream);
+            //创建一个电子表格
+            String[] millLocationArr = new String[]{"A","B","C","D"};
+            for(int m=0;m<millLocationArr.length;m++) {
+                String millLocation = millLocationArr[m];
                 XSSFSheet sheet = workbook.getSheet(millLocation);
-                XSSFSheet sheetForVelocity = workbook.getSheet(millLocation+"V");
+                XSSFSheet sheetForVelocity = workbook.getSheet(millLocation + "V");
+                List<TT> ttList = null;
+                List<TT> ttListForVelocity = null;
                 if (null != sheet) {
                     //行对象
-
-                    List<TT> ttList = new ArrayList<>();
-                    List<TT> ttListForVelocity = new ArrayList<>();
+                    ttList = new ArrayList<>();
+                    ttListForVelocity = new ArrayList<>();
                     for (int i = 2; i < 100; i++) {
                         XSSFRow row = sheet.getRow(i);
                         XSSFRow rowForVelocity = sheetForVelocity.getRow(i);
-                        if(null != rowForVelocity){
+                        if (null != rowForVelocity) {
                             Cell firstCell = rowForVelocity.getCell(0);
-                            if(null != firstCell){
+                            if (null != firstCell) {
                                 TT tt = new TT(rowForVelocity);
                                 ttListForVelocity.add(tt);
                             }
@@ -114,10 +111,70 @@ public class DataFilter {
                             if (null != firstCell) {
                                 TT tt = new TT(row);
                                 ttList.add(tt);
-//                                System.out.println("tt:" + i);
                             }
                         }
                     }
+                    map.put(millLocation ,ttList);
+                    map.put(millLocation+"V",ttListForVelocity);
+
+                }
+            }
+            workbook.close();
+            fileInputStream.close();
+        }
+        return map;
+    }
+
+    /**
+     * 将磨煤机的4根粉管的数据，所有取值乘以系数
+     * 系数来自d:/ABCD.xlsx文件
+     *
+     * @param millLocation 磨煤机名称A B C D
+     * @param resultList   List<? extends  CoalPipingHistory>
+     */
+    public static void filter(String millLocation, List<? extends CoalPipingHistory> resultList) {
+        try {
+            String path = "d:/ABCD.xlsx";
+            File file = new File(path);
+//            file.createNewFile();
+            if (file.exists()) {
+                FileInputStream fileInputStream = new FileInputStream(path);
+                //创建一个工作簿
+                XSSFWorkbook workbook = new XSSFWorkbook(fileInputStream);
+                //创建一个电子表格
+                XSSFSheet sheet = workbook.getSheet(millLocation);
+                XSSFSheet sheetForVelocity = workbook.getSheet(millLocation + "V");
+                List<TT> ttList = null;
+                List<TT> ttListForVelocity = null;
+                if (null != sheet) {
+                    //行对象
+
+                    ttList = new ArrayList<>();
+                    ttListForVelocity = new ArrayList<>();
+                    for (int i = 2; i < 100; i++) {
+                        XSSFRow row = sheet.getRow(i);
+                        XSSFRow rowForVelocity = sheetForVelocity.getRow(i);
+                        if (null != rowForVelocity) {
+                            Cell firstCell = rowForVelocity.getCell(0);
+                            if (null != firstCell) {
+                                TT tt = new TT(rowForVelocity);
+                                ttListForVelocity.add(tt);
+                            }
+                        }
+                        if (null != row) {
+                            Cell firstCell = row.getCell(0);
+                            if (null != firstCell) {
+                                TT tt = new TT(row);
+                                ttList.add(tt);
+                            }
+                        }
+                    }
+                }
+                workbook.close();
+                fileInputStream.close();
+
+                if ((null != ttList && ttList.size() > 0) || (null != ttListForVelocity && ttListForVelocity.size()
+                        >0)) {
                     for (CoalPipingHistory coalPipingHistory : resultList) {
                         Timestamp timestamp = coalPipingHistory.gethTime();
                         LocalDateTime localDateTime = timestamp.toLocalDateTime();
@@ -130,14 +187,10 @@ public class DataFilter {
                                 coalPipingHistory.sethPipeDDencity((float) (coalPipingHistory.gethPipeDDencity() * tt.getValues()[3]));
                             }
                         }
-                        for(int i=0;i<ttListForVelocity.size();i++){
+                        for (int i = 0; i < ttListForVelocity.size(); i++) {
                             TT tt = ttListForVelocity.get(i);
-//                            System.out.println(tt.getValues()[0] +","+tt.getValues()[1] +","+ tt.getValues()[2] + "," +
-//                                    ""+tt.getValues()[3]);
                             if (localDateTime.isAfter(tt.getBegin()) && localDateTime.isBefore(tt.getEnd())) {
-//                                System.out.print("old:"+coalPipingHistory.gethPipeAVelocity());
                                 coalPipingHistory.sethPipeAVelocity((float) (coalPipingHistory.gethPipeAVelocity() * tt.getValues()[0]));
-//                                System.out.println(",new:"+coalPipingHistory.gethPipeAVelocity());
                                 coalPipingHistory.sethPipeBVelocity((float) (coalPipingHistory.gethPipeBVelocity() * tt.getValues()[1]));
                                 coalPipingHistory.sethPipeCVelocity((float) (coalPipingHistory.gethPipeCVelocity() * tt.getValues()[2]));
                                 coalPipingHistory.sethPipeDVelocity((float) (coalPipingHistory.gethPipeDVelocity() * tt.getValues()[3]));
@@ -148,9 +201,7 @@ public class DataFilter {
 
                 }
 
-                workbook.close();
 
-                fileInputStream.close();
             }
         } catch (Exception e) {
 //            e.printStackTrace();
@@ -159,23 +210,25 @@ public class DataFilter {
 
     /**
      * 使用幂指数处理数据
-     * @param resultList    List<CoalPipingHistory>
-     * @param pow           默认使用-2.5
+     *
+     * @param resultList List<CoalPipingHistory>
+     * @param pow        默认使用-2.5
      */
-    public static void updateDateWithPow(List<? extends  CoalPipingHistory> resultList, int pow) {
+    public static void updateDateWithPow(List<? extends CoalPipingHistory> resultList, int pow) {
 //        double m = 3;
         double m = Math.abs(pow);
         resultList.forEach(coalPipingHistory -> {
-            System.out.println("coalPipingHistory.gethPipeADencity():" +coalPipingHistory.gethPipeADencity() +"," + (float) Math.pow(coalPipingHistory.gethPipeADencity(), 1.0/m));
-            coalPipingHistory.sethPipeADencity((float) Math.pow(coalPipingHistory.gethPipeADencity(), 1.0/m));
-            coalPipingHistory.sethPipeBDencity((float) Math.pow(coalPipingHistory.gethPipeBDencity(), 1.0/m));
-            coalPipingHistory.sethPipeCDencity((float) Math.pow(coalPipingHistory.gethPipeCDencity(), 1.0/m));
-            coalPipingHistory.sethPipeDDencity((float) Math.pow(coalPipingHistory.gethPipeDDencity(), 1.0/m));
+//            System.out.println("coalPipingHistory.gethPipeADencity():" + coalPipingHistory.gethPipeADencity() + "," + (float) Math.pow(coalPipingHistory.gethPipeADencity(), 1.0 / m));
+            coalPipingHistory.sethPipeADencity((float) Math.pow(coalPipingHistory.gethPipeADencity(), 1.0 / m));
+            coalPipingHistory.sethPipeBDencity((float) Math.pow(coalPipingHistory.gethPipeBDencity(), 1.0 / m));
+            coalPipingHistory.sethPipeCDencity((float) Math.pow(coalPipingHistory.gethPipeCDencity(), 1.0 / m));
+            coalPipingHistory.sethPipeDDencity((float) Math.pow(coalPipingHistory.gethPipeDDencity(), 1.0 / m));
         });
     }
 
     /**
      * 读取excel文件中的原始数据开关功能，对数据进行处理
+     *
      * @param resultList List<CoalPipingHistory>
      */
     public static void updateOrigianlDataWithExcel(List<CoalPipingHistory> resultList) {
@@ -184,16 +237,16 @@ public class DataFilter {
             XSSFWorkbook xssfWorkbook = new XSSFWorkbook(file);
             XSSFSheet sheet = xssfWorkbook.getSheet("01");
             Row row = sheet.getRow(1);
-            if(null != row) {
+            if (null != row) {
                 Cell cellForSwith = row.getCell(5);
-                if(null != cellForSwith) {
+                if (null != cellForSwith) {
                     int k = (int) cellForSwith.getNumericCellValue();
                     if (k == 1) {
                         //使用幂指数
                         Row rowForM = sheet.getRow(6);
-                        if(null != rowForM) {
+                        if (null != rowForM) {
                             Cell cellForM = rowForM.getCell(5);
-                            if(null != cellForM){
+                            if (null != cellForM) {
                                 int m = (int) cellForM.getNumericCellValue();
                                 DataFilter.updateDateWithPow(resultList, m);
                             }
@@ -204,7 +257,7 @@ public class DataFilter {
                 }
             }
             xssfWorkbook.close();
-        }catch (Exception e){
+        } catch (Exception e) {
             e.printStackTrace();
         }
     }
@@ -214,6 +267,7 @@ public class DataFilter {
      * 0 原始数据
      * 1 偏执数据，读取ABCD.xlsx文件
      * 2 幂指数
+     *
      * @param millLocation
      * @param list
      */
@@ -223,36 +277,36 @@ public class DataFilter {
             XSSFWorkbook xssfWorkbook = new XSSFWorkbook(file);
             XSSFSheet sheet = xssfWorkbook.getSheet("01");
             Row row = sheet.getRow(1);
-            if(null != row) {
+            if (null != row) {
                 Cell cellForSwith = row.getCell(2);
-                if(null != cellForSwith) {
+                if (null != cellForSwith) {
                     int k = (int) cellForSwith.getNumericCellValue();
                     if (k == 2) {
                         //使用幂指数
                         Row rowForM = sheet.getRow(7);
-                        if(null != rowForM) {
+                        if (null != rowForM) {
                             Cell cellForM = rowForM.getCell(2);
-                            if(null != cellForM){
+                            if (null != cellForM) {
                                 int m = (int) cellForM.getNumericCellValue();
                                 DataFilter.updateDateWithPow(list, m);
                             }
                         }
                     } else if (k == 1) {
                         // 使用偏执数据
-                        filter(millLocation,list);
-                    }else if(k == 0){
+                        filter(millLocation, list);
+                    } else if (k == 0) {
                         //使用原始数据
                     }
                 }
             }
             xssfWorkbook.close();
-        }catch (Exception e){
+        } catch (Exception e) {
             e.printStackTrace();
         }
     }
 
 
-    private static class TT {
+    public static class TT {
         private LocalDateTime begin;
         private LocalDateTime end;
         private double[] values;
